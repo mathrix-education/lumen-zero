@@ -46,7 +46,7 @@ class Resolver
         $parts = explode("\\", $fullClass);
         $className = array_pop($parts);
         $modelName = Str::singular(str_replace($type, "", $className));
-        return self::$ModelsNamespace . "\\$modelName";
+        return self::$ModelsNamespace . $modelName;
     }
 
 
