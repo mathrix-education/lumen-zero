@@ -20,7 +20,7 @@ trait DebugTrait
     public function debug()
     {
         echo $this->currentUri . "\n";
-        echo json_encode($this->getJsonResponseData(), JSON_PRETTY_PRINT);
+        echo json_encode($this->getJsonResponseData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     /**
