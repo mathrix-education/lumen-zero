@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
  */
 class Resolver
 {
-    private static $ModelsNamespace = "App\\Models";
+    private static $ModelsNamespace = "App\\Models\\";
 
 
     /**
