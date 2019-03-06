@@ -21,7 +21,7 @@ trait PassportTrait
      */
     public function mockScope(...$scopes): void
     {
-        $user = forward_static_call_array([Resolver::getModelClass("User"), "random"]);
+        $user = forward_static_call_array([Resolver::getModelClass("User"), "random"], []);
 
         Passport::actingAs($user, $scopes);
     }
