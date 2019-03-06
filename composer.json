@@ -1,5 +1,5 @@
 {
-  "name": "mathrix/lumen-bases",
+  "name": "mathrix/lumen",
   "description": "The main library for Mathrix Lumen REST APIs.",
   "type": "library",
   "license": "proprietary",
