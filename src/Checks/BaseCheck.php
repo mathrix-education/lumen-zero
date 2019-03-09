@@ -21,6 +21,8 @@ abstract class BaseCheck implements \JsonSerializable
     protected $latency;
     /** @var string $status The status of the check. */
     protected $status;
+    /** @var string[] $errors The errors. */
+    protected $errors;
 
 
     /**
@@ -45,12 +47,12 @@ abstract class BaseCheck implements \JsonSerializable
 
 
     /**
-     * Get the JSONable reprsentation of the check.
+     * Get the JSONable representation of the check.
      * @return array|mixed
      */
     public function jsonSerialize()
     {
-        return [
+        $data = [
             "name" => Str::snake(class_basename($this)),
             "status" => $this->status,
             "start" => $this->start,
@@ -58,5 +60,11 @@ abstract class BaseCheck implements \JsonSerializable
             "latency" => $this->latency,
             "latency_ms" => round($this->latency * 1000, 2)
         ];
+
+        if (!empty($this->errors)) {
+            $data["errors"] = $this->errors;
+        }
+
+        return $data;
     }
 }
