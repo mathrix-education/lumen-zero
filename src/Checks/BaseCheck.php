@@ -2,6 +2,8 @@
 
 namespace Mathrix\Lumen\Checks;
 
+use Illuminate\Support\Str;
+
 /**
  * Class BaseCheck.
  *
@@ -53,10 +55,12 @@ abstract class BaseCheck implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
+            "name" => Str::snake(class_basename($this)),
             "status" => $this->status,
             "start" => $this->start,
             "end" => $this->end,
-            "latency" => $this->latency
+            "latency" => $this->latency,
+            "latency_ms" => round($this->latency * 1000, 2)
         ];
     }
 }

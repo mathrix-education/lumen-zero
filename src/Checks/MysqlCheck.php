@@ -19,6 +19,12 @@ class MysqlCheck extends BaseCheck
         /** @var \Illuminate\Database\MySqlConnection $connection */
         $connection = DB::connection();
         $pdo = $connection->getPdo();
-        return $pdo instanceof \PDO;
+        $result = $pdo instanceof \PDO;
+
+        if ($result) {
+            return "healthy";
+        } else {
+            return "unhealthy";
+        }
     }
 }
