@@ -34,6 +34,8 @@ abstract class BaseCheck implements \JsonSerializable
         }
         $this->end = microtime(true);
         $this->latency = $this->end - $this->start;
+
+        return $this;
     }
 
 
