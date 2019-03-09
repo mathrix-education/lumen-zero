@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\FactoryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Mathrix\Lumen\Bases\BaseModel;
-use Mathrix\Lumen\Utils\Resolver;
+use Mathrix\Lumen\Utils\ClassResolver;
 
 /**
  * Trait RESTTrait.
@@ -58,7 +58,7 @@ trait RESTTrait
      */
     public function discover(): void
     {
-        $supposedModelClass = Resolver::modelFromTest(get_class($this));
+        $supposedModelClass = ClassResolver::getModelClassFrom("Test", get_class($this));
 
         if (class_exists($supposedModelClass)) {
             $this->modelClass = $supposedModelClass;

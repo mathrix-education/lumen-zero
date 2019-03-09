@@ -5,6 +5,7 @@ namespace Mathrix\Lumen\Providers;
 use Illuminate\Support\ServiceProvider;
 use Mathrix\Lumen\Bases\BaseModel;
 use Mathrix\Lumen\Exceptions\ClassNotFoundException;
+use Mathrix\Lumen\Utils\ClassResolver;
 
 /**
  * Class ObserverServiceProvider.
@@ -17,10 +18,6 @@ use Mathrix\Lumen\Exceptions\ClassNotFoundException;
  */
 class ObserverServiceProvider extends ServiceProvider
 {
-    private const MODELS_NAMESPACE = "App\\Models\\";
-    private const OBSERVERS_NAMESPACE = "App\\Observers\\";
-    private const EXCLUDED_OBSERVERS = [];
-
     /**
      * Auto-discover observers based on the filename.
      *
@@ -32,15 +29,10 @@ class ObserverServiceProvider extends ServiceProvider
         $observerFiles = glob($observersDir . \DIRECTORY_SEPARATOR . "*.php");
 
         foreach ($observerFiles as $observerFile) {
-            $observerClass = self::OBSERVERS_NAMESPACE . mb_substr(basename($observerFile), 0, -4);
-
-            if (\in_array($observerClass, self::EXCLUDED_OBSERVERS, true)) {
-                continue;
-            }
+            $observerClass = ClassResolver::$ObserversNamespace . "\\" . mb_substr(basename($observerFile), 0, -4);
 
             /** @var string|BaseModel $modelClass */
-            $modelClass = str_replace([self::OBSERVERS_NAMESPACE, "Observer"], [self::MODELS_NAMESPACE, ""],
-                $observerClass);
+            $modelClass = ClassResolver::getModelClassFrom("Observer", $observerClass);
 
             if (class_exists($modelClass)) {
                 $modelClass::observe($observerClass);

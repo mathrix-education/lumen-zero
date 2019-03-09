@@ -214,7 +214,6 @@ abstract class BaseModel extends Model
         }
 
         $validator = ValidatorFacade::make($data, $rules);
-
         $validator = $this->injectInValidator($validator);
 
         if ($validator->fails()) {

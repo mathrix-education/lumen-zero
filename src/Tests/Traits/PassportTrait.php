@@ -3,7 +3,7 @@
 namespace Mathrix\Lumen\Tests\Traits;
 
 use Laravel\Passport\Passport;
-use Mathrix\Lumen\Utils\Resolver;
+use Mathrix\Lumen\Utils\ClassResolver;
 
 /**
  * Class PassportTrait.
@@ -21,7 +21,7 @@ trait PassportTrait
      */
     public function mockScope(...$scopes): void
     {
-        $user = forward_static_call_array([Resolver::getModelClass("User"), "random"], []);
+        $user = forward_static_call_array([ClassResolver::getModelClass("User"), "random"], []);
 
         Passport::actingAs($user, $scopes);
     }
