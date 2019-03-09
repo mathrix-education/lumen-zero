@@ -28,7 +28,7 @@ class RegistrarServiceProvider extends ServiceProvider
         $registrarFiles = glob($registrarsPath . \DIRECTORY_SEPARATOR . "*.php");
 
         foreach ($registrarFiles as $registrarFile) {
-            $registrarClass = ClassResolver::$RegistrarNamespace. mb_substr(basename($registrarFile), 0, -4);
+            $registrarClass = ClassResolver::$RegistrarNamespace . "\\" . mb_substr(basename($registrarFile), 0, -4);
 
             if (class_exists($registrarClass)) {
                 /** @var string|BaseRegistrar $registrar */
