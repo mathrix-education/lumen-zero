@@ -9,7 +9,7 @@ namespace Mathrix\Lumen\Checks;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  */
-abstract class BaseCheck
+abstract class BaseCheck implements \JsonSerializable
 {
     /** @var float $start The starting time of the check. */
     protected $start;
@@ -42,4 +42,19 @@ abstract class BaseCheck
      * @return string
      */
     abstract protected function run(): string;
+
+
+    /**
+     * Get the JSONable reprsentation of the check.
+     * @return array|mixed
+     */
+    public function jsonSerialize()
+    {
+        return [
+            "status" => $this->status,
+            "start" => $this->start,
+            "end" => $this->end,
+            "latency" => $this->latency
+        ];
+    }
 }
