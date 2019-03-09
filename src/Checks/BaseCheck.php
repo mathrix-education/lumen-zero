@@ -29,11 +29,7 @@ abstract class BaseCheck implements \JsonSerializable
     public function execute()
     {
         $this->start = microtime(true);
-        try {
-            $this->status = $this->run();
-        } catch (\Exception $e) {
-            // Kill exception
-        }
+        $this->status = $this->run();
         $this->end = microtime(true);
         $this->latency = $this->end - $this->start;
 
