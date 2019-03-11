@@ -3,6 +3,7 @@
 namespace Mathrix\Lumen\Bases;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 /**
@@ -12,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  */
-abstract class BaseMail
+abstract class BaseMail extends Mailable
 {
     use Queueable, SerializesModels;
 
