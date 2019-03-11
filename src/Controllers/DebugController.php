@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 use Laravel\Passport\Client;
 use Mathrix\Lumen\Bases\BaseController;
 use Mathrix\Lumen\Bases\BaseMail;
-use Mathrix\Lumen\Exceptions\ClassNotFoundException;
 use Mathrix\Lumen\Exceptions\Http\Http400BadRequestException;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -103,17 +102,12 @@ class DebugController extends BaseController
      * @param string $mail
      * @param string $namespace
      * @return BaseMail
-     * @throws ClassNotFoundException
      */
     public function mail(string $mail, string $namespace = "App\\Mails"): BaseMail
     {
         $mailClassName = Str::studly($mail);
         /** @var BaseMail $mailClass */
         $mailClass = "$namespace\\$mailClassName";
-
-        if (!class_exists($mailClassName)) {
-            throw new ClassNotFoundException($mailClassName);
-        }
 
         return $mailClass::mock();
     }
