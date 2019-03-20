@@ -31,7 +31,7 @@ class ClassResolver
      */
     public static function getModelClass(string $modelName): string
     {
-        return self::$ModelsNamespace . "\\$modelName";
+        return self::$ModelsNamespace . "\\" . Str::ucfirst($modelName);
     }
 
 

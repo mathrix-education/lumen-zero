@@ -1,4 +1,4 @@
-# Mathrix Lumen
+# Lumen Zero
 
 ---
 
@@ -7,7 +7,7 @@ Author :
 
 Version 1.0.0, published on Mars 6th, 2019
 
-## Modification hostory
+## Modification history
 
 | Version  | Date           | Designation         |
 | -------- | -------------- | ------------------- |

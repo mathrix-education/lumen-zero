@@ -1,5 +1,5 @@
 {
-  "name": "mathrix/lumen",
+  "name": "mathrix/lumen-zero",
   "description": "The main library for Mathrix Lumen REST APIs.",
   "type": "library",
   "license": "proprietary",
@@ -22,6 +22,7 @@
     "ext-pdo": "*",
     "dusterio/lumen-passport": "^0.2.9",
     "illuminate/mail": "^5.7",
+    "illuminate/notifications": "^5.7",
     "laravel/lumen-framework": "5.7.*"
   },
   "require-dev": {

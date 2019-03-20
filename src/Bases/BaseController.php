@@ -10,6 +10,7 @@ use Mathrix\Lumen\Exceptions\Http\Http400BadRequestException;
 use Mathrix\Lumen\Exceptions\Http\Http401UnauthorizedException;
 use Mathrix\Lumen\Exceptions\Models\ValidationException;
 use Mathrix\Lumen\Responses\PaginationJsonResponse;
+use Mathrix\Lumen\Utils\ClassResolver;
 
 /**
  * Class BaseController.
@@ -26,43 +27,12 @@ abstract class BaseController extends Controller
     /**
      * BaseController constructor
      * Build model class.
-     * @throws Http400BadRequestException
      */
     public function __construct()
     {
-        $modelName = str_replace(["App\\Controllers\\", "Controller"], "", \get_class($this));
-        $modelClass = $this->resolveModelClass($modelName, false);
-
-        if ($modelClass !== false) {
-            $this->modelClass = $modelClass;
-        }
+        $this->modelClass = ClassResolver::getModelClassFrom("Controller", get_class($this));
     }
 
-    /**
-     * Resolve a model class by a given controller name.
-     * @param string $name the model name
-     * @param bool $exceptionOnFail if true, raise and exception
-     *
-     * @return BaseModel|bool
-     *
-     * @throws Http400BadRequestException
-     */
-    protected function resolveModelClass(string $name, $exceptionOnFail = true)
-    {
-        $potentialModel = $this->modelClass ?? Str::studly(Str::singular($name));
-
-        /** @var BaseModel $potentialModelClass */
-        $potentialModelClass = "App\\Models\\$potentialModel";
-
-        if (!class_exists($potentialModelClass) && $exceptionOnFail) {
-            dd($potentialModelClass);
-            throw new Http400BadRequestException("$potentialModelClass does not exist"); // @codeCoverageIgnore
-        } elseif (!class_exists($potentialModelClass) && !$exceptionOnFail) {
-            return false;
-        }
-
-        return $potentialModelClass;
-    }
 
     /**
      * Generic paginated index method.
@@ -209,8 +179,8 @@ abstract class BaseController extends Controller
     PaginationJsonResponse
     {
         /** @var BaseModel $relatedModelClass */
-        $relatedModelClass = "App\\Models\\$what";
-        $ucName = ucfirst($what);
+        $relatedModelName = Str::ucfirst($what);
+        $relatedModelClass = ClassResolver::getModelClass($relatedModelName);
 
         if (!class_exists($relatedModelClass)) {
             throw new Http400BadRequestException([], "$relatedModelClass does not exists.");
@@ -225,10 +195,10 @@ abstract class BaseController extends Controller
             throw new Http400BadRequestException("$relatedModelClass::$potentialRelation() does not exist");
         }
 
-        if ($request->user() !== null && $request->user()->cant("by$ucName", $this->modelClass)) {
+        if ($request->user() !== null && $request->user()->cant("by$relatedModelName", $this->modelClass)) {
             throw new Http401UnauthorizedException([
                 "model_class" => $this->modelClass
-            ], "Failed to pass by$ucName policy");
+            ], "Failed to pass by$relatedModelName policy");
         }
 
         $query = $model->{$potentialRelation}();

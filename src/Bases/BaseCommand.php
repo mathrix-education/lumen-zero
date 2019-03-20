@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 
 /**
  * Class BaseCommand.
+ * Base class for Artisan commands.
  *
  * @author Mathieu Bour <mathieu@mathrix.fr>
  * @copyright Mathrix Education SA.
@@ -14,19 +15,36 @@ use Illuminate\Console\Command;
  */
 abstract class BaseCommand extends Command
 {
+    /**
+     * Print a success.
+     * @param string $string
+     * @param null $verbosity
+     */
     public function success(string $string, $verbosity = null)
     {
         $this->line("[<info>✔</info>] $string", null, $verbosity);
     }
 
 
-    public function fatal(string $string, $verbosity = null)
+    /**
+     * Print an error, then exit.
+     * @param string $string
+     * @param null $verbosity
+     * @param int $code The exit code (default to 1)
+     */
+    public function fatal(string $string, $verbosity = null, int $code = 1)
     {
         $this->block($string, "error", $verbosity);
-        exit(1);
+        exit($code);
     }
 
 
+    /**
+     * Print a block in the console.
+     * @param string $string
+     * @param null $style
+     * @param null $verbosity
+     */
     public function block(string $string, $style = null, $verbosity = null)
     {
         $string = " $string ";
