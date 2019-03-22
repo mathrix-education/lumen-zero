@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
-use Mathrix\Lumen\Exceptions\Models\ValidationException;
+use Mathrix\Lumen\Exceptions\ValidationException;
 
 /**
  * Class BaseModel.
@@ -36,6 +36,7 @@ abstract class BaseModel extends Model
     /** @var bool|array Validation errors */
     protected $errors = false;
 
+
     /**
      * Get the table name.
      *
@@ -45,6 +46,7 @@ abstract class BaseModel extends Model
     {
         return with(new static())->getTable();
     }
+
 
     /**
      * Get a random model from the database.
@@ -68,6 +70,7 @@ abstract class BaseModel extends Model
         return $query->firstOrFail();
     }
 
+
     /**
      * Use appends.
      */
@@ -77,6 +80,7 @@ abstract class BaseModel extends Model
 
         return new static();
     }
+
 
     /**
      * Don"t use appends.
@@ -182,6 +186,7 @@ abstract class BaseModel extends Model
         return $this->validate;
     }
 
+
     /**
      * Validate model data.
      *
@@ -225,6 +230,7 @@ abstract class BaseModel extends Model
         return true;
     }
 
+
     /**
      * Inject custom rules in the validator before save.
      *
@@ -237,6 +243,7 @@ abstract class BaseModel extends Model
         return $validator;
     }
 
+
     /**
      * Enable the model validation.
      */
@@ -245,6 +252,7 @@ abstract class BaseModel extends Model
         $this->validate = true;
     }
 
+
     /**
      * Disable the model validation.
      */
@@ -252,6 +260,7 @@ abstract class BaseModel extends Model
     {
         $this->validate = false;
     }
+
 
     /**
      * Returns the validation errors.
