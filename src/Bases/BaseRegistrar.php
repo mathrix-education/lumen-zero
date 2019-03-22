@@ -53,16 +53,19 @@ abstract class BaseRegistrar
 
 
     /**
-     * @param $base
-     * @param $controller
-     * @param $permissions
+     * Register REST-style routes.
+     *
+     * @param string $base The base URL.
+     * @param string $controller The controller
+     * @param array $permissions The persmissions: Passport scopes, comma-separated
      */
-    protected function rest($base, $controller, $permissions)
+    protected function rest(string $base, string $controller, array $permissions = []): void
     {
         $permissions = array_merge(self::$DefaultPermissions, $permissions);
         $singular = Str::singular($base);
 
-        $this->get("{$base}[/{page:[1-9]\d*}/{perPage:[1-9]\d*]", [
+        // page parameter starts at 0
+        $this->get("{$base}/{page:\d+}/{perPage:[1-9]\d*}", [
             "middleware" => !empty($permissions["index"]) ? "scope:{$permissions["index"]}" : null,
             "uses" => "$controller@index"
         ]);
