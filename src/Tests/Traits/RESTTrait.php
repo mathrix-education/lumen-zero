@@ -18,6 +18,7 @@ use Mathrix\Lumen\Utils\ClassResolver;
  * @since 1.0.0
  *
  * @mixin \Laravel\Lumen\Testing\TestCase
+ * @method \Symfony\Component\HttpKernel\HttpKernelInterface createApplication()
  */
 trait RESTTrait
 {
