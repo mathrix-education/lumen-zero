@@ -73,7 +73,7 @@ abstract class BaseRegistrar
         ]);
 
         foreach (["get", "patch", "delete"] as $method) {
-            $this->{$method}("$base/{{$singular}Id}:[1-9]\d*", [
+            $this->{$method}("$base/{{$singular}Id:[1-9]\d*}", [
                 "middleware" => !empty($permissions[$method]) ? "scope:{$permissions[$method]}" : null,
                 "uses" => "$controller@$method"
             ]);
