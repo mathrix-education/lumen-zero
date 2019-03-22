@@ -1,5 +1,6 @@
 <?php
-namespace Mathrix\Lumen\Exceptions\Models;
+
+namespace Mathrix\Lumen\Exceptions;
 
 use Mathrix\Lumen\Exceptions\Http\Http422UnprocessableEntityException;
 
