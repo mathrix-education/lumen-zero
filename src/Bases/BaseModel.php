@@ -200,8 +200,8 @@ abstract class BaseModel extends Model
             $this->useRules = $rules;
         }
 
-        $data = Arr::only($this->toArray(), $this->fillable);
-        $rules = $this->{$this->useRules};
+        $data = Arr::only($this->getDirty(), $this->fillable);
+        $rules = Arr::only($this->{$this->useRules}, array_keys($data));
 
         foreach ($rules as $ruleName => $rule) {
             $dataKeys = array_keys($data);
