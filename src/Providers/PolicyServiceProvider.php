@@ -29,15 +29,19 @@ class PolicyServiceProvider extends ServiceProvider
     public function boot()
     {
         $policiesDir = $this->app->basePath() . "/app/Policies";
-        $policyFiles = glob($policiesDir . \DIRECTORY_SEPARATOR . "*.php");
+        $policyFiles = glob($policiesDir . DIRECTORY_SEPARATOR . "*.php");
 
         foreach ($policyFiles as $policyFile) {
             $policyClass = ClassResolver::$PoliciesNamespace . "\\" . mb_substr(basename($policyFile), 0, -4);
 
+            if (in_array($policyClass, self::$IgnoredPolicies)) {
+                continue;
+            }
+
             /** @var string|BaseModel $modelClass */
             $modelClass = ClassResolver::getModelClassFrom("Policy", $policyClass);
 
-            if (class_exists($modelClass) && !in_array($modelClass, self::$IgnoredPolicies)) {
+            if (class_exists($modelClass)) {
                 Gate::policy($modelClass, $policyClass);
             } else {
                 throw new ClassNotFoundException($modelClass);

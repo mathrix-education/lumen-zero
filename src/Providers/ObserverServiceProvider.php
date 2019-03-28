@@ -2,6 +2,7 @@
 
 namespace Mathrix\Lumen\Providers;
 
+use Exception;
 use Illuminate\Support\ServiceProvider;
 use Mathrix\Lumen\Bases\BaseModel;
 use Mathrix\Lumen\Exceptions\ClassNotFoundException;
@@ -25,20 +26,24 @@ class ObserverServiceProvider extends ServiceProvider
     /**
      * Auto-discover observers based on the filename.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function boot()
     {
         $observersDir = $this->app->basePath() . "/app/Observers";
-        $observerFiles = glob($observersDir . \DIRECTORY_SEPARATOR . "*.php");
+        $observerFiles = glob($observersDir . DIRECTORY_SEPARATOR . "*.php");
 
         foreach ($observerFiles as $observerFile) {
             $observerClass = ClassResolver::$ObserversNamespace . "\\" . mb_substr(basename($observerFile), 0, -4);
 
+            if (in_array($observerClass, self::$IgnoredObservers)) {
+                continue;
+            }
+
             /** @var string|BaseModel $modelClass */
             $modelClass = ClassResolver::getModelClassFrom("Observer", $observerClass);
 
-            if (class_exists($modelClass) && !in_array($modelClass, self::$IgnoredObservers)) {
+            if (class_exists($modelClass)) {
                 $modelClass::observe($observerClass);
             } else {
                 throw new ClassNotFoundException($modelClass);
