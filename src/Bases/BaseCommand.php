@@ -4,7 +4,6 @@ namespace Mathrix\Lumen\Bases;
 
 use Illuminate\Console\Command;
 
-
 /**
  * Class BaseCommand.
  * Base class for Artisan commands.

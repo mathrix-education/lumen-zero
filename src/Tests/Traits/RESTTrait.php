@@ -73,22 +73,19 @@ trait RESTTrait
 
 
     /**
-     * Get the Factory Builder for the current test Model class.
+     * Assert success for generic index call, paginated.
      *
-     * @param array $options Options of the request (used: subFactory).
-     *
-     * @return FactoryBuilder
+     * @param array $options Options of the request.
      */
-    private function getFactoryBuilder(array $options): FactoryBuilder
+    public function assertRestIndexSuccess(array $options = []): void
     {
-        // Build args
-        $args = [$this->modelClass];
-        if (!empty($options["subFactory"])) {
-            $args[] = $options["subFactory"];
-        }
+        [$page, $perPage] = $this->getPaginationParameters($options);
 
-        /** @var FactoryBuilder $factory */
-        return call_user_func_array([$this->factory, "of"], $args);
+        $this->restIndex($options);
+
+        // Assertions
+        $this->assertResponseOk();
+        $this->assertIsPaginatedResponse($page, $perPage);
     }
 
 
@@ -109,37 +106,6 @@ trait RESTTrait
 
 
     /**
-     * Set the request model id.
-     *
-     * @param array $options Options of the request (used: conditions).
-     */
-    private function setRequestModelId(array $options): void
-    {
-        $conditions = $options["conditions"] ?? [];
-        $this->requestModelId = $this->modelClass::random($conditions)->id;
-    }
-
-
-    /**
-     * Override data with an array or a callback.
-     *
-     * @param array $data The data.
-     * @param array|callable $override The array or the callback which will override the data.
-     * @return array
-     */
-    private function override(array $data, $override = null): array
-    {
-        if (is_array($override)) {
-            return array_replace_recursive($data, $override);
-        } else if (is_callable($override)) {
-            return $override($data);
-        } else {
-            return $data;
-        }
-    }
-
-
-    /**
      * Generic index call, paginated.
      *
      * @param array $options Options of the request.
@@ -153,19 +119,17 @@ trait RESTTrait
 
 
     /**
-     * Assert success for generic index call, paginated.
+     * Assert success for generic get call.
      *
      * @param array $options Options of the request.
      */
-    public function assertRestIndexSuccess(array $options = []): void
+    public function assertRestGetSuccess(array $options = []): void
     {
-        [$page, $perPage] = $this->getPaginationParameters($options);
-
-        $this->restIndex($options);
+        $this->restGet($options);
 
         // Assertions
         $this->assertResponseOk();
-        $this->assertIsPaginatedResponse($page, $perPage);
+        $this->assertEquals($this->requestModelId, $this->getJsonResponseValue("id"));
     }
 
 
@@ -182,17 +146,31 @@ trait RESTTrait
 
 
     /**
-     * Assert success for generic get call.
+     * Set the request model id.
      *
+     * @param array $options Options of the request (used: conditions).
+     */
+    private function setRequestModelId(array $options): void
+    {
+        $conditions = $options["conditions"] ?? [];
+        $this->requestModelId = $this->modelClass::random($conditions)->id;
+    }
+
+
+    /**
+     * Assert success for generic post call.
+     *
+     * @param array|callable $before Array or closure to override data before it is sent.
+     * @param array|callable $after Array or closure to override data after it is sent.
      * @param array $options Options of the request.
      */
-    public function assertRestGetSuccess(array $options = []): void
+    public function assertRestPostSuccess($before = null, $after = null, array $options = []): void
     {
-        $this->restGet($options);
+        $this->restPost($before, $after, $options);
 
         // Assertions
         $this->assertResponseOk();
-        $this->assertEquals($this->requestModelId, $this->getJsonResponseValue("id"));
+        $this->assertInDatabase($this->table, $this->afterRequestData);
     }
 
 
@@ -220,15 +198,54 @@ trait RESTTrait
 
 
     /**
-     * Assert success for generic post call.
+     * Override data with an array or a callback.
+     *
+     * @param array $data The data.
+     * @param array|callable $override The array or the callback which will override the data.
+     * @return array
+     */
+    private function override(array $data, $override = null): array
+    {
+        if (is_array($override)) {
+            return array_replace_recursive($data, $override);
+        } else if (is_callable($override)) {
+            return $override($data);
+        } else {
+            return $data;
+        }
+    }
+
+
+    /**
+     * Get the Factory Builder for the current test Model class.
+     *
+     * @param array $options Options of the request (used: subFactory).
+     *
+     * @return FactoryBuilder
+     */
+    private function getFactoryBuilder(array $options): FactoryBuilder
+    {
+        // Build args
+        $args = [$this->modelClass];
+        if (!empty($options["subFactory"])) {
+            $args[] = $options["subFactory"];
+        }
+
+        /** @var FactoryBuilder $factory */
+        return call_user_func_array([$this->factory, "of"], $args);
+    }
+
+
+    /**
+     * Assert success for generic patch call.
      *
      * @param array|callable $before Array or closure to override data before it is sent.
      * @param array|callable $after Array or closure to override data after it is sent.
      * @param array $options Options of the request.
      */
-    public function assertRestPostSuccess($before = null, $after = null, array $options = []): void
+    public function assertRestPatchSuccess($before = null, $after = null, array $options = []): void
     {
-        $this->restPost($before, $after, $options);
+        $this->restPatch($before, $after, $options);
 
         // Assertions
         $this->assertResponseOk();
@@ -262,19 +279,17 @@ trait RESTTrait
 
 
     /**
-     * Assert success for generic patch call.
+     * Assert success for delete call.
      *
-     * @param array|callable $before Array or closure to override data before it is sent.
-     * @param array|callable $after Array or closure to override data after it is sent.
      * @param array $options Options of the request.
      */
-    public function assertRestPatchSuccess($before = null, $after = null, array $options = []): void
+    public function assertRestDeleteSuccess(array $options = []): void
     {
-        $this->restPatch($before, $after, $options);
+        $this->restDelete($options);
 
         // Assertions
         $this->assertResponseOk();
-        $this->assertInDatabase($this->table, $this->afterRequestData);
+        $this->assertNotInDatabase($this->table, ["id" => $this->requestModelId]);
     }
 
 
@@ -291,17 +306,17 @@ trait RESTTrait
 
 
     /**
-     * Assert success for delete call.
+     * Assert success for generic by call.
      *
+     * @param BaseModel|string $modelClass The related model class
      * @param array $options Options of the request.
      */
-    public function assertRestDeleteSuccess(array $options = []): void
+    public function assertRestBySuccess(string $modelClass, array $options = []): void
     {
-        $this->restDelete($options);
+        $this->restBy($modelClass, $options);
 
-        // Assertions
         $this->assertResponseOk();
-        $this->assertNotInDatabase($this->table, ["id" => $this->requestModelId]);
+        $this->assertIsPaginatedResponse();
     }
 
 
@@ -319,20 +334,5 @@ trait RESTTrait
         [$page, $perPage] = $this->getPaginationParameters($options);
 
         $this->json("get", "/{$this->baseUri}/by-$relatedModelUri/{$this->requestModelId}/$page/$perPage");
-    }
-
-
-    /**
-     * Assert success for generic by call.
-     *
-     * @param BaseModel|string $modelClass The related model class
-     * @param array $options Options of the request.
-     */
-    public function assertRestBySuccess(string $modelClass, array $options = []): void
-    {
-        $this->restBy($modelClass, $options);
-
-        $this->assertResponseOk();
-        $this->assertIsPaginatedResponse();
     }
 }

@@ -53,6 +53,12 @@ abstract class BaseRegistrar
 
 
     /**
+     * Register the routes.
+     */
+    abstract public function register(): void;
+
+
+    /**
      * Register REST-style routes.
      *
      * @param string $base The base URL.
@@ -82,10 +88,4 @@ abstract class BaseRegistrar
             ]);
         }
     }
-
-
-    /**
-     * Register the routes.
-     */
-    abstract public function register(): void;
 }

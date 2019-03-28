@@ -20,20 +20,6 @@ trait ResponseTrait
 {
     use JsonAssertions;
 
-    /**
-     * Get the response data, assuming the response body is a valid JSON. If not, return null.
-     * @return \stdClass|null
-     */
-    public function getJsonResponseData()
-    {
-        if ($this->response instanceof Response) {
-            $response = $this->response->getContent();
-            return json_decode($response);
-        } else {
-            return null;
-        }
-    }
-
 
     /**
      * Get a value of the JSON response, with the dot notation for the key.
@@ -52,19 +38,21 @@ trait ResponseTrait
         }
     }
 
+
     /**
-     * Assert that the response is a valid JSON response and that it matches the given constraints.
-     * @param array $constraints
+     * Get the response data, assuming the response body is a valid JSON. If not, return null.
+     * @return \stdClass|null
      */
-    public function assertJsonResponseMatches(array $constraints)
+    public function getJsonResponseData()
     {
-        $data = $this->getJsonResponseData();
-        if ($data !== null) {
-            $this->assertJsonDocumentMatches((array)$data, $constraints);
+        if ($this->response instanceof Response) {
+            $response = $this->response->getContent();
+            return json_decode($response);
         } else {
-            $this->fail("The response is not a valid JSON.");
+            return null;
         }
     }
+
 
     /**
      * @param int|null $page
@@ -79,6 +67,22 @@ trait ResponseTrait
             "total" => $total ?? new IsType("integer"),
         ]);
     }
+
+
+    /**
+     * Assert that the response is a valid JSON response and that it matches the given constraints.
+     * @param array $constraints
+     */
+    public function assertJsonResponseMatches(array $constraints)
+    {
+        $data = $this->getJsonResponseData();
+        if ($data !== null) {
+            $this->assertJsonDocumentMatches((array)$data, $constraints);
+        } else {
+            $this->fail("The response is not a valid JSON.");
+        }
+    }
+
 
     /**
      * Assert that the response follows th standard JSON error format.

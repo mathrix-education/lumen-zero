@@ -15,6 +15,18 @@ use Mathrix\Lumen\Bases\BaseModel;
 trait DatabaseTrait
 {
     /**
+     * Assert that dataset exists in the database.
+     * @param string $table The table where the dataset should be located
+     * @param BaseModel|array $data The data
+     * @param null $onConnection The database connection
+     */
+    public function assertInDatabase(string $table, $data, $onConnection = null)
+    {
+        $this->seeInDatabase($table, $this->castToDatabase($data), $onConnection);
+    }
+
+
+    /**
      * Cast data to database format
      * @param BaseModel|array $data
      * @return array
@@ -40,16 +52,6 @@ trait DatabaseTrait
         return $data;
     }
 
-    /**
-     * Assert that dataset exists in the database.
-     * @param string $table The table where the dataset should be located
-     * @param BaseModel|array $data The data
-     * @param null $onConnection The database connection
-     */
-    public function assertInDatabase(string $table, $data, $onConnection = null)
-    {
-        $this->seeInDatabase($table, $this->castToDatabase($data), $onConnection);
-    }
 
     /**
      * Assert that dataset should not exist in the database.

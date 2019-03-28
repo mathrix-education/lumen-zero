@@ -3,7 +3,6 @@
 namespace Mathrix\Lumen\Exceptions;
 
 use Mathrix\Lumen\Exceptions\Http\Http500InternalServerErrorException;
-use Throwable;
 
 /**
  * Class InvalidArgument.

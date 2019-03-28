@@ -1,4 +1,5 @@
 <?php
+
 namespace Mathrix\Lumen\Bases;
 
 use Illuminate\Queue\SerializesModels;

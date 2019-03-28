@@ -1,4 +1,5 @@
 <?php
+
 namespace Mathrix\Lumen\Tests\Traits;
 
 /**
@@ -13,17 +14,6 @@ namespace Mathrix\Lumen\Tests\Traits;
 trait DebugTrait
 {
     /**
-     * Debug the response.
-     *
-     * @throws \Exception
-     */
-    public function debug()
-    {
-        echo $this->currentUri . "\n";
-        echo json_encode($this->getJsonResponseData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    }
-
-    /**
      * Handle response printing.
      *
      * @param \Exception|\Throwable $e
@@ -34,5 +24,17 @@ trait DebugTrait
     {
         $this->debug();
         parent::onNotSuccessfulTest($e);
+    }
+
+
+    /**
+     * Debug the response.
+     *
+     * @throws \Exception
+     */
+    public function debug()
+    {
+        echo $this->currentUri . "\n";
+        echo json_encode($this->getJsonResponseData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 }

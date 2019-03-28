@@ -26,6 +26,7 @@ abstract class HttpException extends \Exception
     /** @var array Exception data; has to be manually defined */
     protected $data;
 
+
     /**
      * HttpException constructor.
      *
@@ -39,6 +40,7 @@ abstract class HttpException extends \Exception
         $this->data = $data;
     }
 
+
     public function __toString()
     {
         $body = [
@@ -49,6 +51,7 @@ abstract class HttpException extends \Exception
 
         return json_encode($body, JSON_PRETTY_PRINT);
     }
+
 
     /**
      * Build JsonResponse object.

@@ -47,6 +47,7 @@ class DebugController extends BaseController
         return new JsonResponse($data);
     }
 
+
     /**
      * GET /debug/reset
      * Reset the database by refreshing the migrations and seeding again.

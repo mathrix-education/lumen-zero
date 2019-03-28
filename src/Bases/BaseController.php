@@ -4,11 +4,12 @@ namespace Mathrix\Lumen\Bases;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Support\Str;
 use Laravel\Lumen\Routing\Controller;
 use Mathrix\Lumen\Exceptions\Http\Http400BadRequestException;
 use Mathrix\Lumen\Exceptions\Http\Http401UnauthorizedException;
-use Mathrix\Lumen\Exceptions\Models\ValidationException;
+use Mathrix\Lumen\Exceptions\ValidationException;
 use Mathrix\Lumen\Responses\PaginationJsonResponse;
 use Mathrix\Lumen\Utils\ClassResolver;
 
@@ -24,6 +25,7 @@ abstract class BaseController extends Controller
     /** @var BaseModel The model class associated with the controller */
     public $modelClass = null;
 
+
     /**
      * BaseController constructor
      * Build model class.
@@ -31,6 +33,29 @@ abstract class BaseController extends Controller
     public function __construct()
     {
         $this->modelClass = ClassResolver::getModelClassFrom("Controller", get_class($this));
+    }
+
+
+    /**
+     * Validate the given request with the given rules.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  array $rules
+     * @param  array $messages
+     * @param  array $customAttributes
+     * @return array
+     * @throws ValidationException
+     */
+    public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])
+    {
+        $validator = ValidatorFacade::make($request->all(), $rules, $messages, $customAttributes);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->getMessages();
+            throw new ValidationException($errors, "Model data failed to pass validation.");
+        }
+
+        return $this->extractInputFromRules($request, $rules);
     }
 
 
@@ -57,6 +82,7 @@ abstract class BaseController extends Controller
         return new PaginationJsonResponse($this->modelClass::query(), $page, $perPage);
     }
 
+
     /**
      * Generic get action.
      *
@@ -81,13 +107,14 @@ abstract class BaseController extends Controller
         return new JsonResponse($model);
     }
 
+
     /**
      * Generic post action.
      *
      * @param Request $request The request
      *
      * @throws Http401UnauthorizedException
-     * @throws ValidationException
+     * @throws \Mathrix\Lumen\Exceptions\ValidationException
      *
      * @return JsonResponse
      */
@@ -105,6 +132,7 @@ abstract class BaseController extends Controller
 
         return new JsonResponse($model);
     }
+
 
     /**
      * Generic edit action.
@@ -131,6 +159,7 @@ abstract class BaseController extends Controller
 
         return new JsonResponse($model);
     }
+
 
     /**
      * Generic delete action.
@@ -161,6 +190,7 @@ abstract class BaseController extends Controller
             "message" => ucfirst(Str::singular($this->modelClass::getTableName())) . " id $id was successfully deleted.",
         ]);
     }
+
 
     /**
      * Get the models which satisfy a given relation.
