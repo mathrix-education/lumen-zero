@@ -1,4 +1,5 @@
 <?php
+
 namespace Mathrix\Lumen\Providers;
 
 use Illuminate\Support\Facades\Gate;
@@ -18,6 +19,10 @@ use Mathrix\Lumen\Utils\ClassResolver;
  */
 class PolicyServiceProvider extends ServiceProvider
 {
+    /** @var array Ignored policies */
+    public static $IgnoredPolicies = [];
+
+
     /**
      * @throws \Exception
      */
@@ -32,7 +37,7 @@ class PolicyServiceProvider extends ServiceProvider
             /** @var string|BaseModel $modelClass */
             $modelClass = ClassResolver::getModelClassFrom("Policy", $policyClass);
 
-            if (class_exists($modelClass)) {
+            if (class_exists($modelClass) && !in_array($modelClass, self::$IgnoredPolicies)) {
                 Gate::policy($modelClass, $policyClass);
             } else {
                 throw new ClassNotFoundException($modelClass);

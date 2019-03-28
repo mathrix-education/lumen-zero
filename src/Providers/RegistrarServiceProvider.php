@@ -18,6 +18,10 @@ use Mathrix\Lumen\Utils\ClassResolver;
  */
 class RegistrarServiceProvider extends ServiceProvider
 {
+    /** @var array Ignored registrars */
+    public static $IgnoredRegistrars = [];
+
+
     /**
      * Register all Registrars.
      * @throws \Exception
@@ -30,7 +34,7 @@ class RegistrarServiceProvider extends ServiceProvider
         foreach ($registrarFiles as $registrarFile) {
             $registrarClass = ClassResolver::$RegistrarNamespace . "\\" . mb_substr(basename($registrarFile), 0, -4);
 
-            if (class_exists($registrarClass)) {
+            if (class_exists($registrarClass) && !in_array($registrarClass, self::$IgnoredRegistrars)) {
                 /** @var string|BaseRegistrar $registrar */
                 $registrar = new $registrarClass($this->app->router);
                 $registrar->register();
