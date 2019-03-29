@@ -4,17 +4,19 @@ namespace Mathrix\Lumen\Tests\Traits;
 
 use Helmich\JsonAssert\JsonAssertions;
 use Illuminate\Support\Arr;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Constraint\IsType;
+use stdClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Trait ResponseTrait.
  *
- * @author    Mathieu Bour <mathieu@mathrix.fr>
- * @author    Jérémie Levain <munezero999@live.fr>
- * @since     4.0.3
- * @copyright Mathrix Education SA
- * @package   Tests\Utils\Traits
+ * @author Mathieu Bour <mathieu@mathrix.fr>
+ * @copyright Mathrix Education SA.
+ * @since 4.0.3
+ *
+ * @mixin Assert
  */
 trait ResponseTrait
 {
@@ -41,7 +43,7 @@ trait ResponseTrait
 
     /**
      * Get the response data, assuming the response body is a valid JSON. If not, return null.
-     * @return \stdClass|null
+     * @return stdClass|stdClass[]|null
      */
     public function getJsonResponseData()
     {
@@ -81,6 +83,17 @@ trait ResponseTrait
         } else {
             $this->fail("The response is not a valid JSON.");
         }
+    }
+
+
+    /**
+     * Assert that the response has the given length.
+     * @param int $length The expected length
+     */
+    public function assertJsonResponseLength(int $length)
+    {
+        $data = $this->getJsonResponseData();
+        $this->assertEquals($length, count($data));
     }
 
 
