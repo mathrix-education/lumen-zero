@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\FactoryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Laravel\Lumen\Testing\TestCase;
+use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
 use Mathrix\Lumen\Bases\BaseModel;
 use Mathrix\Lumen\Middleware\ScopeMiddleware;
 use Mathrix\Lumen\Utils\ClassResolver;
+use PHPUnit\Framework\Assert;
 use function FastRoute\simpleDispatcher;
 
 /**
@@ -23,8 +24,8 @@ use function FastRoute\simpleDispatcher;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  *
- * @mixin TestCase
- *
+ * @mixin MakesHttpRequests
+ * @mixin Assert
  * @property Generator $faker
  */
 trait RESTTrait
