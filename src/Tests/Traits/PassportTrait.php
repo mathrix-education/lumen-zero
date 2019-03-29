@@ -14,6 +14,8 @@ use Mathrix\Lumen\Utils\ClassResolver;
  */
 trait PassportTrait
 {
+    protected $passportUser;
+
     /**
      * Mock Passport scopes.
      *
@@ -21,8 +23,8 @@ trait PassportTrait
      */
     public function mockScope(...$scopes): void
     {
-        $user = forward_static_call_array([ClassResolver::getModelClass("User"), "random"], []);
+        $this->passportUser = forward_static_call_array([ClassResolver::getModelClass("User"), "random"], []);
 
-        Passport::actingAs($user, $scopes);
+        Passport::actingAs($this->passportUser, $scopes);
     }
 }
