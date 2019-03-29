@@ -234,9 +234,10 @@ trait RESTTrait
      */
     public function restDelete(array $options = []): void
     {
+        $this->setRequestModelId($options);
+
         $uri = "/{$this->baseUri}/{$this->requestModelId}";
 
-        $this->setRequestModelId($options);
         $this->autoMockScope("delete", $uri);
         $this->json("delete", $uri);
     }
