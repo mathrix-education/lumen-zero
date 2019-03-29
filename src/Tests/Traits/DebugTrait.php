@@ -2,6 +2,9 @@
 
 namespace Mathrix\Lumen\Tests\Traits;
 
+use Exception;
+use Throwable;
+
 /**
  * Trait DebugTrait.
  *
@@ -16,11 +19,11 @@ trait DebugTrait
     /**
      * Handle response printing.
      *
-     * @param \Exception|\Throwable $e
+     * @param Exception|Throwable $e
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
-    protected function onNotSuccessfulTest(\Throwable $e)
+    protected function onNotSuccessfulTest(Throwable $e)
     {
         $this->debug();
         parent::onNotSuccessfulTest($e);
@@ -30,7 +33,7 @@ trait DebugTrait
     /**
      * Debug the response.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function debug()
     {
