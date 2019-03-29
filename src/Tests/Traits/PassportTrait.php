@@ -20,7 +20,7 @@ trait PassportTrait
     /**
      * Mock Passport scopes.
      *
-     * @param string[] $scopes
+     * @param string|string[] $scopes
      */
     public function mockScope($scopes): void
     {
