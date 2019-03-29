@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Notifications;
+namespace Mathrix\Lumen\Bases;
 
 use Illuminate\Notifications\Notification;
 
