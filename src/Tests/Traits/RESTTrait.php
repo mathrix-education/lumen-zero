@@ -38,8 +38,8 @@ trait RESTTrait
     protected $table = null;
     /** @var string The Model base uri; by default its table name */
     protected $baseUri = null;
-    /** @var int The quest model id (used in get, patch and delete) */
-    protected $requestModelId = null;
+    /** @var BaseModel The request model (used in get, patch and delete) */
+    protected $requestModel = null;
     /** @var array The data before the request is sent. */
     protected $beforeRequestData = [];
     /** @var array The data after the request has been sent. */
@@ -111,14 +111,14 @@ trait RESTTrait
 
 
     /**
-     * Set the request model id.
+     * Set the request model.
      *
      * @param array $options Options of the request (used: conditions).
      */
-    private function setRequestModelId(array $options): void
+    private function setRequestModel(array $options): void
     {
         $conditions = $options["conditions"] ?? [];
-        $this->requestModelId = $this->modelClass::random($conditions)->id;
+        $this->requestModel = $this->modelClass::random($conditions);
     }
 
 
@@ -172,9 +172,9 @@ trait RESTTrait
      */
     public function restGet(array $options = []): void
     {
-        $this->setRequestModelId($options);
+        $this->setRequestModel($options);
 
-        $uri = "/{$this->baseUri}/{$this->requestModelId}";
+        $uri = "/{$this->baseUri}/{$this->requestModel->id}";
 
         $this->autoMockScope("get", $uri);
         $this->json("get", $uri);
@@ -216,14 +216,14 @@ trait RESTTrait
      */
     public function restPatch($before = null, $after = null, array $options = []): void
     {
-        $this->setRequestModelId($options);
+        $this->setRequestModel($options);
 
         $this->beforeRequestData = $this->override(
             $this->getFactoryBuilder($options)->raw(),
             $before
         );
 
-        $uri = "/{$this->baseUri}/{$this->requestModelId}";
+        $uri = "/{$this->baseUri}/{$this->requestModel->id}";
 
         $this->autoMockScope("patch", $uri);
         $this->json("patch", $uri, $this->beforeRequestData);
@@ -242,9 +242,9 @@ trait RESTTrait
      */
     public function restDelete(array $options = []): void
     {
-        $this->setRequestModelId($options);
+        $this->setRequestModel($options);
 
-        $uri = "/{$this->baseUri}/{$this->requestModelId}";
+        $uri = "/{$this->baseUri}/{$this->requestModel->id}";
 
         $this->autoMockScope("delete", $uri);
         $this->json("delete", $uri);
@@ -260,10 +260,27 @@ trait RESTTrait
     public function restBy(string $modelClass, array $options = []): void
     {
         $conditions = $options["conditions"] ?? [];
-        $this->requestModelId = $modelClass::random($conditions)->id;
+        $this->requestModel = $modelClass::random($conditions);
         $relatedModelUri = Str::singular($modelClass::getTableName());
         [$page, $perPage] = $this->getPaginationParameters($options);
-        $uri = "/{$this->baseUri}/by-$relatedModelUri/{$this->requestModelId}/$page/$perPage";
+        $uri = "/{$this->baseUri}/by-$relatedModelUri/{$this->requestModel->id}/$page/$perPage";
+
+        $this->autoMockScope("get", $uri);
+        $this->json("get", $uri);
+    }
+
+
+    /**
+     * Generic get call.
+     *
+     * @param string $field The field which will be used.
+     * @param array $options Options of the request.
+     */
+    public function restGetBy(string $field, array $options = []): void
+    {
+        $this->setRequestModel($options);
+
+        $uri = "/{$this->baseUri}/$field/{$this->requestModel->{$field}}";
 
         $this->autoMockScope("get", $uri);
         $this->json("get", $uri);
@@ -298,7 +315,7 @@ trait RESTTrait
 
         // Assertions
         $this->assertResponseOk();
-        $this->assertEquals($this->requestModelId, $this->getJsonResponseValue("id"));
+        $this->assertEquals($this->requestModel->id, $this->getJsonResponseValue("id"));
     }
 
 
@@ -347,7 +364,7 @@ trait RESTTrait
 
         // Assertions
         $this->assertResponseOk();
-        $this->assertNotInDatabase($this->table, ["id" => $this->requestModelId]);
+        $this->assertNotInDatabase($this->table, ["id" => $this->requestModel->id]);
     }
 
 
@@ -365,4 +382,19 @@ trait RESTTrait
         $this->assertIsPaginatedResponse();
     }
 
+
+    /**
+     * Assert success for generic get by field call.
+     *
+     * @param string $field The field which will be used.
+     * @param array $options Options of the request.
+     */
+    public function assertRestGetBySuccess(string $field, array $options = []): void
+    {
+        $this->restGetBy($field, $options);
+
+        // Assertions
+        $this->assertResponseOk();
+        $this->assertEquals($this->requestModel->{$field}, $this->getJsonResponseValue($field));
+    }
 }
