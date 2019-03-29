@@ -16,13 +16,18 @@ trait PassportTrait
 {
     protected $passportUser;
 
+
     /**
      * Mock Passport scopes.
      *
-     * @param string[] ...$scopes
+     * @param string[] $scopes
      */
-    public function mockScope(...$scopes): void
+    public function mockScope($scopes): void
     {
+        if (is_string($scopes)) {
+            $scopes = [$scopes];
+        }
+
         $this->passportUser = forward_static_call_array([ClassResolver::getModelClass("User"), "random"], []);
 
         Passport::actingAs($this->passportUser, $scopes);
