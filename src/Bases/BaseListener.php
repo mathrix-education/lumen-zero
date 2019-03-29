@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listeners;
+namespace Mathrix\Lumen\Bases;
 
 /**
  * Class BaseListener.
