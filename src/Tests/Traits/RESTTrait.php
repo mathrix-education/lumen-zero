@@ -137,6 +137,14 @@ trait RESTTrait
         } else if (is_callable($override)) {
             return $override($data);
         } else {
+            // Override is not defined, we can safely remove created_at and updated_at
+            if (isset($data["created_at"])) {
+                unset($data["created_at"]);
+            }
+            if (isset($data["updated_at"])) {
+                unset($data["updated_at"]);
+            }
+
             return $data;
         }
     }
