@@ -2,6 +2,8 @@
 
 namespace Mathrix\Lumen\Bases;
 
+use Carbon\Carbon;
+use DateTimeInterface;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +51,21 @@ abstract class BaseModel extends Model
 
 
     /**
+     * Set default date format to be in compliance with the OpenAPI date-time format.
+     *
+     * @param DateTimeInterface $date
+     * @return string
+     *
+     * @link https://swagger.io/docs/specification/data-models/data-types/#string
+     * @link https://tools.ietf.org/html/rfc3339#section-5.6
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return Carbon::instance($date)->format("c");
+    }
+
+
+    /**
      * Get a random model from the database.
      *
      * @param array $conditions The conditions
@@ -60,7 +77,7 @@ abstract class BaseModel extends Model
         $query = self::query()->inRandomOrder();
 
         if (!empty($conditions)) {
-            if (!\is_array($conditions[0])) {
+            if (!is_array($conditions[0])) {
                 $conditions = [$conditions];
             }
 
@@ -102,7 +119,7 @@ abstract class BaseModel extends Model
      */
     public function unguardAttributes($attributes)
     {
-        if (\is_string($attributes)) {
+        if (is_string($attributes)) {
             $attributes = [$attributes];
         }
 
@@ -126,9 +143,9 @@ abstract class BaseModel extends Model
      *
      * @param array $options
      *
+     * @return bool
      * @throws ValidationException
      *
-     * @return bool
      */
     public function save(array $options = [])
     {
@@ -196,7 +213,7 @@ abstract class BaseModel extends Model
      */
     public function validate($rules = "rules")
     {
-        if (\is_string($rules)) {
+        if (is_string($rules)) {
             $this->useRules = $rules;
         }
 
