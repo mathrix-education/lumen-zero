@@ -24,6 +24,19 @@ class ClassResolver
 
 
     /**
+     * Get then base class name from full class name.
+     * @param string $fullClass
+     * @return string
+     */
+    public static function baseClassName(string $fullClass): string
+    {
+        $parts = explode("\\", $fullClass);
+        $className = array_pop($parts);
+        return $className;
+    }
+
+
+    /**
      * Get model full class name
      *
      * @param string $modelName

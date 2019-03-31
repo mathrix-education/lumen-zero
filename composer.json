@@ -23,7 +23,8 @@
     "dusterio/lumen-passport": "^0.2.9",
     "illuminate/mail": "^5.7",
     "illuminate/notifications": "^5.7",
-    "laravel/lumen-framework": "5.7.*"
+    "laravel/lumen-framework": "5.7.*",
+    "symfony/yaml": "^4.2"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

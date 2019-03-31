@@ -316,6 +316,7 @@ trait RESTTrait
         // Assertions
         $this->assertResponseOk();
         $this->assertEquals($this->requestModel->id, $this->getJsonResponseValue("id"));
+        $this->assertJsonResponseMatchesJsonSchema(ClassResolver::baseClassName($this->modelClass));
     }
 
 
@@ -333,6 +334,7 @@ trait RESTTrait
         // Assertions
         $this->assertResponseOk();
         $this->assertInDatabase($this->table, $this->afterRequestData);
+        $this->assertJsonResponseMatchesJsonSchema(ClassResolver::baseClassName($this->modelClass));
     }
 
 
@@ -350,6 +352,7 @@ trait RESTTrait
         // Assertions
         $this->assertResponseOk();
         $this->assertInDatabase($this->table, $this->afterRequestData);
+        $this->assertJsonResponseMatchesJsonSchema(ClassResolver::baseClassName($this->modelClass));
     }
 
 

@@ -4,6 +4,8 @@ namespace Mathrix\Lumen\Tests\Traits;
 
 use Helmich\JsonAssert\JsonAssertions;
 use Illuminate\Support\Arr;
+use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
+use Mathrix\Lumen\Services\OpenAPI\Parser;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Constraint\IsType;
 use stdClass;
@@ -16,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @copyright Mathrix Education SA.
  * @since 4.0.3
  *
+ * @mixin MakesHttpRequests
  * @mixin Assert
  */
 trait ResponseTrait
@@ -110,5 +113,29 @@ trait ResponseTrait
                 "error" => $error
             ]);
         }
+    }
+
+
+    /**
+     * Assert that the response matches the given schema.
+     * @param string $schemaName The JSON schema
+     * @param bool $allowAdditionalProperties Allow additional properties
+     */
+    public function assertJsonResponseMatchesJsonSchema(string $schemaName, bool $allowAdditionalProperties = false)
+    {
+        $parser = new Parser();
+        $json = $this->response->getContent();
+        $schema = $parser->getSchema($schemaName);
+
+        if (
+            $allowAdditionalProperties !== true && (
+                !isset($schema["additionalProperties"]) ||
+                $schema["additionalProperties"] !== true
+            )
+        ) {
+            $this->fail("JSON Schema additionalProperties value is not equal to false");
+        }
+
+        $this->assertJsonDocumentMatchesSchema($json, $schema);
     }
 }
