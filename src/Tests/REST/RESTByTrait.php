@@ -45,6 +45,6 @@ trait RESTByTrait
 
         $this->assertResponseOk();
         $this->assertIsPaginatedResponse();
-        $this->assertResponseMatchesSchema($this->modelName, "array");
+        $this->assertResponseMatchesSchema($this->modelName, "paginated");
     }
 }

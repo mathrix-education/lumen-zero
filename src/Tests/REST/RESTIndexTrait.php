@@ -40,6 +40,6 @@ trait RESTIndexTrait
         // Assertions
         $this->assertResponseOk();
         $this->assertIsPaginatedResponse($page, $perPage);
-        $this->assertResponseMatchesSchema($this->modelName, "array");
+        $this->assertResponseMatchesSchema($this->modelName, "paginated");
     }
 }
