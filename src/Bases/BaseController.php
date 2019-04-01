@@ -2,6 +2,7 @@
 
 namespace Mathrix\Lumen\Bases;
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
@@ -39,10 +40,10 @@ abstract class BaseController extends Controller
     /**
      * Validate the given request with the given rules.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  array $rules
-     * @param  array $messages
-     * @param  array $customAttributes
+     * @param Request $request
+     * @param array $rules
+     * @param array $messages
+     * @param array $customAttributes
      * @return array
      * @throws ValidationException
      */
@@ -66,9 +67,9 @@ abstract class BaseController extends Controller
      * @param int $page
      * @param int $perPage
      *
+     * @return PaginationJsonResponse
      * @throws Http401UnauthorizedException
      *
-     * @return PaginationJsonResponse
      */
     public function index(Request $request, int $page = 0, int $perPage = 100): PaginationJsonResponse
     {
@@ -89,9 +90,9 @@ abstract class BaseController extends Controller
      * @param Request $request The request
      * @param int $id The model id
      *
+     * @return JsonResponse
      * @throws Http401UnauthorizedException
      *
-     * @return JsonResponse
      */
     public function get(Request $request, int $id): JsonResponse
     {
@@ -113,10 +114,10 @@ abstract class BaseController extends Controller
      *
      * @param Request $request The request
      *
-     * @throws Http401UnauthorizedException
-     * @throws \Mathrix\Lumen\Exceptions\ValidationException
-     *
      * @return JsonResponse
+     * @throws ValidationException
+     *
+     * @throws Http401UnauthorizedException
      */
     public function post(Request $request): JsonResponse
     {
@@ -140,9 +141,9 @@ abstract class BaseController extends Controller
      * @param Request $request The request
      * @param int $id The model id
      *
+     * @return JsonResponse
      * @throws Http401UnauthorizedException
      *
-     * @return JsonResponse
      */
     public function patch(Request $request, int $id): JsonResponse
     {
@@ -167,10 +168,10 @@ abstract class BaseController extends Controller
      * @param Request $request The request
      * @param int $id
      *
-     * @throws Http401UnauthorizedException
-     * @throws \Exception
-     *
      * @return JsonResponse
+     * @throws Exception
+     *
+     * @throws Http401UnauthorizedException
      */
     public function delete(Request $request, int $id): JsonResponse
     {

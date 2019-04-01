@@ -39,6 +39,7 @@ class Parser
 
 
     /**
+     * Get a JSON Schema.
      * @param string $schema
      *
      * @return array
@@ -52,6 +53,46 @@ class Parser
 
 
     /**
+     * Get a JSON Schema wrapped into the array form.
+     * @param string $schema
+     * @return array
+     */
+    public function getSchemaArray(string $schema)
+    {
+        return [
+            "type" => "array",
+            "items" => $this->getSchema($schema)
+        ];
+    }
+
+
+    /**
+     * Get a JSON Schema wrapped into the paginated form.
+     * @param string $schema
+     * @return array
+     */
+    public function getPaginatedSchema(string $schema)
+    {
+        return [
+            "type" => "object",
+            "properties" => [
+                "page" => [
+                    "type" => "integer"
+                ],
+                "per_page" => [
+                    "type" => "integer"
+                ],
+                "total" => [
+                    "type" => "integer"
+                ],
+                "data" => $this->getSchemaArray($schema)
+            ]
+        ];
+    }
+
+
+    /**
+     * Preprocess nullable.
      * @param $schema
      *
      * @return array
