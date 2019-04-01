@@ -56,7 +56,7 @@ class NullablePreProcessor implements PreProcessor
      */
     private function isObject(array $schema): bool
     {
-        return $schema["type"] !== "object" || empty($subSchema["properties"]);
+        return $schema["type"] === "object" && !empty($subSchema["properties"]);
     }
 
 
