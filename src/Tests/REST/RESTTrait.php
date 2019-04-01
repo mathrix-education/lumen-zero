@@ -35,6 +35,8 @@ trait RESTTrait
     protected $factory = null;
     /** @var string The models namespace */
     protected $modelsNamespace = "App\\Models";
+    /** @var $modelName string */
+    protected $modelName = null;
     /** @var $modelClass BaseModel */
     protected $modelClass = null;
     /** @var string The Model table */
@@ -72,6 +74,7 @@ trait RESTTrait
 
             if ($model instanceof Model) {
                 $this->table = $this->baseUri = $model->getTable();
+                $this->modelName = ClassResolver::baseClassName($this->modelClass);
             }
         }
     }

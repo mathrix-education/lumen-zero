@@ -12,22 +12,6 @@ namespace Mathrix\Lumen\Tests\REST;
 trait RESTGetByTrait
 {
     /**
-     * Assert success for generic get by field call.
-     *
-     * @param string $field The field which will be used.
-     * @param array $options Options of the request.
-     */
-    public function assertRestGetBySuccess(string $field, array $options = []): void
-    {
-        $this->restGetBy($field, $options);
-
-        // Assertions
-        $this->assertResponseOk();
-        $this->assertEquals($this->requestModel->{$field}, $this->getJsonResponseValue($field));
-    }
-
-
-    /**
      * Generic get call.
      *
      * @param string $field The field which will be used.
@@ -41,5 +25,22 @@ trait RESTGetByTrait
 
         $this->autoMockScope("get", $uri);
         $this->json("get", $uri);
+    }
+
+
+    /**
+     * Assert success for generic get by field call.
+     *
+     * @param string $field The field which will be used.
+     * @param array $options Options of the request.
+     */
+    public function assertRestGetBySuccess(string $field, array $options = []): void
+    {
+        $this->restGetBy($field, $options);
+
+        // Assertions
+        $this->assertResponseOk();
+        $this->assertEquals($this->requestModel->{$field}, $this->getJsonResponseValue($field));
+        $this->assertResponseMatchesSchema($this->modelName);
     }
 }

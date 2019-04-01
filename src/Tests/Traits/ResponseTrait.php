@@ -118,24 +118,30 @@ trait ResponseTrait
 
     /**
      * Assert that the response matches the given schema.
-     * @param string $schemaName The JSON schema
-     * @param bool $allowAdditionalProperties Allow additional properties
+     * @param string $schemaName
+     * @param string $type
      */
-    public function assertJsonResponseMatchesJsonSchema(string $schemaName, bool $allowAdditionalProperties = false)
+    public function assertResponseMatchesSchema(string $schemaName, string $type = "single")
     {
         $parser = new Parser();
-        $json = $this->response->getContent();
-        $schema = $parser->getSchema($schemaName);
+        $schema = null;
 
-        if (
-            $allowAdditionalProperties !== true && (
-                !isset($schema["additionalProperties"]) ||
-                $schema["additionalProperties"] !== true
-            )
-        ) {
-            $this->fail("JSON Schema additionalProperties value is not equal to false");
+        switch ($type) {
+            case "single":
+                $schema = $parser->getSchema($schemaName);
+                break;
+            case "array":
+                $schema = $parser->getSchemaArray($schemaName);
+                break;
+            case "paginated":
+                $schema = $parser->getPaginatedSchema($schemaName);
+                break;
+            default:
+                $this->fail("Invalid schema type. Allowed: [single, array, paginated], got $type.");
+                break;
+
         }
 
-        $this->assertJsonDocumentMatchesSchema($json, $schema);
+        $this->assertJsonDocumentMatchesSchema($this->response->getContent(), $schema);
     }
 }

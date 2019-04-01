@@ -2,8 +2,6 @@
 
 namespace Mathrix\Lumen\Tests\REST;
 
-use Mathrix\Lumen\Utils\ClassResolver;
-
 /**
  * Trait RESTPatchTrait.
  *
@@ -13,24 +11,6 @@ use Mathrix\Lumen\Utils\ClassResolver;
  */
 trait RESTPatchTrait
 {
-    /**
-     * Assert success for generic patch call.
-     *
-     * @param array|callable $before Array or closure to override data before it is sent.
-     * @param array|callable $after Array or closure to override data after it is sent.
-     * @param array $options Options of the request.
-     */
-    public function assertRestPatchSuccess($before = null, $after = null, array $options = []): void
-    {
-        $this->restPatch($before, $after, $options);
-
-        // Assertions
-        $this->assertResponseOk();
-        $this->assertInDatabase($this->table, $this->afterRequestData);
-        $this->assertJsonResponseMatchesJsonSchema(ClassResolver::baseClassName($this->modelClass));
-    }
-
-
     /**
      * Generic patch call.
      *
@@ -56,5 +36,23 @@ trait RESTPatchTrait
             $this->beforeRequestData,
             $after
         );
+    }
+
+
+    /**
+     * Assert success for generic patch call.
+     *
+     * @param array|callable $before Array or closure to override data before it is sent.
+     * @param array|callable $after Array or closure to override data after it is sent.
+     * @param array $options Options of the request.
+     */
+    public function assertRestPatchSuccess($before = null, $after = null, array $options = []): void
+    {
+        $this->restPatch($before, $after, $options);
+
+        // Assertions
+        $this->assertResponseOk();
+        $this->assertInDatabase($this->table, $this->afterRequestData);
+        $this->assertResponseMatchesSchema($this->modelName);
     }
 }
