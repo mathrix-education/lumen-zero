@@ -15,6 +15,8 @@ class Parser
 {
     /** @var string The schema paths */
     private $schemaPath;
+    /** @var PreProcessor[] */
+    private $preProcessors = [NullablePreProcessor::class];
 
 
     public function __construct($schemaPath = "docs/schemas")
@@ -99,28 +101,10 @@ class Parser
      */
     public function preProcess($schema): array
     {
-        if ($schema["type"] === "object" && !empty($schema["properties"])) {
-            /**
-             * Handle OpenAPI nullable
-             *
-             * @link https://github.com/justinrainbow/json-schema/issues/551
-             */
-            foreach ($schema["properties"] as $property => $spec) {
-                if (isset($spec["type"]) && isset($spec["nullable"]) && $spec["nullable"] === true) {
-                    unset($schema["properties"][$property]["type"]);
-                    $currentTypeDefinition = ["type" => $spec["type"]];
-
-                    if (isset($spec["format"])) {
-                        $currentTypeDefinition["format"] = $spec["format"];
-                        unset($schema["properties"][$property]["format"]);
-                    }
-
-                    $schema["properties"][$property]["anyOf"] = [
-                        $currentTypeDefinition,
-                        ["type" => "null"]
-                    ];
-                }
-            }
+        foreach ($this->preProcessors as $preProcessorClass) {
+            /** @var PreProcessor $preProcessor */
+            $preProcessor = new $preProcessorClass();
+            $schema = $preProcessor->transform($schema);
         }
 
         return $schema;
