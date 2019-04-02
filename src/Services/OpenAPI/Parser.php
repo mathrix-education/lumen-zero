@@ -19,7 +19,7 @@ class Parser
     private $preProcessors = [NullablePreProcessor::class];
 
 
-    public function __construct($schemaPath = "docs/schemas")
+    public function __construct($schemaPath = "docs/out/schemas")
     {
         $this->schemaPath = $schemaPath;
     }
