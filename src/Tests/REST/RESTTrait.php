@@ -103,7 +103,7 @@ trait RESTTrait
      *
      * @return FactoryBuilder
      */
-    private function getFactoryBuilder(array $options): FactoryBuilder
+    protected function getFactoryBuilder(array $options): FactoryBuilder
     {
         // Build args
         $args = [$this->modelClass];
