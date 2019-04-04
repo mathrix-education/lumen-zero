@@ -13,5 +13,6 @@ use Mathrix\Lumen\Exceptions\Http\Http422UnprocessableEntityException;
  */
 class ValidationException extends Http422UnprocessableEntityException
 {
+    protected const ERROR = "validation";
     protected $message = "Submitted data failed to pass validation.";
 }
