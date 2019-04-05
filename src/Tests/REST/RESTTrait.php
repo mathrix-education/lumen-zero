@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\FactoryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
 use Mathrix\Lumen\Bases\BaseModel;
+use Mathrix\Lumen\Tests\OpenAPI\OpenAPITrait;
 use Mathrix\Lumen\Tests\Traits\DatabaseTrait;
 use Mathrix\Lumen\Tests\Traits\JsonResponseTrait;
 use Mathrix\Lumen\Tests\Traits\PassportTrait;
 use Mathrix\Lumen\Utils\ClassResolver;
-use Mathrix\Tests\OpenAPI\OpenAPITrait;
 use PHPUnit\Framework\Assert;
 
 /**
