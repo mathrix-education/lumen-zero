@@ -117,7 +117,7 @@ trait OpenAPITrait
         $openAPIUri = $this->getOpenAPIUri($this->requestMethod, $this->requestUri);
 
         // Get the request uri
-        $this->assertResponse($this->schema, $openAPIUri, $this->requestMethod, $psrResponse);
+        self::assertResponse($this->schema, $openAPIUri, $this->requestMethod, $psrResponse);
     }
 
 
@@ -132,10 +132,10 @@ trait OpenAPITrait
      *
      * @see RebillyOpenAPIAsserts::assertResponseBody
      */
-    protected function assertRequestBody(Schema $schema, string $path, string $method, StreamInterface $body = null,
-                                         string $msg = ""): void
+    protected static function assertRequestBody(Schema $schema, string $path, string $method,
+                                                StreamInterface $body = null, string $msg = ""): void
     {
-        $bodySchema = $this->preProcessSchema($schema->getRequestBodySchema($path, strtolower($method)));
+        $bodySchema = self::preProcessSchema($schema->getRequestBodySchema($path, strtolower($method)));
 
         if ($bodySchema) {
             Assert::assertThat(
@@ -156,7 +156,7 @@ trait OpenAPITrait
      *
      * @return stdClass|null The processed schema.
      */
-    private function preProcessSchema(?stdClass $schema): ?stdClass
+    protected static function preProcessSchema(?stdClass $schema): ?stdClass
     {
         return (new NullablePreProcessor())->transform($schema);
     }
@@ -172,10 +172,10 @@ trait OpenAPITrait
      * @param StreamInterface|null $body
      * @param string $msg
      */
-    protected function assertResponseBody(Schema $schema, string $path, string $method, string $status,
+    protected static function assertResponseBody(Schema $schema, string $path, string $method, string $status,
                                           StreamInterface $body = null, string $msg = ""): void
     {
-        $bodySchema = $this->preProcessSchema($schema->getResponseBodySchema($path, strtolower($method), $status));
+        $bodySchema = self::preProcessSchema($schema->getResponseBodySchema($path, strtolower($method), $status));
 
         if ($bodySchema) {
             Assert::assertThat(
