@@ -24,8 +24,21 @@ trait RESTByTrait
     {
         $this->restBy($modelClass, $options);
 
+        /*
+         * We need to pre-process the resolved URI to replace /by-{what}/ with the model name
+         * Example: /activities/by-notion/12/0/100 is resolved to /activities/by-{what}/{id}/{page}/{perPage}
+         * We want: /activities/by-notion/{notionId}/{page}/{perPage}
+         */
+        $resolved = $this->dispatch($this->requestMethod, $this->requestUri);
+        $uri = $this->getOpenAPIUri("get", "/activities/by-notion/12/0/100");
+
+        if (!empty($resolved[2]["what"])) {
+            $what = Str::studly($resolved[2]["what"]);
+            $uri = str_replace(["{what}", "{id}"], [$what, "{{$what}Id}"], $uri);
+        }
+
         $this->assertResponseOk();
-        $this->assertOpenAPIResponse();
+        $this->assertOpenAPIResponse($uri);
     }
 
 
