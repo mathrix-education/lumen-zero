@@ -37,43 +37,19 @@ class NullablePreProcessor implements PreProcessor
      */
     public function analyse(array $schema)
     {
-        if (!$this->isObject($schema)) {
+        if (!is_array($schema)) {
             return $schema;
         }
 
-        foreach ($schema["properties"] as $key => $subSchema) {
-            if ($this->isObject($subSchema)) {
-                $schema["properties"][$key] = $this->analyse($subSchema);
-            } elseif ($this->isArray($subSchema)) {
-                $schema["properties"][$key]["items"] = $this->analyse($subSchema["items"]);
-            } elseif ($this->isNullable($subSchema)) {
-                $schema["properties"][$key] = $this->handleNullable($subSchema);
+        foreach ($schema as $key => $subSchema) {
+            if ($this->isNullable($subSchema)) {
+                $schema[$key] = $this->handleNullable($subSchema);
+            } elseif (is_array($subSchema)) {
+                $schema[$key] = $this->analyse($subSchema);
             }
         }
 
         return $schema;
-    }
-
-
-    /**
-     * Check if a schema is an object and thus need analyse.
-     * @param array $schema The schema.
-     * @return bool
-     */
-    private function isObject(array $schema): bool
-    {
-        return $schema["type"] === "object" && !empty($schema["properties"]);
-    }
-
-
-    /**
-     * Check if a schema is an object and thus need analyse.
-     * @param array $schema The schema.
-     * @return bool
-     */
-    private function isArray(array $schema): bool
-    {
-        return $schema["type"] === "array" && !empty($schema["items"]);
     }
 
 
