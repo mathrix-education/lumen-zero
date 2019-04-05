@@ -30,7 +30,7 @@ trait RESTByTrait
          * We want: /activities/by-notion/{notionId}/{page}/{perPage}
          */
         $resolved = $this->dispatch($this->requestMethod, $this->requestUri);
-        $uri = $this->getOpenAPIUri("get", "/activities/by-notion/12/0/100");
+        $uri = $this->getOpenAPIUri($this->requestMethod, $this->requestUri);
 
         if (!empty($resolved[2]["what"])) {
             $what = lcfirst(Str::studly($resolved[2]["what"]));
