@@ -34,8 +34,7 @@ trait JsonResponseTrait
      */
     public function getJsonResponseValue(string $key)
     {
-        $responseData = (array)$this->response->getContent();
-        $responseDataFlatten = Arr::dot($responseData);
+        $responseDataFlatten = Arr::dot((array)$this->getJsonResponseContent());
 
         if (isset($responseDataFlatten[$key])) {
             return $responseDataFlatten[$key];
