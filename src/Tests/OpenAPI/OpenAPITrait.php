@@ -106,15 +106,18 @@ trait OpenAPITrait
     /**
      * Assert that the current response follow the given OpenAPI specification.
      * We need the request URI since the specification does not use the
+     * @param string $openAPIUri The OpenAPI uri. If null, we will try to auto-detect it.
      */
-    protected function assertOpenAPIResponse(): void
+    protected function assertOpenAPIResponse(?string $openAPIUri = null): void
     {
         // Convert Illuminate HTTP Response to PSR-17 Response
         $psr17Factory = new Psr17Factory();
         $psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
         $psrResponse = $psrHttpFactory->createResponse($this->response);
 
-        $openAPIUri = $this->getOpenAPIUri($this->requestMethod, $this->requestUri);
+        if ($openAPIUri === null) {
+            $openAPIUri = $this->getOpenAPIUri($this->requestMethod, $this->requestUri);
+        }
 
         // Get the request uri
         self::assertResponse($this->schema, $openAPIUri, $this->requestMethod, $psrResponse);
@@ -173,7 +176,7 @@ trait OpenAPITrait
      * @param string $msg
      */
     protected static function assertResponseBody(Schema $schema, string $path, string $method, string $status,
-                                          StreamInterface $body = null, string $msg = ""): void
+                                                 StreamInterface $body = null, string $msg = ""): void
     {
         $bodySchema = self::preProcessSchema($schema->getResponseBodySchema($path, strtolower($method), $status));
 
