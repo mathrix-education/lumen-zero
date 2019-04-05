@@ -25,7 +25,7 @@ trait RESTIndexTrait
         // Assertions
         $this->assertResponseOk();
         $this->assertEquals($page, $this->getJsonResponseValue("page"));
-        $this->assertEquals($perPage, $this->getJsonResponseValue("perPage"));
+        $this->assertEquals($perPage, $this->getJsonResponseValue("per_page"));
         $this->assertOpenAPIResponse();
     }
 
