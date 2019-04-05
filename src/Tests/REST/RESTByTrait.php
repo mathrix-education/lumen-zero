@@ -33,7 +33,7 @@ trait RESTByTrait
         $uri = $this->getOpenAPIUri("get", "/activities/by-notion/12/0/100");
 
         if (!empty($resolved[2]["what"])) {
-            $what = Str::studly($resolved[2]["what"]);
+            $what = lcfirst(Str::studly($resolved[2]["what"]));
             $uri = str_replace(["{what}", "{id}"], [$what, "{{$what}Id}"], $uri);
         }
 
