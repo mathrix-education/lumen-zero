@@ -35,6 +35,8 @@ trait DispatcherTrait
     }
 
 
+
+
     /**
      * Get the Dispatcher
      * @return Dispatcher
@@ -44,7 +46,7 @@ trait DispatcherTrait
         if (!$this->dispatcher instanceof Dispatcher) {
             $this->dispatcher = simpleDispatcher(function (RouteCollector $r) {
                 foreach (app()->router->getRoutes() as $route) {
-                    $r->addRoute($route['method'], $route['uri'], $route['action']);
+                    $r->addRoute($route["method"], $route["uri"], $route["action"]);
                 }
             });
         }

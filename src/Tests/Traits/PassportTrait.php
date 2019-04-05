@@ -15,12 +15,11 @@ use Mathrix\Lumen\Utils\ClassResolver;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  *
+ * @mixin DispatcherTrait
  * @property Generator $faker
  */
 trait PassportTrait
 {
-    use DispatcherTrait;
-
     protected $passportUser;
 
 

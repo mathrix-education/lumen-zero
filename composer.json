@@ -38,5 +38,10 @@
     "psr-4": {
       "Mathrix\\Lumen\\": "src"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Mathrix\\Lumen\\": "tests"
+    }
   }
 }

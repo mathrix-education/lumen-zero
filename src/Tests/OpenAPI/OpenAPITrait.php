@@ -2,7 +2,10 @@
 
 namespace Mathrix\Lumen\Tests\OpenAPI;
 
+use Illuminate\Support\Str;
+use Laravel\Lumen\Application;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
+use Mathrix\Lumen\Tests\Traits\DispatcherTrait;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\StreamInterface;
@@ -19,6 +22,8 @@ use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  *
+ * @property-read Application $app
+ * @mixin DispatcherTrait
  * @mixin MakesHttpRequests
  */
 trait OpenAPITrait
@@ -28,6 +33,7 @@ trait OpenAPITrait
         RebillyOpenAPIAsserts::assertRequestBody as RebillyAssertRequestBody;
         RebillyOpenAPIAsserts::assertResponseBody as RebillyAssertResponseBody;
     }
+
     /** @var string The OpenAPI Specification entry file. MUST BE JSON! */
     public static $SpecPath = "docs/spec.json";
     /** @var Schema The OpenAPI Schema. */
@@ -36,6 +42,15 @@ trait OpenAPITrait
     protected $requestMethod;
     /** @var string The request URI. */
     protected $requestUri;
+
+
+    /**
+     * Boot the OpenAPI trait.
+     */
+    protected function bootOpenAPI(): void
+    {
+        $this->schema = new Schema(base_path(OpenAPITrait::$SpecPath));
+    }
 
 
     /**
@@ -55,16 +70,42 @@ trait OpenAPITrait
 
 
     /**
-     * Boot the OpenAPI trait.
+     * Get the OpenAPI URI based on the actual request URI.
+     * @param string $method The HTTP method (GET, POST, PUT, PATCH, DELETE etc.)
+     * @param string $actualUri The actual request URI
+     * @return string
      */
-    protected function bootOpenAPI(): void
+    public function getOpenAPIUri(string $method, $actualUri)
     {
-        $this->schema = new Schema(base_path(OpenAPITrait::$SpecPath));
+        $currentRouter = $this->dispatch($method, $actualUri);
+        $uses = $currentRouter[1]["uses"];
+        $routes = $this->app->router->getRoutes();
+
+        $methodUpper = strtoupper($method);
+        $uri = null;
+
+        foreach ($routes as $route => $routeData) {
+            if (Str::start($route, $methodUpper) && $routeData["action"]["uses"] === $uses) {
+                $uri = $routeData["uri"];
+            }
+        }
+
+        // If we did not found the URI, return null.
+        if ($uri === null) {
+            return null;
+        }
+
+        // We now need to remove the Regex from the uri
+        $pattern = '/{([a-zA-Z]+):[a-zA-Z0-9' . preg_quote("\\+-[]*") . ']+}/';
+        $result = preg_replace($pattern, '{$1}', $uri);
+
+        return $result;
     }
 
 
     /**
      * Assert that the current response follow the given OpenAPI specification.
+     * We need the request URI since the specification does not use the
      */
     protected function assertOpenAPIResponse(): void
     {
@@ -73,7 +114,10 @@ trait OpenAPITrait
         $psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
         $psrResponse = $psrHttpFactory->createResponse($this->response);
 
-        $this->assertResponse($this->schema, $this->requestUri, $this->requestMethod, $psrResponse);
+        $openAPIUri = $this->getOpenAPIUri($this->requestMethod, $this->requestUri);
+
+        // Get the request uri
+        $this->assertResponse($this->schema, $openAPIUri, $this->requestMethod, $psrResponse);
     }
 
 
