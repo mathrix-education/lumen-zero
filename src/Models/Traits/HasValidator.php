@@ -53,7 +53,11 @@ trait HasValidator
      */
     protected function getValidationData()
     {
-        return $this->toArray();
+        $hidden = $this->getHidden();
+        $this->setHidden([]);
+        $data = $this->toArray();
+        $this->setHidden($hidden);
+        return $data;
     }
 
 
