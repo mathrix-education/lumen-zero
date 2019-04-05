@@ -42,10 +42,12 @@ class NullablePreProcessor implements PreProcessor
         }
 
         foreach ($schema as $key => $subSchema) {
-            if ($this->isNullable($subSchema)) {
-                $schema[$key] = $this->handleNullable($subSchema);
-            } elseif (is_array($subSchema)) {
-                $schema[$key] = $this->analyse($subSchema);
+            if (is_array($subSchema)) {
+                if ($this->isNullable($subSchema)) {
+                    $schema[$key] = $this->handleNullable($subSchema);
+                } else {
+                    $schema[$key] = $this->analyse($subSchema);
+                }
             }
         }
 
