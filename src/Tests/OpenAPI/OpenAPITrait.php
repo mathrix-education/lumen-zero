@@ -1,10 +1,8 @@
 <?php
 
-namespace Mathrix\Tests\OpenAPI;
+namespace Mathrix\Lumen\Tests\OpenAPI;
 
-use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
-use Mathrix\Lumen\Services\OpenAPI\NullablePreProcessor;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\StreamInterface;

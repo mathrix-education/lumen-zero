@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Services\OpenAPI;
+namespace Mathrix\Lumen\Tests\OpenAPI;
 
 use stdClass;
 
