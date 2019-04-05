@@ -12,6 +12,22 @@ namespace Mathrix\Lumen\Tests\REST;
 trait RESTDeleteTrait
 {
     /**
+     * Assert success for delete call.
+     *
+     * @param array $options Options of the request.
+     */
+    public function assertRestDeleteSuccess(array $options = []): void
+    {
+        $this->restDelete($options);
+
+        // Assertions
+        $this->assertNotInDatabase($this->table, ["id" => $this->requestModel->id]);
+        $this->assertResponseOk();
+        $this->assertOpenAPIResponse();
+    }
+
+
+    /**
      * Generic delete call.
      *
      * @param array $options Options of the request.
@@ -24,20 +40,5 @@ trait RESTDeleteTrait
 
         $this->autoMockScope("delete", $uri);
         $this->json("delete", $uri);
-    }
-
-
-    /**
-     * Assert success for delete call.
-     *
-     * @param array $options Options of the request.
-     */
-    public function assertRestDeleteSuccess(array $options = []): void
-    {
-        $this->restDelete($options);
-
-        // Assertions
-        $this->assertResponseOk();
-        $this->assertNotInDatabase($this->table, ["id" => $this->requestModel->id]);
     }
 }

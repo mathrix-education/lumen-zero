@@ -9,9 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
 use Mathrix\Lumen\Bases\BaseModel;
 use Mathrix\Lumen\Tests\Traits\DatabaseTrait;
+use Mathrix\Lumen\Tests\Traits\JsonResponseTrait;
 use Mathrix\Lumen\Tests\Traits\PassportTrait;
-use Mathrix\Lumen\Tests\Traits\ResponseTrait;
 use Mathrix\Lumen\Utils\ClassResolver;
+use Mathrix\Tests\OpenAPI\OpenAPITrait;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -28,7 +29,7 @@ use PHPUnit\Framework\Assert;
  */
 trait RESTTrait
 {
-    use DatabaseTrait, ResponseTrait, PassportTrait,
+    use DatabaseTrait, PassportTrait, JsonResponseTrait, OpenAPITrait,
         RESTIndexTrait, RESTGetTrait, RESTPostTrait, RESTPatchTrait, RESTDeleteTrait, RESTByTrait, RESTGetByTrait;
 
     /** @var Factory $factory */
@@ -49,6 +50,8 @@ trait RESTTrait
     protected $beforeRequestData = [];
     /** @var array The data after the request has been sent. */
     protected $afterRequestData = [];
+
+    protected $openApi = true;
 
 
     /**
@@ -113,7 +116,7 @@ trait RESTTrait
 
         /** @var FactoryBuilder $factory */
         return call_user_func_array([$this->factory, "of"], $args);
-    }
+    }/** @noinspection PhpUnusedPrivateMethodInspection */
 
 
     /**
@@ -125,7 +128,7 @@ trait RESTTrait
     {
         $conditions = $options["conditions"] ?? [];
         $this->requestModel = $this->modelClass::random($conditions);
-    }
+    }/** @noinspection PhpUnusedPrivateMethodInspection */
 
 
     /**
@@ -147,6 +150,7 @@ trait RESTTrait
             if (isset($data["created_at"])) {
                 unset($data["created_at"]);
             }
+
             if (isset($data["updated_at"])) {
                 unset($data["updated_at"]);
             }

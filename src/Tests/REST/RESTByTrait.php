@@ -15,6 +15,21 @@ use Mathrix\Lumen\Bases\BaseModel;
 trait RESTByTrait
 {
     /**
+     * Assert success for generic by call.
+     *
+     * @param BaseModel|string $modelClass The related model class
+     * @param array $options Options of the request.
+     */
+    public function assertRestBySuccess(string $modelClass, array $options = []): void
+    {
+        $this->restBy($modelClass, $options);
+
+        $this->assertResponseOk();
+        $this->assertOpenAPIResponse();
+    }
+
+
+    /**
      * Generic by call.
      *
      * @param BaseModel|string $modelClass The related model class
@@ -30,21 +45,5 @@ trait RESTByTrait
 
         $this->autoMockScope("get", $uri);
         $this->json("get", $uri);
-    }
-
-
-    /**
-     * Assert success for generic by call.
-     *
-     * @param BaseModel|string $modelClass The related model class
-     * @param array $options Options of the request.
-     */
-    public function assertRestBySuccess(string $modelClass, array $options = []): void
-    {
-        $this->restBy($modelClass, $options);
-
-        $this->assertResponseOk();
-        $this->assertIsPaginatedResponse();
-        $this->assertResponseMatchesSchema($this->modelName, "paginated");
     }
 }

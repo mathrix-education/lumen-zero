@@ -39,9 +39,9 @@ class LoggedMiddleware
     /**
      * Handle the incoming request.
      *
-     * @param  Request $request
-     * @param  \Closure $next
-     * @param  string|null $guard
+     * @param Request $request
+     * @param Closure $next
+     * @param string|null $guard
      * @return mixed
      *
      * @throws Http401UnauthorizedException

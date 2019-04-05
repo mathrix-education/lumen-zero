@@ -2,6 +2,8 @@
 
 namespace Mathrix\Lumen\Services\OpenAPI;
 
+use stdClass;
+
 /**
  * Interface BasePreProcessor.
  *
@@ -13,8 +15,8 @@ interface PreProcessor
 {
     /**
      * Transform the schema.
-     * @param array $schema The schema before the transformation.
-     * @return array The schema after the transformation.
+     * @param stdClass|null $schema The schema before the transformation.
+     * @return stdClass|null The schema after the transformation.
      */
-    public function transform(array $schema): array;
+    public function transform(?stdClass $schema): ?stdClass;
 }

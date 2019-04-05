@@ -2,7 +2,9 @@
 
 namespace Mathrix\Lumen\Bases;
 
+use Faker\Factory;
 use Illuminate\Console\Command;
+use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
@@ -20,7 +22,7 @@ use Illuminate\Support\Str;
  */
 class BaseTableSeeder extends Seeder
 {
-    /** @var \Illuminate\Console\OutputStyle */
+    /** @var OutputStyle */
     protected $output;
 
 
@@ -40,7 +42,7 @@ class BaseTableSeeder extends Seeder
     /**
      * Set the console command instance.
      *
-     * @param \Illuminate\Console\Command $command
+     * @param Command $command
      *
      * @return $this
      */
@@ -257,7 +259,7 @@ class BaseTableSeeder extends Seeder
      */
     public function link($modelClass1, $modelClass2, $min = 3, $max = 5, callable $callback = null)
     {
-        $faker = \Faker\Factory::create();
+        $faker = Factory::create();
 
         // Build all necessary variables (tables, ids...)
         $models1 = $modelClass1::all();

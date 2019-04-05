@@ -2,6 +2,7 @@
 
 namespace Mathrix\Lumen\Providers;
 
+use Exception;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Mathrix\Lumen\Bases\BaseModel;
@@ -24,7 +25,7 @@ class PolicyServiceProvider extends ServiceProvider
 
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function boot()
     {

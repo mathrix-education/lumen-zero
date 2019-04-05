@@ -115,7 +115,6 @@ abstract class BaseController extends Controller
      * @param Request $request The request
      *
      * @return JsonResponse
-     * @throws ValidationException
      *
      * @throws Http401UnauthorizedException
      */

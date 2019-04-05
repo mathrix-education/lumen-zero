@@ -22,6 +22,7 @@ abstract class BaseModel extends Model
 {
     use HasValidator;
 
+
     /**
      * Get the table name.
      *
@@ -30,21 +31,6 @@ abstract class BaseModel extends Model
     public static function getTableName(): string
     {
         return with(new static())->getTable();
-    }
-
-
-    /**
-     * Set default date format to be in compliance with the OpenAPI date-time format.
-     *
-     * @param DateTimeInterface $date The DateTimeInterface.
-     * @return string The serialized date.
-     *
-     * @link https://swagger.io/docs/specification/data-models/data-types/#string
-     * @link https://tools.ietf.org/html/rfc3339#section-5.6
-     */
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return Carbon::instance($date)->format("c");
     }
 
 
@@ -68,5 +54,20 @@ abstract class BaseModel extends Model
         }
 
         return $query->firstOrFail();
+    }
+
+
+    /**
+     * Set default date format to be in compliance with the OpenAPI date-time format.
+     *
+     * @param DateTimeInterface $date The DateTimeInterface.
+     * @return string The serialized date.
+     *
+     * @link https://swagger.io/docs/specification/data-models/data-types/#string
+     * @link https://tools.ietf.org/html/rfc3339#section-5.6
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return Carbon::instance($date)->format("c");
     }
 }

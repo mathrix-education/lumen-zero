@@ -29,7 +29,10 @@
   "require-dev": {
     "fzaninotto/faker": "~1.4",
     "helmich/phpunit-json-assert": "^2.0",
-    "phpunit/phpunit": "~7.0"
+    "nyholm/psr7": "^1.1",
+    "phpunit/phpunit": "~7.0",
+    "rebilly/openapi-php": "^0.6.0",
+    "symfony/psr-http-message-bridge": "^1.2"
   },
   "autoload": {
     "psr-4": {

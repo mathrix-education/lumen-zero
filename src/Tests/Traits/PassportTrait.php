@@ -25,6 +25,20 @@ trait PassportTrait
 
 
     /**
+     * Automatically mock Passport scopes based on the scope middleware route declaration.
+     *
+     * @param string $method The method.
+     * @param string $uri The uri.
+     */
+    public function autoMockScope(string $method, string $uri): void
+    {
+        if ($scope = $this->getAnyScopes($method, $uri)) {
+            $this->mockScope([$scope]);
+        }
+    }
+
+
+    /**
      * Get the middleware scope value for the given uri. If there are multiple scopes (comma-separated), randomly choose
      * one.
      *
@@ -67,19 +81,5 @@ trait PassportTrait
         $this->passportUser = forward_static_call_array([ClassResolver::getModelClass("User"), "random"], []);
 
         Passport::actingAs($this->passportUser, $scopes);
-    }
-
-
-    /**
-     * Automatically mock Passport scopes based on the scope middleware route declaration.
-     *
-     * @param string $method The method.
-     * @param string $uri The uri.
-     */
-    public function autoMockScope(string $method, string $uri): void
-    {
-        if ($scope = $this->getAnyScopes($method, $uri)) {
-            $this->mockScope([$scope]);
-        }
     }
 }

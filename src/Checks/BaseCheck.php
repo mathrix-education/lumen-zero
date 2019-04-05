@@ -3,6 +3,7 @@
 namespace Mathrix\Lumen\Checks;
 
 use Illuminate\Support\Str;
+use JsonSerializable;
 
 /**
  * Class BaseCheck.
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  */
-abstract class BaseCheck implements \JsonSerializable
+abstract class BaseCheck implements JsonSerializable
 {
     /** @var float $start The starting time of the check. */
     protected $start;
@@ -47,7 +48,7 @@ abstract class BaseCheck implements \JsonSerializable
 
 
     /**
-     * Get the JSONable representation of the check.
+     * Get the JSON representation of the check.
      * @return array|mixed
      */
     public function jsonSerialize()

@@ -12,6 +12,22 @@ namespace Mathrix\Lumen\Tests\REST;
 trait RESTGetTrait
 {
     /**
+     * Assert success for generic get call.
+     *
+     * @param array $options Options of the request.
+     */
+    public function assertRestGetSuccess(array $options = []): void
+    {
+        $this->restGet($options);
+
+        // Assertions
+        $this->assertResponseOk();
+        $this->assertEquals($this->requestModel->id, $this->getJsonResponseValue("id"));
+        $this->assertOpenAPIResponse();
+    }
+
+
+    /**
      * Generic get call.
      *
      * @param array $options Options of the request.
@@ -24,22 +40,6 @@ trait RESTGetTrait
 
         $this->autoMockScope("get", $uri);
         $this->json("get", $uri);
-    }
-
-
-    /**
-     * Assert success for generic get call.
-     *
-     * @param array $options Options of the request.
-     */
-    public function assertRestGetSuccess(array $options = []): void
-    {
-        $this->restGet($options);
-
-        // Assertions
-        $this->assertResponseOk();
-        $this->assertEquals($this->requestModel->id, $this->getJsonResponseValue("id"));
-        $this->assertResponseMatchesSchema($this->modelName);
     }
 
 }

@@ -2,10 +2,10 @@
 
 namespace Mathrix\Lumen\Tests\Standard;
 
-use Mathrix\Lumen\Tests\Traits\RESTTrait;
+use Mathrix\Lumen\Tests\REST\RESTTrait;
 
 /**
- * Class StandardPostTest.
+ * Class StandardGetTest.
  *
  * @author Mathieu Bour <mathieu@mathrix.fr>
  * @copyright Mathrix Education SA.
@@ -13,14 +13,14 @@ use Mathrix\Lumen\Tests\Traits\RESTTrait;
  *
  * @mixin RESTTrait
  */
-trait StandardPostTest
+trait StandardGetTest
 {
     /**
-     * POST /{base}
-     * Standard post test.
+     * GET /{base}/{modelId}
+     * Standard get test.
      */
-    public function testPost()
+    public function testGet()
     {
-        $this->assertRestPostSuccess();
+        $this->assertRestGetSuccess();
     }
 }

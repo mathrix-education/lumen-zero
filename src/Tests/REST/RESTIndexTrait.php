@@ -12,21 +12,6 @@ namespace Mathrix\Lumen\Tests\REST;
 trait RESTIndexTrait
 {
     /**
-     * Generic index call, paginated.
-     *
-     * @param array $options Options of the request.
-     */
-    public function restIndex(array $options = []): void
-    {
-        [$page, $perPage] = $this->getPaginationParameters($options);
-        $uri = "/{$this->baseUri}/$page/$perPage";
-
-        $this->autoMockScope("get", $uri);
-        $this->json("get", $uri);
-    }
-
-
-    /**
      * Assert success for generic index call, paginated.
      *
      * @param array $options Options of the request.
@@ -39,7 +24,23 @@ trait RESTIndexTrait
 
         // Assertions
         $this->assertResponseOk();
-        $this->assertIsPaginatedResponse($page, $perPage);
-        $this->assertResponseMatchesSchema($this->modelName, "paginated");
+        $this->assertEquals($page, $this->getJsonResponseValue("page"));
+        $this->assertEquals($perPage, $this->getJsonResponseValue("perPage"));
+        $this->assertOpenAPIResponse();
+    }
+
+
+    /**
+     * Generic index call, paginated.
+     *
+     * @param array $options Options of the request.
+     */
+    public function restIndex(array $options = []): void
+    {
+        [$page, $perPage] = $this->getPaginationParameters($options);
+        $uri = "/{$this->baseUri}/$page/$perPage";
+
+        $this->autoMockScope("get", $uri);
+        $this->json("get", $uri);
     }
 }

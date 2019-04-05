@@ -2,7 +2,9 @@
 
 namespace Mathrix\Lumen\Checks;
 
+use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\Facades\DB;
+use PDO;
 
 /**
  * Class MysqlCheck.
@@ -16,10 +18,10 @@ class MysqlCheck extends BaseCheck
 {
     protected function run(): string
     {
-        /** @var \Illuminate\Database\MySqlConnection $connection */
+        /** @var MySqlConnection $connection */
         $connection = DB::connection();
         $pdo = $connection->getPdo();
-        $result = $pdo instanceof \PDO;
+        $result = $pdo instanceof PDO;
 
         if ($result) {
             return "healthy";

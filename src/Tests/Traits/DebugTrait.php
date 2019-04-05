@@ -3,7 +3,8 @@
 namespace Mathrix\Lumen\Tests\Traits;
 
 use Exception;
-use Throwable;
+use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
+use Mathrix\Tests\OpenAPI\OpenAPITrait;
 
 /**
  * Trait DebugTrait.
@@ -12,24 +13,12 @@ use Throwable;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  *
- * @mixin RESTTrait
+ * @mixin JsonResponseTrait
+ * @mixin MakesHttpRequests
+ * @mixin OpenAPITrait
  */
 trait DebugTrait
 {
-    /**
-     * Handle response printing.
-     *
-     * @param Exception|Throwable $e
-     *
-     * @throws Throwable
-     */
-    protected function onNotSuccessfulTest(Throwable $e)
-    {
-        $this->debug();
-        parent::onNotSuccessfulTest($e);
-    }
-
-
     /**
      * Debug the response.
      *
@@ -37,7 +26,7 @@ trait DebugTrait
      */
     public function debug()
     {
-        echo $this->currentUri . "\n";
-        echo json_encode($this->getJsonResponseData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        echo "{$this->requestMethod} {$this->requestUri}\n";
+        echo json_encode($this->getJsonResponseContent(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 }

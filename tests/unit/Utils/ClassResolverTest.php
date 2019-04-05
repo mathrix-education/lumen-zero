@@ -1,6 +1,7 @@
 <?php
 
 use Mathrix\Lumen\Utils\ClassResolver;
+use PHPUnit\Framework\TestCase;
 
 
 /**
@@ -10,7 +11,7 @@ use Mathrix\Lumen\Utils\ClassResolver;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  */
-class ClassResolverTest extends \PHPUnit\Framework\TestCase
+class ClassResolverTest extends TestCase
 {
     /**
      * @covers \Mathrix\Lumen\Utils\ClassResolver::getModelClass

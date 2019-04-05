@@ -3,6 +3,7 @@
 namespace Mathrix\Lumen\Services\OpenAPI;
 
 use Illuminate\Support\Arr;
+use stdClass;
 
 /**
  * Class NullablePreProcessor.
@@ -17,12 +18,15 @@ class NullablePreProcessor implements PreProcessor
 {
     /**
      * Transform the schema.
-     * @param array $schema The schema before the transformation.
-     * @return array The schema after the transformation.
+     * @param stdClass|null $schema The schema before the transformation.
+     * @return stdClass|null The schema after the transformation.
      */
-    public function transform(array $schema): array
+    public function transform(?stdClass $schema): ?stdClass
     {
-        return $this->analyse($schema);
+        $array = json_decode(json_encode($schema), true);
+        $transformed = $this->analyse($array);
+
+        return json_decode(json_encode($transformed));
     }
 
 

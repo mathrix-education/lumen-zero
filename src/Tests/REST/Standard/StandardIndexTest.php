@@ -2,7 +2,7 @@
 
 namespace Mathrix\Lumen\Tests\Standard;
 
-use Mathrix\Lumen\Tests\Traits\RESTTrait;
+use Mathrix\Lumen\Tests\REST\RESTTrait;
 
 /**
  * Trait StandardIndexTest.

@@ -12,6 +12,24 @@ namespace Mathrix\Lumen\Tests\REST;
 trait RESTPostTrait
 {
     /**
+     * Assert success for generic post call.
+     *
+     * @param array|callable $before Array or closure to override data before it is sent.
+     * @param array|callable $after Array or closure to override data after it is sent.
+     * @param array $options Options of the request.
+     */
+    public function assertRestPostSuccess($before = null, $after = null, array $options = []): void
+    {
+        $this->restPost($before, $after, $options);
+
+        // Assertions
+        $this->assertResponseOk();
+        $this->assertInDatabase($this->table, $this->afterRequestData);
+        $this->assertOpenAPIResponse();
+    }
+
+
+    /**
      * Generic post call.
      *
      * @param array|callable $before Array or closure to override data before it is sent.
@@ -34,24 +52,6 @@ trait RESTPostTrait
             $this->beforeRequestData,
             $after
         );
-    }
-
-
-    /**
-     * Assert success for generic post call.
-     *
-     * @param array|callable $before Array or closure to override data before it is sent.
-     * @param array|callable $after Array or closure to override data after it is sent.
-     * @param array $options Options of the request.
-     */
-    public function assertRestPostSuccess($before = null, $after = null, array $options = []): void
-    {
-        $this->restPost($before, $after, $options);
-
-        // Assertions
-        $this->assertResponseOk();
-        $this->assertInDatabase($this->table, $this->afterRequestData);
-        $this->assertResponseMatchesSchema($this->modelName);
     }
 
 }

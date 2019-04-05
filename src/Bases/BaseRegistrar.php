@@ -63,7 +63,7 @@ abstract class BaseRegistrar
      *
      * @param string $base The base URL.
      * @param string $controller The controller
-     * @param array $permissions The persmissions: Passport scopes, comma-separated
+     * @param array $permissions The permissions: Passport scopes, comma-separated
      */
     protected function rest(string $base, string $controller, array $permissions = []): void
     {

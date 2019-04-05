@@ -2,6 +2,7 @@
 
 namespace Mathrix\Lumen\Exceptions\Http;
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
@@ -15,7 +16,7 @@ use Throwable;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  */
-abstract class HttpException extends \Exception
+abstract class HttpException extends Exception
 {
     /** The HTTP error standard name */
     protected const ERROR = null;
@@ -76,7 +77,7 @@ abstract class HttpException extends \Exception
 
             $exceptionIterator = $this;
 
-            while ($exceptionIterator->getPrevious() instanceof \Exception) {
+            while ($exceptionIterator->getPrevious() instanceof Exception) {
                 $previous = $this->getPrevious();
                 $exceptions[] = [
                     "exception" => get_class($previous),
