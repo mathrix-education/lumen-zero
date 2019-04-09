@@ -7,10 +7,8 @@ use Laravel\Lumen\Application;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
 use Mathrix\Lumen\Tests\Traits\DispatcherTrait;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use PHPUnit\Framework\Assert;
 use Psr\Http\Message\StreamInterface;
 use Rebilly\OpenAPI\PhpUnit\Asserts as RebillyOpenAPIAsserts;
-use Rebilly\OpenAPI\PhpUnit\JsonSchemaConstraint;
 use Rebilly\OpenAPI\Schema;
 use stdClass;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
@@ -37,7 +35,7 @@ trait OpenAPITrait
     /** @var string The OpenAPI Specification entry file. MUST BE JSON! */
     public static $SpecPath = "docs/spec.json";
     /** @var Schema The OpenAPI Schema. */
-    protected $schema;
+    protected static $schema;
     /** @var string The request method. */
     protected $requestMethod;
     /** @var string The request URI. */
@@ -47,9 +45,9 @@ trait OpenAPITrait
     /**
      * Boot the OpenAPI trait.
      */
-    protected function bootOpenAPI(): void
+    protected static function bootOpenAPI(): void
     {
-        $this->schema = new Schema(base_path(OpenAPITrait::$SpecPath));
+        self::$schema = new Schema(OpenAPITrait::$SpecPath);
     }
 
 
@@ -120,7 +118,7 @@ trait OpenAPITrait
         }
 
         // Get the request uri
-        self::assertResponse($this->schema, $openAPIUri, $this->requestMethod, $psrResponse);
+        self::assertResponse(self::$schema, $openAPIUri, $this->requestMethod, $psrResponse);
     }
 
 
@@ -135,7 +133,7 @@ trait OpenAPITrait
      *
      * @see RebillyOpenAPIAsserts::assertResponseBody
      */
-    protected static function assertRequestBody(Schema $schema, string $path, string $method,
+    /*protected static function assertRequestBody(Schema $schema, string $path, string $method,
                                                 StreamInterface $body = null, string $msg = ""): void
     {
         $bodySchema = self::preProcessSchema($schema->getRequestBodySchema($path, strtolower($method)));
@@ -149,7 +147,7 @@ trait OpenAPITrait
         } else {
             Assert::assertEmpty(json_decode($body), $msg);
         }
-    }
+    }*/
 
 
     /**
@@ -159,10 +157,10 @@ trait OpenAPITrait
      *
      * @return stdClass|null The processed schema.
      */
-    protected static function preProcessSchema(?stdClass $schema): ?stdClass
+    /*protected static function preProcessSchema(?stdClass $schema): ?stdClass
     {
         return (new NullablePreProcessor())->transform($schema);
-    }
+    }*/
 
 
     /**
@@ -175,7 +173,7 @@ trait OpenAPITrait
      * @param StreamInterface|null $body
      * @param string $msg
      */
-    protected static function assertResponseBody(Schema $schema, string $path, string $method, string $status,
+    /*protected static function assertResponseBody(Schema $schema, string $path, string $method, string $status,
                                                  StreamInterface $body = null, string $msg = ""): void
     {
         $bodySchema = self::preProcessSchema($schema->getResponseBodySchema($path, strtolower($method), $status));
@@ -189,5 +187,5 @@ trait OpenAPITrait
         } else {
             Assert::assertEmpty(json_decode($body), $msg);
         }
-    }
+    }*/
 }
