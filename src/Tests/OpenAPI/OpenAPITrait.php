@@ -94,7 +94,7 @@ trait OpenAPITrait
         }
 
         // We now need to remove the Regex from the uri
-        $pattern = '/{([a-zA-Z]+):[a-zA-Z0-9\/' . preg_quote("\\+-_[]*{}|.") . ']+}/';
+        $pattern = '/{([a-zA-Z]+):[a-zA-Z0-9\/' . preg_quote("\\+-_[]*{}|.^") . ']+}/';
         $result = preg_replace($pattern, '{$1}', $uri);
 
         return $result;
