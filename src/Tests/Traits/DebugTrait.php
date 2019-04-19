@@ -4,7 +4,7 @@ namespace Mathrix\Lumen\Tests\Traits;
 
 use Exception;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
-use Mathrix\Tests\OpenAPI\OpenAPITrait;
+use Mathrix\Lumen\Tests\OpenAPI\OpenAPITrait;
 
 /**
  * Trait DebugTrait.
@@ -26,7 +26,14 @@ trait DebugTrait
      */
     public function debug()
     {
-        echo "{$this->requestMethod} {$this->requestUri}\n";
-        echo json_encode($this->getJsonResponseContent(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        if ($this->response !== null) {
+            $status = $this->response->getStatusCode();
+            $method = strtoupper($this->requestMethod);
+            $uri = $this->requestUri;
+            $content = json_encode(json_decode($this->response->getContent()),
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+            echo "HTTP/$status $method $uri\n$content";
+        }
     }
 }
