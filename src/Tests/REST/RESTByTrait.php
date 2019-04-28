@@ -56,7 +56,7 @@ trait RESTByTrait
         [$page, $perPage] = $this->getPaginationParameters($options);
         $uri = "/{$this->baseUri}/by-$relatedModelUri/{$this->requestModel->id}/$page/$perPage";
 
-        $this->event("beforeRequest", "get", $uri);
+        $this->event("before.request", "get", $uri);
         $this->json("get", $uri);
     }
 }

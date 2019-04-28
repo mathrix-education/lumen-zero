@@ -40,7 +40,7 @@ trait RESTIndexTrait
         [$page, $perPage] = $this->getPaginationParameters($options);
         $uri = "/{$this->baseUri}/$page/$perPage";
 
-        $this->event("beforeRequest", "get", $uri);
+        $this->event("before.request", "get", $uri);
         $this->json("get", $uri);
     }
 }

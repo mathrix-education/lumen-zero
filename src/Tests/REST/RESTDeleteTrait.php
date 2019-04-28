@@ -38,7 +38,7 @@ trait RESTDeleteTrait
 
         $uri = "/{$this->baseUri}/{$this->requestModel->id}";
 
-        $this->event("beforeRequest", "delete", $uri);
+        $this->event("before.request", "delete", $uri);
         $this->json("delete", $uri);
     }
 }

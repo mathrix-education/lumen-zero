@@ -65,10 +65,19 @@ trait RESTTrait
         $this->factory = app("Illuminate\Database\Eloquent\Factory");
         $this->discover();
 
-        $this->handler("beforeRequest", function (string $method, string $uri) {
+        $this->handler("before.json", function (string $method, string $uri) {
             $this->requestMethod = $method;
             $this->requestUri = "/" . trim($uri, "/");
         });
+    }
+
+    public function json($method, $uri, array $data = [], array $headers = [])
+    {
+        $this->event("before.json");
+        $result = parent::json($method, $uri, $data, $headers);
+        $this->event("after.json");
+
+        return $result;
     }
 
 

@@ -47,7 +47,7 @@ trait RESTPatchTrait
 
         $uri = "/{$this->baseUri}/{$this->requestModel->id}";
 
-        $this->event("beforeRequest", "patch", $uri);
+        $this->event("before.request", "patch", $uri);
         $this->json("patch", $uri, $this->beforeRequestData);
 
         $this->afterRequestData = $this->override(

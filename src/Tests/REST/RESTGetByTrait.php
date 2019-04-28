@@ -40,7 +40,7 @@ trait RESTGetByTrait
 
         $uri = "/{$this->baseUri}/$field/{$this->requestModel->{$field}}";
 
-        $this->event("beforeRequest", "get", $uri);
+        $this->event("before.request", "get", $uri);
         $this->json("get", $uri);
     }
 }
