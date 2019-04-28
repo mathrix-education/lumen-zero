@@ -38,7 +38,7 @@ trait RESTDeleteTrait
 
         $uri = "/{$this->baseUri}/{$this->requestModel->id}";
 
-        $this->autoMockScope("delete", $uri);
+        $this->event("beforeRequest", "delete", $uri);
         $this->json("delete", $uri);
     }
 }

@@ -47,7 +47,7 @@ trait RESTPatchTrait
 
         $uri = "/{$this->baseUri}/{$this->requestModel->id}";
 
-        $this->autoMockScope("patch", $uri);
+        $this->event("beforeRequest", "patch", $uri);
         $this->json("patch", $uri, $this->beforeRequestData);
 
         $this->afterRequestData = $this->override(

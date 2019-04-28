@@ -2,6 +2,7 @@
 
 namespace Mathrix\Lumen\Tests\REST;
 
+use Closure;
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\FactoryBuilder;
@@ -10,9 +11,7 @@ use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
 use Mathrix\Lumen\Bases\BaseModel;
 use Mathrix\Lumen\Tests\OpenAPI\OpenAPITrait;
 use Mathrix\Lumen\Tests\Traits\DatabaseTrait;
-use Mathrix\Lumen\Tests\Traits\DispatcherTrait;
 use Mathrix\Lumen\Tests\Traits\JsonResponseTrait;
-use Mathrix\Lumen\Tests\Traits\PassportTrait;
 use Mathrix\Lumen\Utils\ClassResolver;
 use PHPUnit\Framework\Assert;
 
@@ -30,7 +29,7 @@ use PHPUnit\Framework\Assert;
  */
 trait RESTTrait
 {
-    use DatabaseTrait, DispatcherTrait, PassportTrait, JsonResponseTrait, OpenAPITrait,
+    use DatabaseTrait, JsonResponseTrait, OpenAPITrait,
         RESTIndexTrait, RESTGetTrait, RESTPostTrait, RESTPatchTrait, RESTDeleteTrait, RESTByTrait, RESTGetByTrait;
 
     /** @var Factory $factory */
@@ -54,6 +53,9 @@ trait RESTTrait
 
     protected $openApi = true;
 
+    /** @var array The event handlers. */
+    protected $handlers = [];
+
 
     /**
      * Initialize the REST Trait.
@@ -62,6 +64,11 @@ trait RESTTrait
     {
         $this->factory = app("Illuminate\Database\Eloquent\Factory");
         $this->discover();
+
+        $this->handler("beforeRequest", function (string $method, string $uri) {
+            $this->requestMethod = $method;
+            $this->requestUri = "/" . trim($uri, "/");
+        });
     }
 
 
@@ -157,6 +164,38 @@ trait RESTTrait
             }
 
             return $data;
+        }
+    }
+
+
+    /**
+     * Register an event handler.
+     *
+     * @param $name
+     * @param Closure $callback
+     */
+    public function handler(string $name, Closure $callback)
+    {
+        if (empty($this->handlers[$name])) {
+            $this->handlers[$name] = [];
+        }
+
+        $this->handlers[$name][] = $callback;
+    }
+
+
+    /**
+     * Fire the a named event.
+     *
+     * @param string $name
+     * @param mixed ...$payload
+     */
+    public function event(string $name, ...$payload)
+    {
+        if (!empty($this->handlers[$name])) {
+            foreach ($this->handlers[$name] as $callback) {
+                $callback(...$payload);
+            }
         }
     }
 }

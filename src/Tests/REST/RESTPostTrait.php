@@ -45,7 +45,7 @@ trait RESTPostTrait
 
         $uri = "/{$this->baseUri}";
 
-        $this->autoMockScope("post", $uri);
+        $this->event("beforeRequest", "post", $uri);
         $this->json("post", $uri, $this->beforeRequestData);
 
         $this->afterRequestData = $this->override(

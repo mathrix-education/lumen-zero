@@ -38,7 +38,7 @@ trait RESTGetTrait
 
         $uri = "/{$this->baseUri}/{$this->requestModel->id}";
 
-        $this->autoMockScope("get", $uri);
+        $this->event("beforeRequest", "get", $uri);
         $this->json("get", $uri);
     }
 

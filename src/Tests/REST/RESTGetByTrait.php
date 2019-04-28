@@ -40,7 +40,7 @@ trait RESTGetByTrait
 
         $uri = "/{$this->baseUri}/$field/{$this->requestModel->{$field}}";
 
-        $this->autoMockScope("get", $uri);
+        $this->event("beforeRequest", "get", $uri);
         $this->json("get", $uri);
     }
 }

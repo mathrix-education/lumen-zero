@@ -52,22 +52,6 @@ trait OpenAPITrait
 
 
     /**
-     * Overridden method in order to save method and URI.
-     *
-     * @param $method
-     * @param $uri
-     * @param array $data
-     * @param array $headers
-     */
-    public function json($method, $uri, array $data = [], array $headers = [])
-    {
-        $this->requestMethod = $method;
-        $this->requestUri = "/" . trim($uri, "/");
-        parent::json($method, $uri, $data, $headers);
-    }
-
-
-    /**
      * Get the OpenAPI URI based on the actual request URI.
      * @param string $method The HTTP method (GET, POST, PUT, PATCH, DELETE etc.)
      * @param string $actualUri The actual request URI
