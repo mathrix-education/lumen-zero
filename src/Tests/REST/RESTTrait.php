@@ -72,6 +72,15 @@ trait RESTTrait
     }
 
 
+    /**
+     * Make a json request.
+     *
+     * @param string $method
+     * @param string $uri
+     * @param array $data
+     * @param array $headers
+     * @return mixed
+     */
     public function json($method, $uri, array $data = [], array $headers = [])
     {
         $this->event("before.json", $method, $uri);

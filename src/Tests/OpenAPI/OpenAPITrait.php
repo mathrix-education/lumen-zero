@@ -21,13 +21,12 @@ use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
  * @since 1.0.0
  *
  * @property-read Application $app
- * @mixin DispatcherTrait
  * @mixin MakesHttpRequests
  */
 trait OpenAPITrait
 {
     // We sadly need to rename those methods to override them since we need a parser for
-    use RebillyOpenAPIAsserts {
+    use DispatcherTrait, RebillyOpenAPIAsserts {
         RebillyOpenAPIAsserts::assertRequestBody as RebillyAssertRequestBody;
         RebillyOpenAPIAsserts::assertResponseBody as RebillyAssertResponseBody;
     }
