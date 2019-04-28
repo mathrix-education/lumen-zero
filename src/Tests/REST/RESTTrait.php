@@ -71,11 +71,12 @@ trait RESTTrait
         });
     }
 
+
     public function json($method, $uri, array $data = [], array $headers = [])
     {
-        $this->event("before.json");
+        $this->event("before.json", $method, $uri);
         $result = parent::json($method, $uri, $data, $headers);
-        $this->event("after.json");
+        $this->event("after.json", $method, $uri);
 
         return $result;
     }
