@@ -72,7 +72,6 @@ class BaseTableSeeder extends Seeder
 
         $this->output->writeln("<comment>Seeding:</comment> $table from json");
         $this->seedFromArray($jsonData, $table);
-        $this->output->writeln("<info>Seeded:</info>  $table from json");
     }
 
 
@@ -86,7 +85,7 @@ class BaseTableSeeder extends Seeder
     public function seedFromArray(array $rawData, string $table, int $chunkSize = 100)
     {
         $progressBar = $this->output->createProgressBar(count($rawData));
-        $progressBar->setFormat("verbose");
+        $progressBar->setFormat("%bar% %percent:3s%% (%current%/%max%) ETA: %estimated:-6s%");
 
         // Let's find all row keys
         $keys = [];
@@ -148,7 +147,6 @@ class BaseTableSeeder extends Seeder
 
         $this->output->writeln("<comment>Seeding:</comment> $table from csv");
         $this->seedFromArray($csvData, $table);
-        $this->output->writeln("<info>Seeded:</info>  $table from csv");
     }
 
 
@@ -229,7 +227,6 @@ class BaseTableSeeder extends Seeder
         }
 
         $this->seedFromArray($factoryData->toArray(), $factoryOptions["table"]);
-        $this->output->writeln("<info>Seeded:</info>  $factoryName from factory");
     }
 
 
@@ -302,7 +299,5 @@ class BaseTableSeeder extends Seeder
         }
 
         $this->seedFromArray($linkData, $linkTable);
-
-        $this->output->writeln("<info>Linked:</info>  $model1Table <=> $model2Table");
     }
 }
