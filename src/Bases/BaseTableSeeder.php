@@ -22,6 +22,8 @@ use Illuminate\Support\Str;
  */
 class BaseTableSeeder extends Seeder
 {
+    public const DEFAULT_PROGRESS_BAR_FORMAT = "[%bar%] %percent:3s%% (%current%/%max%) ETA: %estimated:-6s%";
+
     /** @var OutputStyle */
     protected $output;
 
@@ -85,7 +87,7 @@ class BaseTableSeeder extends Seeder
     public function seedFromArray(array $rawData, string $table, int $chunkSize = 100)
     {
         $progressBar = $this->output->createProgressBar(count($rawData));
-        $progressBar->setFormat("%bar% %percent:3s%% (%current%/%max%) ETA: %estimated:-6s%");
+        $progressBar->setFormat(self::DEFAULT_PROGRESS_BAR_FORMAT);
 
         // Let's find all row keys
         $keys = [];
