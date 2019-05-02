@@ -11,8 +11,6 @@ namespace Mathrix\Lumen\Exceptions\Http;
  */
 class Http409ConflictException extends HttpException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "Conflict";
     /** THE HTTP error standard code */
     protected const CODE = 409;
 }

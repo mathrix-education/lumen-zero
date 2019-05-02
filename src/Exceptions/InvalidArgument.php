@@ -13,5 +13,4 @@ use Mathrix\Lumen\Exceptions\Http\Http500InternalServerErrorException;
  */
 class InvalidArgument extends Http500InternalServerErrorException
 {
-    protected const ERROR = "invalid_argument";
 }

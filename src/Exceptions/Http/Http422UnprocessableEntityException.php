@@ -11,8 +11,6 @@ namespace Mathrix\Lumen\Exceptions\Http;
  */
 class Http422UnprocessableEntityException extends HttpException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "Unprocessable Entity";
     /** THE HTTP error standard code */
     protected const CODE = 422;
 }

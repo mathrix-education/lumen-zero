@@ -11,8 +11,6 @@ namespace Mathrix\Lumen\Exceptions\Http;
  */
 class Http500InternalServerErrorException extends HttpException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "internal_server_error";
     /** THE HTTP error standard code */
     protected const CODE = 500;
     /** @var string Exception message; has to be manually defined */

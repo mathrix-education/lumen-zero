@@ -14,10 +14,6 @@ use Throwable;
  */
 class ClassNotFoundException extends Http500InternalServerErrorException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "class_not_found";
-
-
     public function __construct(string $class, ?Throwable $previous = null)
     {
         $data = ["class" => $class];

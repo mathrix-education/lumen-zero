@@ -4,6 +4,7 @@ namespace Mathrix\Lumen\Exceptions\Http;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 use Throwable;
 
 /**
@@ -18,8 +19,6 @@ use Throwable;
  */
 abstract class HttpException extends Exception
 {
-    /** The HTTP error standard name */
-    protected const ERROR = null;
     /** THE HTTP error standard code */
     protected const CODE = null;
     /** @var string Exception message; has to be manually defined */
@@ -45,12 +44,29 @@ abstract class HttpException extends Exception
     public function __toString()
     {
         $body = [
-            "error" => snake_case($this::ERROR),
+            "error" => Str::snake($this->getError()),
             "message" => !empty($this->message) ? $this->message : "No message given",
             "data" => $this->data ?? []
         ];
 
         return json_encode($body, JSON_PRETTY_PRINT);
+    }
+
+
+    /**
+     * Get the exception error, extracted from the class name.
+     * Examples:
+     * - Http429TooManyRequestsException => TooManyRequests
+     * - Http501NotImplementedException => NotImplemented
+     * - ProductAlreadyBoughtException => ProductAlreadyBought
+     *
+     * @param string|null $name
+     * @return string
+     */
+    public function getError(?string $name = null): string
+    {
+        $name = $name ?: class_basename($this);
+        return preg_replace("/(?:Http[0-9]{3})?([A-Za-z]+)Exception/", "$1", $name);
     }
 
 
@@ -62,12 +78,12 @@ abstract class HttpException extends Exception
     public function toJsonResponse(): JsonResponse
     {
         $body = [
-            "error" => snake_case($this::ERROR),
+            "error" => Str::snake($this->getError()),
             "message" => !empty($this->message) ? $this->message : "No message given",
             "data" => $this->data ?? []
         ];
 
-        if (!app()->environment("master")) {
+        if (!env("APP_DEBUG")) {
             $exceptions = [
                 [
                     "exception" => get_class($this),

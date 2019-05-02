@@ -11,8 +11,6 @@ namespace Mathrix\Lumen\Exceptions\Http;
  */
 class Http401UnauthorizedException extends HttpException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "Unauthorized";
     /** THE HTTP error standard code */
     protected const CODE = 401;
 }

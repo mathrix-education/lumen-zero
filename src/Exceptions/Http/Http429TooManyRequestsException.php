@@ -11,8 +11,6 @@ namespace Mathrix\Lumen\Exceptions\Http;
  */
 class Http429TooManyRequestsException extends HttpException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "Too Many Requests";
     /** THE HTTP error standard code */
     protected const CODE = 429;
 }

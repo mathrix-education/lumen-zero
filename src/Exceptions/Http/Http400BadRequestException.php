@@ -11,8 +11,6 @@ namespace Mathrix\Lumen\Exceptions\Http;
  */
 class Http400BadRequestException extends HttpException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "Bad Request";
     /** THE HTTP error standard code */
     protected const CODE = 400;
 }

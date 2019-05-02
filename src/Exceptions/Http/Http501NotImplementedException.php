@@ -11,8 +11,8 @@ namespace Mathrix\Lumen\Exceptions\Http;
  */
 class Http501NotImplementedException extends HttpException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "Not Implemented";
     /** THE HTTP error standard code */
     protected const CODE = 501;
+    /** The HTTP error standard name */
+    protected $message = "This feature has not yet been implemented.";
 }

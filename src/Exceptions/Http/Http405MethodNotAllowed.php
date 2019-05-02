@@ -13,8 +13,6 @@ use Mathrix\Lumen\Exceptions\Http\HttpException;
  */
 class Http405MethodNotAllowed extends HttpException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "Method Not Allowed";
     /** THE HTTP error standard code */
     protected const CODE = 405;
 }

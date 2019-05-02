@@ -11,10 +11,6 @@ namespace Mathrix\Lumen\Exceptions\Http;
  */
 class Http404NotFoundException extends HttpException
 {
-    /** The HTTP error standard name */
-    protected const ERROR = "Not Found";
     /** THE HTTP error standard code */
     protected const CODE = 404;
-    /** @var string Exception message; has to be manually defined */
-    protected $message = "Not Found";
 }
