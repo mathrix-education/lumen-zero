@@ -21,6 +21,8 @@ abstract class HttpException extends Exception
 {
     /** THE HTTP error standard code */
     protected const CODE = null;
+    /** @var string Exception error; will be displayed in the JSON response */
+    protected $error;
     /** @var string Exception message; has to be manually defined */
     protected $message;
     /** @var array Exception data; has to be manually defined */
@@ -43,8 +45,12 @@ abstract class HttpException extends Exception
 
     public function __toString()
     {
+        if (empty($this->error)) {
+            $this->error = Str::snake($this->getError());
+        }
+
         $body = [
-            "error" => Str::snake($this->getError()),
+            "error" => $this->error,
             "message" => !empty($this->message) ? $this->message : "No message given",
             "data" => $this->data ?? []
         ];
