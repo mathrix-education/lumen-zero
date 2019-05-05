@@ -39,16 +39,17 @@ abstract class HttpException extends Exception
     public function __construct($data = null, $message = null, Throwable $previous = null)
     {
         parent::__construct($message ?? $this->message, self::CODE, $previous);
+
         $this->data = $data;
+
+        if (empty($this->error)) {
+            $this->error = Str::snake($this->getError());
+        }
     }
 
 
     public function __toString()
     {
-        if (empty($this->error)) {
-            $this->error = Str::snake($this->getError());
-        }
-
         $body = [
             "error" => $this->error,
             "message" => !empty($this->message) ? $this->message : "No message given",
@@ -84,7 +85,7 @@ abstract class HttpException extends Exception
     public function toJsonResponse(): JsonResponse
     {
         $body = [
-            "error" => Str::snake($this->getError()),
+            "error" => $this->error,
             "message" => !empty($this->message) ? $this->message : "No message given",
             "data" => $this->data ?? []
         ];
