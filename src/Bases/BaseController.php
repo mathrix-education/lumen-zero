@@ -109,26 +109,6 @@ abstract class BaseController extends Controller
 
 
     /**
-     * Generic get action.
-     *
-     * @param Request $request The request
-     * @param int $id The model id.
-     *
-     * @return JsonResponse
-     * @throws Http401UnauthorizedException
-     *
-     */
-    public function get(Request $request, int $id): JsonResponse
-    {
-        /** @var BaseModel $model */
-        $model = $this->modelClass::query()->findOrFail($id);
-        $this->canOrFail($request, "get", $model);
-
-        return new JsonResponse($model);
-    }
-
-
-    /**
      * Generic post action.
      *
      * @param Request $request The Illuminate HTTP request.
@@ -150,6 +130,26 @@ abstract class BaseController extends Controller
 
 
     /**
+     * Generic get action.
+     *
+     * @param Request $request The request
+     * @param int $id The model id.
+     *
+     * @return JsonResponse
+     * @throws Http401UnauthorizedException
+     *
+     */
+    public function get(Request $request, int $id): JsonResponse
+    {
+        /** @var BaseModel $model */
+        $model = $this->modelClass::query()->findOrFail($id);
+        $this->canOrFail($request, "get", $model);
+
+        return new JsonResponse($model);
+    }
+
+
+    /**
      * Generic edit action.
      *
      * @param Request $request The Illuminate HTTP request.
@@ -163,7 +163,7 @@ abstract class BaseController extends Controller
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::query()->findOrFail($id);
-        $this->canOrFail($request, "patch", $this->modelClass);
+        $this->canOrFail($request, "patch", $model);
 
         $model->update($request->all());
 
@@ -187,7 +187,7 @@ abstract class BaseController extends Controller
         /** @var BaseModel $model */
         $model = $this->modelClass::query()->findOrFail($id);
 
-        $this->canOrFail($request, "delete", $this->modelClass);
+        $this->canOrFail($request, "delete", $model);
         $model->delete();
 
         return new JsonResponse([
