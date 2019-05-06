@@ -35,7 +35,7 @@ trait HasValidator
      * Validate model data after attributes mutation.
      * @throws ValidationException
      */
-    protected function validate()
+    public function validate()
     {
         $validator = Validator::make($this->getValidationData(), $this->getValidationRules());
 
