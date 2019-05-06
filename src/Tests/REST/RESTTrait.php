@@ -30,7 +30,7 @@ use PHPUnit\Framework\Assert;
 trait RESTTrait
 {
     use DatabaseTrait, JsonResponseTrait, OpenAPITrait,
-        RESTIndexTrait, RESTGetTrait, RESTPostTrait, RESTPatchTrait, RESTDeleteTrait, RESTByTrait, RESTGetByTrait;
+        RESTIndexTrait, RESTGetTrait, RESTPostTrait, RESTPatchTrait, RESTDeleteTrait, RESTGetByTrait, RESTRelationTrait;
 
     /** @var Factory $factory */
     protected $factory = null;
