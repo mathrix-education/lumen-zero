@@ -5,10 +5,10 @@ namespace Mathrix\Lumen\Bases;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Support\Str;
 use Laravel\Lumen\Routing\Controller;
-use Mathrix\Lumen\Exceptions\Http\Http400BadRequestException;
 use Mathrix\Lumen\Exceptions\Http\Http401UnauthorizedException;
 use Mathrix\Lumen\Exceptions\ValidationException;
 use Mathrix\Lumen\Responses\PaginationJsonResponse;
@@ -23,7 +23,7 @@ use Mathrix\Lumen\Utils\ClassResolver;
  */
 abstract class BaseController extends Controller
 {
-    /** @var BaseModel The model class associated with the controller */
+    /** @var BaseModel|string The model class associated with the controller */
     public $modelClass = null;
 
 
@@ -61,25 +61,49 @@ abstract class BaseController extends Controller
 
 
     /**
+     * Check if the controller should use a policy for a given ability.
+     * @param string $ability The policy ability.
+     * @return bool
+     */
+    protected function shouldUsePolicy(string $ability): bool
+    {
+        $policyClass = Gate::getPolicyFor($this->modelClass);
+
+        return $policyClass !== null && method_exists($policyClass, $ability);
+    }
+
+
+    /**
+     * Check if the Gate denies the request.
+     * @param Request $request
+     * @param string $ability
+     * @param null $model
+     * @throws Http401UnauthorizedException
+     */
+    protected function canOrFail(Request $request, string $ability, $model = null)
+    {
+        if ($this->shouldUsePolicy($ability) && Gate::forUser($request->user())->denies($ability, $model)) {
+            throw new Http401UnauthorizedException([
+                "model_class" => $this->modelClass,
+                "ability" => $ability
+            ], "Failed to pass $ability policy");
+        }
+    }
+
+
+    /**
      * Generic paginated index method.
      *
-     * @param Request $request The request
-     * @param int $page
-     * @param int $perPage
+     * @param Request $request The Illuminate HTTP request.
+     * @param int $page The results page (starts at 0).
+     * @param int $perPage The number of related models per page.
      *
      * @return PaginationJsonResponse
      * @throws Http401UnauthorizedException
-     *
      */
     public function index(Request $request, int $page = 0, int $perPage = 100): PaginationJsonResponse
     {
-        // Check permission
-        if ($request->user() !== null && $request->user()->cant("index", $this->modelClass)) {
-            throw new Http401UnauthorizedException([
-                "model_class" => $this->modelClass
-            ], "Failed to pass index policy");
-        }
-
+        $this->canOrFail($request, "index", $this->modelClass);
         return new PaginationJsonResponse($this->modelClass::query(), $page, $perPage);
     }
 
@@ -88,7 +112,7 @@ abstract class BaseController extends Controller
      * Generic get action.
      *
      * @param Request $request The request
-     * @param int $id The model id
+     * @param int $id The model id.
      *
      * @return JsonResponse
      * @throws Http401UnauthorizedException
@@ -98,12 +122,7 @@ abstract class BaseController extends Controller
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::query()->findOrFail($id);
-
-        if ($request->user() !== null && $request->user()->cant("get", $model)) {
-            throw new Http401UnauthorizedException([
-                "model_class" => $this->modelClass
-            ], "Failed to pass get policy");
-        }
+        $this->canOrFail($request, "get", $model);
 
         return new JsonResponse($model);
     }
@@ -112,7 +131,7 @@ abstract class BaseController extends Controller
     /**
      * Generic post action.
      *
-     * @param Request $request The request
+     * @param Request $request The Illuminate HTTP request.
      *
      * @return JsonResponse
      *
@@ -120,11 +139,7 @@ abstract class BaseController extends Controller
      */
     public function post(Request $request): JsonResponse
     {
-        if ($request->user() !== null && $request->user()->cant("post", $this->modelClass)) {
-            throw new Http401UnauthorizedException([
-                "model_class" => $this->modelClass
-            ], "Failed to pass post policy");
-        }
+        $this->canOrFail($request, "post", $this->modelClass);
 
         /** @var BaseModel $model */
         $model = new $this->modelClass($request->all());
@@ -137,8 +152,8 @@ abstract class BaseController extends Controller
     /**
      * Generic edit action.
      *
-     * @param Request $request The request
-     * @param int $id The model id
+     * @param Request $request The Illuminate HTTP request.
+     * @param int $id The model id.
      *
      * @return JsonResponse
      * @throws Http401UnauthorizedException
@@ -148,12 +163,7 @@ abstract class BaseController extends Controller
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::query()->findOrFail($id);
-
-        if ($request->user() !== null && $request->user()->cant("patch", $model)) {
-            throw new Http401UnauthorizedException([
-                "model_class" => $this->modelClass
-            ], "Failed to pass patch policy");
-        }
+        $this->canOrFail($request, "patch", $this->modelClass);
 
         $model->update($request->all());
 
@@ -164,8 +174,8 @@ abstract class BaseController extends Controller
     /**
      * Generic delete action.
      *
-     * @param Request $request The request
-     * @param int $id
+     * @param Request $request The Illuminate HTTP request.
+     * @param int $id The model id.
      *
      * @return JsonResponse
      * @throws Exception
@@ -177,12 +187,7 @@ abstract class BaseController extends Controller
         /** @var BaseModel $model */
         $model = $this->modelClass::query()->findOrFail($id);
 
-        if ($request->user() !== null && $request->user()->cant("delete", $model)) {
-            throw new Http401UnauthorizedException([
-                "model_class" => $this->modelClass
-            ], "Failed to pass delete policy");
-        }
-
+        $this->canOrFail($request, "delete", $this->modelClass);
         $model->delete();
 
         return new JsonResponse([
@@ -193,45 +198,25 @@ abstract class BaseController extends Controller
 
 
     /**
-     * Get the models which satisfy a given relation.
+     * Generic relation action.
      *
-     * @param Request $request The request
-     * @param string $what the linked model
-     * @param int $id the linked model id
-     * @param int $page the query page
-     * @param int $perPage the query per page
+     * @param Request $request The Illuminate HTTP request.
+     * @param string $relation The relation.
+     * @param int $id The model id.
+     * @param int $page The results page (starts at 0).
+     * @param int $perPage The number of related models per page.
      *
      * @return PaginationJsonResponse
-     * @throws Http400BadRequestException
      * @throws Http401UnauthorizedException
      */
-    public function by(Request $request, string $what, int $id, int $page = 0, int $perPage = 100):
-    PaginationJsonResponse
+    public function relation(Request $request, string $relation, int $id, int $page, int $perPage): PaginationJsonResponse
     {
-        /** @var BaseModel $relatedModelClass */
-        $relatedModelName = Str::ucfirst($what);
-        $relatedModelClass = ClassResolver::getModelClass($relatedModelName);
-
-        if (!class_exists($relatedModelClass)) {
-            throw new Http400BadRequestException([], "$relatedModelClass does not exists.");
-        }
-
         /** @var BaseModel $model */
-        $model = $relatedModelClass::query()->findOrFail($id);
+        $model = $this->modelClass::query()->findOrFail($id);
 
-        $potentialRelation = Str::lower($this->modelClass::getTableName());
+        $this->canOrFail($request, "delete", $this->modelClass);
+        $related = $model->{$relation}();
 
-        if (!method_exists($model, $potentialRelation)) {
-            throw new Http400BadRequestException("$relatedModelClass::$potentialRelation() does not exist");
-        }
-
-        if ($request->user() !== null && $request->user()->cant("by$relatedModelName", $this->modelClass)) {
-            throw new Http401UnauthorizedException([
-                "model_class" => $this->modelClass
-            ], "Failed to pass by$relatedModelName policy");
-        }
-
-        $query = $model->{$potentialRelation}();
-        return new PaginationJsonResponse($query, $page, $perPage);
+        return new PaginationJsonResponse($related, $page, $perPage);
     }
 }
