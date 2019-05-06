@@ -84,7 +84,7 @@ abstract class BaseRegistrar
                 default:
                     if (Str::start($key, "related:")) {
                         $relation = str_replace("related:", "", $key);
-                        $this->get("$base/$relation/{page:\d+}/{perPage:[1-9]\d*}", [
+                        $this->get("$base/{{$singular}Id:[1-9]\d*}/$relation/{page:\d+}/{perPage:[1-9]\d*}", [
                             "uses" => "$controller@$relation",
                             "middleware" => $middleware ?? null
                         ]);
