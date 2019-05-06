@@ -39,7 +39,8 @@ trait RESTRelationTrait
         $this->requestModel = $this->modelClass::query()
             ->inRandomOrder()
             ->has($relation)
-            ->where($conditions);
+            ->where($conditions)
+            ->firstOrFail();
 
         [$page, $perPage] = $this->getPaginationParameters($options);
         $uri = "/{$this->baseUri}/{$this->requestModel->id}/$relation/$page/$perPage";
