@@ -3,6 +3,8 @@
 namespace Mathrix\Lumen\Tests\Traits;
 
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 use Mathrix\Lumen\Bases\BaseModel;
 
 /**
@@ -15,41 +17,55 @@ use Mathrix\Lumen\Bases\BaseModel;
 trait DatabaseTrait
 {
     /**
-     * Assert that dataset exists in the database.
+     * Make a database builder for database existence tests.
      * @param string $table The table where the dataset should be located
      * @param BaseModel|array $data The data
      * @param null $onConnection The database connection
+     * @return Builder
      */
-    public function assertInDatabase(string $table, $data, $onConnection = null)
+    protected function makeBuilder(string $table, $data, $onConnection = null)
     {
-        $this->seeInDatabase($table, $this->castToDatabase($data), $onConnection);
+        $builder = DB::connection($onConnection)->table($table);
+
+        foreach ($data as $key => $value) {
+            if ($value instanceof Carbon) {
+                $builder = $builder->where($key, "=", $value->format("Y-m-d H:i:s"));
+            } else if (is_bool($value) && $value) {
+                $builder = $builder->where($key, "=", 1);
+            } else if (is_bool($value) && !$value) {
+                $builder = $builder->where($key, "=", 0);
+            } else if (is_array($value)) {
+                $builder = $builder->whereJsonContains($key, $value)
+                    ->whereJsonLength($key, count($value));
+            } else if (is_null($value)) {
+                $builder = $builder->whereNull($key);
+            } else {
+                $builder = $builder->where($key, "=", $value);
+            }
+        }
+
+        return $builder;
     }
 
 
     /**
-     * Cast data to database format
-     * @param BaseModel|array $data
-     * @return array
+     * Assert that dataset exists in the database.
+     * @param string $table The table where the dataset should be located
+     * @param BaseModel|array $data The data
+     * @param null $onConnection The database connection
+     * @return self
      */
-    protected function castToDatabase($data): array
+    public function assertInDatabase(string $table, $data, $onConnection = null)
     {
-        if ($data instanceof BaseModel) {
-            $data = $data->toArray();
-        }
+        $count = $this->makeBuilder($table, $data, $onConnection)->count();
+        $this->assertGreaterThan(
+            0,
+            $count,
+            "Unable to find row in database table [$table] that matched attributes.\nSubmitted data:\n"
+            . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        );
 
-        foreach ($data as $k => $v) {
-            if ($v instanceof Carbon) {
-                $data[$k] = $v->format("Y-m-d H:i:s");
-            } elseif (is_array($v)) {
-                $data[$k] = json_encode($v);
-            } elseif (is_bool($v) && $v) {
-                $data[$k] = 1;
-            } elseif (is_bool($v) && !$v) {
-                $data[$k] = 0;
-            }
-        }
-
-        return $data;
+        return $this;
     }
 
 
@@ -58,9 +74,18 @@ trait DatabaseTrait
      * @param string $table The table where the dataset should be located
      * @param BaseModel|array $data The data
      * @param null $onConnection The database connection
+     * @return self
      */
     public function assertNotInDatabase(string $table, $data, $onConnection = null)
     {
-        $this->missingFromDatabase($table, $this->castToDatabase($data), $onConnection);
+        $count = $this->makeBuilder($table, $data, $onConnection)->count();
+        $this->assertEquals(
+            0,
+            $count,
+            "Found $count unexpected row in database table [$table] that matched attributes.\nSubmitted data:\n"
+            . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        );
+
+        return $this;
     }
 }

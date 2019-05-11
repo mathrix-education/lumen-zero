@@ -36,23 +36,24 @@ trait RESTTrait
     protected $factory = null;
     /** @var string The models namespace */
     protected $modelsNamespace = "App\\Models";
-    /** @var $modelName string */
+    /** @var string $modelName */
     protected $modelName = null;
-    /** @var $modelClass BaseModel */
+    /** @var BaseModel|string $modelClass */
     protected $modelClass = null;
-    /** @var string The Model table */
+    /** @var string $table The Model table. */
     protected $table = null;
-    /** @var string The Model base uri; by default its table name */
+    /** @var string The Model base uri; by default its table name. */
     protected $baseUri = null;
-    /** @var BaseModel The request model (used in get, patch and delete) */
+    /** @var BaseModel The request model (used in get, patch and delete). */
     protected $requestModel = null;
+    /** @var array exceptFactoryFields Field to ignore from the model factory. */
+    protected $exceptFactoryFields = ["created_at", "updated_at"];
     /** @var array The data before the request is sent. */
     protected $beforeRequestData = [];
     /** @var array The data after the request has been sent. */
     protected $afterRequestData = [];
-
+    /** @var bool $openApi If the application uses OpenAPI specification. */
     protected $openApi = true;
-
     /** @var array The event handlers. */
     protected $handlers = [];
 
@@ -62,7 +63,7 @@ trait RESTTrait
      */
     public function initializeREST(): void
     {
-        $this->factory = app("Illuminate\Database\Eloquent\Factory");
+        $this->factory = app(Factory::class);
         $this->discover();
 
         $this->handler("before.json", function (string $method, string $uri) {
@@ -172,16 +173,9 @@ trait RESTTrait
             return array_replace_recursive($data, $override);
         } else if (is_callable($override)) {
             return $override($data);
+        } else if (!empty($this->ignoreFactoryFields)) {
+            return Arr::except($data, $this->ignoreFactoryFields);
         } else {
-            // Override is not defined, we can safely remove created_at and updated_at
-            if (isset($data["created_at"])) {
-                unset($data["created_at"]);
-            }
-
-            if (isset($data["updated_at"])) {
-                unset($data["updated_at"]);
-            }
-
             return $data;
         }
     }
