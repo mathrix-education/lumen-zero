@@ -7,6 +7,7 @@ use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\FactoryBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
 use Mathrix\Lumen\Bases\BaseModel;
 use Mathrix\Lumen\Tests\OpenAPI\OpenAPITrait;
@@ -173,8 +174,8 @@ trait RESTTrait
             return array_replace_recursive($data, $override);
         } else if (is_callable($override)) {
             return $override($data);
-        } else if (!empty($this->ignoreFactoryFields)) {
-            return Arr::except($data, $this->ignoreFactoryFields);
+        } else if (!empty($this->exceptFactoryFields)) {
+            return Arr::except($data, $this->exceptFactoryFields);
         } else {
             return $data;
         }
