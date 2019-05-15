@@ -1,12 +1,11 @@
 <?php
 
-namespace Mathrix\Lumen\Bases;
+namespace Mathrix\Lumen\Zero\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Mathrix\Lumen\Models\Traits\HasValidator;
+use Mathrix\Lumen\Zero\Models\Traits\HasValidator;
 
 /**
  * Class BaseModel.
@@ -15,12 +14,12 @@ use Mathrix\Lumen\Models\Traits\HasValidator;
  * @author Mathieu Bour <mathieu@mathrix.fr>
  * @copyright Mathrix Education SA.
  * @since 1.0.0
- *
- * @property int|mixed $id
  */
 abstract class BaseModel extends Model
 {
     use HasValidator;
+
+    protected $aliases = [];
 
 
     /**
@@ -35,11 +34,46 @@ abstract class BaseModel extends Model
 
 
     /**
+     * Handle aliases.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getAttribute($key)
+    {
+        if (isset($this->aliases[$key])) {
+            return parent::getAttribute($this->aliases[$key]);
+        } else {
+            return parent::getAttribute($key);
+        }
+    }
+
+
+    /**
+     * Handle aliases.
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    public function setAttribute($key, $value): void
+    {
+        if (isset($this->aliases[$key])) {
+            parent::setAttribute($this->aliases[$key], $value);
+        } else {
+            parent::setAttribute($key, $value);
+        }
+    }
+
+
+    /**
      * Get a random model from the database.
      *
      * @param array $conditions The conditions
      *
-     * @return Builder|BaseModel|Model|static
+     * @return self
      */
     public static function random($conditions = [])
     {
@@ -53,7 +87,29 @@ abstract class BaseModel extends Model
             $query = $query->where($conditions);
         }
 
-        return $query->firstOrFail();
+        /** @var self $model */
+        $model = $query->firstOrFail();
+
+        return $model;
+    }
+
+
+    /**
+     * Shortcut for self::query()->where($key, "=", $value)->firstOrFail()
+     *
+     * @param string $key The column key
+     * @param mixed $value The column value
+     *
+     * @return self
+     */
+    public static function findByOrFail(string $key, $value)
+    {
+        /** @var self $model */
+        $model = self::query()
+            ->where($key, "=", $value)
+            ->firstOrFail();
+
+        return $model;
     }
 
 
@@ -61,6 +117,7 @@ abstract class BaseModel extends Model
      * Set default date format to be in compliance with the OpenAPI date-time format.
      *
      * @param DateTimeInterface $date The DateTimeInterface.
+     *
      * @return string The serialized date.
      *
      * @link https://swagger.io/docs/specification/data-models/data-types/#string

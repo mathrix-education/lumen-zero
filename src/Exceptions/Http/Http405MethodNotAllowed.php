@@ -1,8 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\exceptions\standard;
-
-use Mathrix\Lumen\Exceptions\Http\HttpException;
+namespace Mathrix\Lumen\Zero\Exceptions\Http;
 
 /**
  * Class Http405MethodNotAllowed.

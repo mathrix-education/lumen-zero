@@ -2,7 +2,7 @@
 
 namespace Mathrix\Lumen\unit\Exceptions\Http;
 
-use Mathrix\Lumen\Exceptions\Http\HttpException;
+use Mathrix\Lumen\Zero\Exceptions\Http\HttpException;
 use PHPUnit\Framework\TestCase;
 
 /**

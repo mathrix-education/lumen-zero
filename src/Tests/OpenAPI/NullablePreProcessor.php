@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Tests\OpenAPI;
+namespace Mathrix\Lumen\Zero\Tests\OpenAPI;
 
 use Illuminate\Support\Arr;
 use stdClass;

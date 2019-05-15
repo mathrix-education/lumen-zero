@@ -1,15 +1,17 @@
 <?php
 
-namespace Mathrix\Lumen\Bases;
+namespace Mathrix\Lumen\Zero\Database;
 
-use Faker\Factory;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Mathrix\Lumen\Zero\Models\BaseModel;
 
 /**
  * Class BaseTableSeeder.
@@ -239,6 +241,8 @@ class BaseTableSeeder extends Seeder
      * @param BaseModel|string $modelClass2 the model class to use and link
      * @param int $min the minimum relations
      * @param int $max the maximum relations
+     *
+     * @throws Exception
      */
     public function linkAll($modelClass1, $modelClass2, $min = 3, $max = 5)
     {
@@ -255,11 +259,11 @@ class BaseTableSeeder extends Seeder
      * @param int $min the minimum relations
      * @param int $max the maximum relations
      * @param callable $callback
+     *
+     * @throws Exception
      */
     public function link($modelClass1, $modelClass2, $min = 3, $max = 5, callable $callback = null)
     {
-        $faker = Factory::create();
-
         // Build all necessary variables (tables, ids...)
         $models1 = $modelClass1::all();
         $model1Table = $modelClass1::getTableName();
@@ -283,7 +287,7 @@ class BaseTableSeeder extends Seeder
         foreach ($models1 as $model1) {
             $model1Id = $model1->id;
 
-            $model2IdsToLinkWithModel1 = $faker->randomElements($model2Ids, $faker->numberBetween($min, $max));
+            $model2IdsToLinkWithModel1 = Arr::random($model2Ids, random_int($min, $max));
 
             foreach ($model2IdsToLinkWithModel1 as $order => $model2Id) {
                 if (is_callable($callback)) {

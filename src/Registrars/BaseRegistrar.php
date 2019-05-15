@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Bases;
+namespace Mathrix\Lumen\Zero\Registrars;
 
 use Illuminate\Support\Str;
 use Laravel\Lumen\Routing\Router;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Mathrix\Lumen\Tests\OpenAPI;
+namespace Mathrix\Lumen\Zero\Tests\OpenAPI;
 
 use Illuminate\Support\Str;
 use Laravel\Lumen\Application;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
-use Mathrix\Lumen\Tests\Traits\DispatcherTrait;
+use Mathrix\Lumen\Zero\Tests\Traits\DispatcherTrait;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\StreamInterface;
 use Rebilly\OpenAPI\PhpUnit\Asserts as RebillyOpenAPIAsserts;

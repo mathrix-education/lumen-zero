@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Bases;
+namespace Mathrix\Lumen\Zero\Events;
 
 use Illuminate\Queue\SerializesModels;
 

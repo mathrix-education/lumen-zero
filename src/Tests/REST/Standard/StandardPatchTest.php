@@ -1,8 +1,8 @@
 <?php
 
-namespace Mathrix\Lumen\Tests\REST\Standard;
+namespace Mathrix\Lumen\Zero\Tests\REST\Standard;
 
-use Mathrix\Lumen\Tests\REST\RESTTrait;
+use Mathrix\Lumen\Zero\Tests\REST\RESTTrait;
 
 /**
  * Trait StandardPatchTest.

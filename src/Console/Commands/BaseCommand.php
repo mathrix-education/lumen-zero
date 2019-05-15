@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Bases;
+namespace Mathrix\Lumen\Zero\Console\Commands;
 
 use Illuminate\Console\Command;
 
@@ -14,8 +14,11 @@ use Illuminate\Console\Command;
  */
 abstract class BaseCommand extends Command
 {
+    abstract function handle();
+
     /**
      * Print a success.
+     *
      * @param string $string
      * @param null $verbosity
      */
@@ -27,6 +30,7 @@ abstract class BaseCommand extends Command
 
     /**
      * Print an error, then exit.
+     *
      * @param string $string
      * @param null $verbosity
      * @param int $code The exit code (default to 1)
@@ -40,6 +44,7 @@ abstract class BaseCommand extends Command
 
     /**
      * Print a block in the console.
+     *
      * @param string $string
      * @param null $style
      * @param null $verbosity

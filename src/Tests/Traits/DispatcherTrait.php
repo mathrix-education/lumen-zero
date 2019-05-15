@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Tests\Traits;
+namespace Mathrix\Lumen\Zero\Tests\Traits;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;

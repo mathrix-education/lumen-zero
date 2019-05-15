@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Bases;
+namespace Mathrix\Lumen\Zero\Mails;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
  *
  * @author Mathieu Bour <mathieu@mathrix.fr>
  * @copyright Mathrix Education SA.
- * @since 1.0.0
+ * @since 2.0.0
  */
 abstract class BaseMail extends Mailable
 {

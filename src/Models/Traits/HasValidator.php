@@ -1,9 +1,9 @@
 <?php
 
-namespace Mathrix\Lumen\Models\Traits;
+namespace Mathrix\Lumen\Zero\Models\Traits;
 
 use Illuminate\Support\Facades\Validator;
-use Mathrix\Lumen\Exceptions\ValidationException;
+use Mathrix\Lumen\Zero\Exceptions\ValidationException;
 
 /**
  * Trait HasValidator.

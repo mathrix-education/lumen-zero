@@ -1,7 +1,7 @@
 {
   "name": "mathrix/lumen-zero",
   "description": "The main library for Mathrix Lumen REST APIs.",
-  "version": "1.1.8",
+  "version": "2.0.0-dev",
   "type": "library",
   "keywords": [
     "php",
@@ -28,27 +28,26 @@
     "php": ">=7.2",
     "ext-json": "*",
     "ext-pdo": "*",
-    "illuminate/mail": "^5.7",
-    "illuminate/notifications": "^5.7",
-    "laravel/lumen-framework": "5.7.*",
-    "symfony/yaml": "^4.2"
+    "haydenpierce/class-finder": "^0.3.1",
+    "illuminate/mail": "^5.8",
+    "illuminate/notifications": "^5.8",
+    "laravel/lumen-framework": "5.8.*"
   },
   "require-dev": {
-    "fzaninotto/faker": "~1.4",
-    "helmich/phpunit-json-assert": "^2.0",
     "nyholm/psr7": "^1.1",
     "phpunit/phpunit": "~7.0",
     "rebilly/openapi-php": "^0.6.0",
-    "symfony/psr-http-message-bridge": "^1.2"
+    "symfony/psr-http-message-bridge": "^1.2",
+    "symfony/yaml": "^4.2"
   },
   "autoload": {
     "psr-4": {
-      "Mathrix\\Lumen\\": "src"
+      "Mathrix\\Lumen\\Zero\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Mathrix\\Lumen\\": "tests"
+      "Mathrix\\Lumen\\Zero\\": "tests"
     }
   },
   "minimum-stability": "dev",

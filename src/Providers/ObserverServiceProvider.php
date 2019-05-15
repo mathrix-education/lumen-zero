@@ -1,12 +1,12 @@
 <?php
 
-namespace Mathrix\Lumen\Providers;
+namespace Mathrix\Lumen\Zero\Providers;
 
 use Exception;
+use HaydenPierce\ClassFinder\ClassFinder;
 use Illuminate\Support\ServiceProvider;
-use Mathrix\Lumen\Bases\BaseModel;
-use Mathrix\Lumen\Exceptions\ClassNotFoundException;
-use Mathrix\Lumen\Utils\ClassResolver;
+use Mathrix\Lumen\Zero\Models\BaseModel;
+use Mathrix\Lumen\Zero\Utils\ClassResolver;
 
 /**
  * Class ObserverServiceProvider.
@@ -24,29 +24,19 @@ class ObserverServiceProvider extends ServiceProvider
 
 
     /**
-     * Auto-discover observers based on the filename.
+     * Auto-assign observers.
      *
      * @throws Exception
      */
     public function boot()
     {
-        $observersDir = $this->app->basePath() . "/app/Observers";
-        $observerFiles = glob($observersDir . DIRECTORY_SEPARATOR . "*.php");
+        $observers = ClassFinder::getClassesInNamespace(ClassResolver::$ObserversNamespace);
+        foreach ($observers as $observerClass) {
+            /** @var BaseModel|null $modelClass */
+            $modelClass = ClassResolver::getModelClass($observerClass);
 
-        foreach ($observerFiles as $observerFile) {
-            $observerClass = ClassResolver::$ObserversNamespace . "\\" . mb_substr(basename($observerFile), 0, -4);
-
-            if (in_array($observerClass, self::$IgnoredObservers)) {
-                continue;
-            }
-
-            /** @var string|BaseModel $modelClass */
-            $modelClass = ClassResolver::getModelClassFrom("Observer", $observerClass);
-
-            if (class_exists($modelClass)) {
+            if ($modelClass !== null && !in_array($observerClass, self::$IgnoredObservers)) {
                 $modelClass::observe($observerClass);
-            } else {
-                throw new ClassNotFoundException($modelClass);
             }
         }
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Exceptions\Http;
+namespace Mathrix\Lumen\Zero\Exceptions\Http;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -68,11 +68,13 @@ abstract class HttpException extends Exception
      * - ProductAlreadyBoughtException => ProductAlreadyBought
      *
      * @param string|null $name
+     *
      * @return string
      */
     public function getError(?string $name = null): string
     {
         $name = $name ?: class_basename($this);
+
         return preg_replace("/(?:Http[0-9]{3})?([A-Za-z]+)Exception/", "$1", $name);
     }
 

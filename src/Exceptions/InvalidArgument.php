@@ -1,8 +1,8 @@
 <?php
 
-namespace Mathrix\Lumen\Exceptions;
+namespace Mathrix\Lumen\Zero\Exceptions;
 
-use Mathrix\Lumen\Exceptions\Http\Http500InternalServerErrorException;
+use Mathrix\Lumen\Zero\Exceptions\Http\Http500InternalServerErrorException;
 
 /**
  * Class InvalidArgument.

@@ -1,11 +1,11 @@
 <?php
 
-namespace Mathrix\Lumen\Tests\Traits;
+namespace Mathrix\Lumen\Zero\Tests\Traits;
 
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
-use Mathrix\Lumen\Bases\BaseModel;
+use Mathrix\Lumen\Zero\Events\BaseModel;
 
 /**
  * Trait DatabaseTrait.

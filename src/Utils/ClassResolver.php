@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Utils;
+namespace Mathrix\Lumen\Zero\Utils;
 
 use Illuminate\Support\Str;
 
@@ -21,45 +21,28 @@ class ClassResolver
     public static $PoliciesNamespace = "App\\Policies";
     /** @var string $RegistrarNamespace The registrars namespace. */
     public static $RegistrarNamespace = "App\\Registrars";
+    /** @var array $KnownCallers The possible callers. */
+    public static $KnownCallers = ["Controller", "Policy", "Test"];
 
 
     /**
-     * Get then base class name from full class name.
-     * @param string $fullClass
-     * @return string
-     */
-    public static function baseClassName(string $fullClass): string
-    {
-        $parts = explode("\\", $fullClass);
-        $className = array_pop($parts);
-        return $className;
-    }
-
-
-    /**
-     * Get model full class name
+     * Get the model associated with a given class.
+     * @param string|object $callerClass The caller class
+     * @param bool $force If set to true, return the model class i=even if does not exist.
      *
-     * @param string $modelName
-     * @return string
+     * @return string|null The full model class if found, null otherwise.
      */
-    public static function getModelClass(string $modelName): string
+    public static function getModelClass($callerClass, $force = false): ?string
     {
-        return self::$ModelsNamespace . "\\" . Str::ucfirst($modelName);
-    }
+        $classBaseName = class_basename($callerClass);
+        $potentialModel = Str::singular(str_replace(self::$KnownCallers, "", $classBaseName));
+        $potentialModelClass = self::$ModelsNamespace . "\\" . $potentialModel;
+        $exists = class_exists($potentialModelClass);
 
-
-    /**
-     * Get the Model class from a full class.
-     *
-     * @param string $type
-     * @param string $fullClass
-     * @return string
-     */
-    public static function getModelClassFrom(string $type, string $fullClass)
-    {
-        $parts = explode("\\", $fullClass);
-        $className = array_pop($parts);
-        $modelName = Str::singular(str_replace($type, "", $className));
-        return self::$ModelsNamespace . "\\$modelName";
+        if ($force || $exists) {
+            return $potentialModelClass;
+        } else {
+            return null;
+        }
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Mathrix\Lumen\Tests\Traits;
+namespace Mathrix\Lumen\Zero\Tests\Traits;
 
 use Exception;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
-use Mathrix\Lumen\Tests\OpenAPI\OpenAPITrait;
+use Mathrix\Lumen\Zero\Tests\OpenAPI\OpenAPITrait;
 
 /**
  * Trait DebugTrait.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Tests\REST;
+namespace Mathrix\Lumen\Zero\Tests\REST;
 
 /**
  * Trait RESTPatchTrait.

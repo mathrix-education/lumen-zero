@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Tests\REST;
+namespace Mathrix\Lumen\Zero\Tests\REST;
 
 use Closure;
 use Faker\Generator;
@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\FactoryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
-use Mathrix\Lumen\Bases\BaseModel;
-use Mathrix\Lumen\Tests\OpenAPI\OpenAPITrait;
-use Mathrix\Lumen\Tests\Traits\DatabaseTrait;
-use Mathrix\Lumen\Tests\Traits\JsonResponseTrait;
-use Mathrix\Lumen\Utils\ClassResolver;
+use Mathrix\Lumen\Zero\Events\BaseModel;
+use Mathrix\Lumen\Zero\Tests\OpenAPI\OpenAPITrait;
+use Mathrix\Lumen\Zero\Tests\Traits\DatabaseTrait;
+use Mathrix\Lumen\Zero\Tests\Traits\JsonResponseTrait;
+use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use PHPUnit\Framework\Assert;
 
 /**

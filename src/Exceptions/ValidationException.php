@@ -1,8 +1,8 @@
 <?php
 
-namespace Mathrix\Lumen\Exceptions;
+namespace Mathrix\Lumen\Zero\Exceptions;
 
-use Mathrix\Lumen\Exceptions\Http\Http422UnprocessableEntityException;
+use Mathrix\Lumen\Zero\Exceptions\Http\Http422UnprocessableEntityException;
 
 /**
  * Class ValidationException.
