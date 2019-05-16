@@ -5,6 +5,7 @@ namespace Mathrix\Lumen\Zero\Testing\Traits;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\FactoryBuilder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
@@ -125,12 +126,16 @@ trait RESTTrait
      */
     public function makeRESTJsonRequest(string $key, $before = null, $after = null, $options = [])
     {
-        [$method, $uri] = RESTUtils::resolve($this->modelClass, $key);
+        [$method, $uri, $field] = RESTUtils::resolve($this->modelClass, $key);
         $uri = "/" . ltrim($uri, "/"); // Be sure to prepend $uri by a slash
 
         if (in_array($method, ["get", "patch", "delete"])) {
             // Set the request model
             $this->requestModel = $this->modelClass::random($options["conditions"] ?? []);
+
+            $placeholder = "{" . lcfirst(class_basename($this->modelClass)) . Str::ucfirst($field) . "}";
+            $identifier = $this->requestModel->{$field};
+            $uri = str_replace($placeholder, $identifier, $uri);
         }
 
         if (in_array($method, ["post", "patch"])) {
