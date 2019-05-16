@@ -126,6 +126,7 @@ trait RESTTrait
     public function makeRESTJsonRequest(string $key, $before = null, $after = null, $options = [])
     {
         [$method, $uri] = RESTUtils::resolve($this->modelClass, $key);
+        $uri = "/" . ltrim($uri, "/"); // Be sure to prepend $uri by a slash
 
         if (in_array($method, ["get", "patch", "delete"])) {
             // Set the request model
@@ -144,7 +145,7 @@ trait RESTTrait
         $this->event("before.json", $method, $uri);
         $this->json($method, $uri, $this->beforeRequestData ?? []);
         $this->event("after.json", $method, $uri);
-        
+
         // Make assertions
         $this->event("before.assertions");
         if (in_array($method, ["post", "patch"])) {
