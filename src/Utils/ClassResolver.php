@@ -23,8 +23,6 @@ class ClassResolver
     public static $PoliciesNamespace = "App\\Policies";
     /** @var string $RegistrarNamespace The registrars namespace. */
     public static $RegistrarNamespace = "App\\Registrars";
-    /** @var array $KnownCallers The possible callers. */
-    public static $KnownCallers = ["Controller", "Policy", "Test", "Registrar"];
 
 
     /**
@@ -37,9 +35,11 @@ class ClassResolver
      */
     public static function getModelClass($callerClass, $force = false): ?string
     {
-        $classBaseName = class_basename($callerClass);
-        $potentialModel = Str::singular(str_replace(self::$KnownCallers, "", $classBaseName));
-        $potentialModelClass = self::$ModelsNamespace . "\\" . $potentialModel;
+        $snakedClass = Str::snake(class_basename($callerClass));
+        $parts = explode("_", $snakedClass);
+        $potentialModel = Str::singular(Str::ucfirst($parts[0]));
+        $potentialModelClass = self::$ModelsNamespace . "\\$potentialModel";
+
         $exists = class_exists($potentialModelClass);
 
         if ($force || $exists) {

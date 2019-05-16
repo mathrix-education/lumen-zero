@@ -2,9 +2,9 @@
 
 namespace Mathrix\Lumen\Controllers\Traits;
 
-use Illuminate\Support\Collection;
 use Mathrix\Lumen\Zero\Controllers\Traits\HasAbilities;
-use Mathrix\Lumen\Zero\Tests\Traits\ReflectorTrait;
+use Mathrix\Lumen\Zero\Testing\DataProvider;
+use Mathrix\Lumen\Zero\Testing\Traits\ReflectorTrait;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
@@ -22,7 +22,7 @@ class HasAbilitiesTest extends TestCase
 
     public function getAbilityDataProvider()
     {
-        return Collection::make([
+        return DataProvider::makeDataProvider([
             "index" => ["index", "standard"],
             "get" => ["get", "standard"],
             "patch" => ["patch", "standard"],
@@ -33,11 +33,7 @@ class HasAbilitiesTest extends TestCase
             "getApplesBySlug" => ["get", "relation", "slug", "apples"],
             "patchApples" => ["patch", "relation", "id", "apples"],
             "patchApplesBySlug" => ["patch", "relation", "slug", "apples"]
-        ])
-            ->mapWithKeys(function ($args, $expected) {
-                return [$expected => array_merge([$expected], $args)];
-            })
-            ->toArray();
+        ]);
     }
 
 

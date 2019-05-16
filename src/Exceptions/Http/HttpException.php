@@ -11,7 +11,7 @@ use Throwable;
  * Class HttpException.
  * Define the HTTP Exceptions basics.
  *
- * @see https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+ * @link https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
  *
  * @author Mathieu Bour <mathieu@mathrix.fr>
  * @copyright Mathrix Education SA.

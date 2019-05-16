@@ -1,16 +1,13 @@
 <?php
 
-namespace Mathrix\Lumen\Zero\Testing\OpenAPI;
+namespace Mathrix\Lumen\Zero\Testing\Traits;
 
 use Illuminate\Support\Str;
 use Laravel\Lumen\Application;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
-use Mathrix\Lumen\Zero\Testing\Traits\DispatcherTrait;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Http\Message\StreamInterface;
 use Rebilly\OpenAPI\PhpUnit\Asserts as RebillyOpenAPIAsserts;
 use Rebilly\OpenAPI\Schema;
-use stdClass;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
 /**
@@ -44,7 +41,7 @@ trait OpenAPITrait
     /**
      * Boot the OpenAPI trait.
      */
-    protected static function bootOpenAPI(): void
+    protected static function bootOpenAPITrait(): void
     {
         self::$schema = new Schema(OpenAPITrait::$SpecPath);
     }
@@ -110,72 +107,4 @@ trait OpenAPITrait
 
         return $result;
     }
-
-
-    /**
-     * Overridden assertion in order to support the nullable property.
-     *
-     * @param Schema $schema
-     * @param string $path
-     * @param string $method
-     * @param StreamInterface|null $body
-     * @param string $msg
-     *
-     * @see RebillyOpenAPIAsserts::assertResponseBody
-     */
-    /*protected static function assertRequestBody(Schema $schema, string $path, string $method,
-                                                StreamInterface $body = null, string $msg = ""): void
-    {
-        $bodySchema = self::preProcessSchema($schema->getRequestBodySchema($path, strtolower($method)));
-
-        if ($bodySchema) {
-            Assert::assertThat(
-                json_decode($body),
-                new JsonSchemaConstraint($bodySchema, "request body"),
-                $msg
-            );
-        } else {
-            Assert::assertEmpty(json_decode($body), $msg);
-        }
-    }*/
-
-
-    /**
-     * Transform schema to match Json Schema specification.
-     *
-     * @param stdClass|null $schema The schema to pre-process.
-     *
-     * @return stdClass|null The processed schema.
-     */
-    /*protected static function preProcessSchema(?stdClass $schema): ?stdClass
-    {
-        return (new NullablePreProcessor())->transform($schema);
-    }*/
-
-
-    /**
-     * Overridden assertion in order to support the nullable property.
-     *
-     * @param Schema $schema
-     * @param string $path
-     * @param string $method
-     * @param string $status
-     * @param StreamInterface|null $body
-     * @param string $msg
-     */
-    /*protected static function assertResponseBody(Schema $schema, string $path, string $method, string $status,
-                                                 StreamInterface $body = null, string $msg = ""): void
-    {
-        $bodySchema = self::preProcessSchema($schema->getResponseBodySchema($path, strtolower($method), $status));
-
-        if ($bodySchema) {
-            Assert::assertThat(
-                json_decode($body),
-                new JsonSchemaConstraint($bodySchema, "response body"),
-                $msg
-            );
-        } else {
-            Assert::assertEmpty(json_decode($body), $msg);
-        }
-    }*/
 }

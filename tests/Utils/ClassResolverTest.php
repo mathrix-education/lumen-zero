@@ -1,6 +1,8 @@
 <?php
 
-use Mathrix\Lumen\Zero\Utils\ClassResolver;
+namespace Mathrix\Lumen\Zero\Utils;
+
+use Mathrix\Lumen\Zero\Testing\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 
@@ -13,22 +15,27 @@ use PHPUnit\Framework\TestCase;
  */
 class ClassResolverTest extends TestCase
 {
-    /**
-     * @covers \Mathrix\Lumen\Utils\ClassResolver::getModelClass
-     */
-    public function testGetModelClass()
+    public function getModelClassDataProvider(): array
     {
-        $samples = [
-            ["Cake", false, null],
-            ["Cake", true, "App\\Models\\Cake"],
-            ["App\\Controllers\\CakesController", true, "App\\Models\\Cake"],
-            ["Tests\\API\\CakesTest", true, "App\\Models\\Cake"],
-            [$this, true, "App\\Models\\ClassResolver"]
-        ];
+        return DataProvider::makeDataProvider([
+            "App\\Models\\Cake" => "App\\Controllers\\CakesController",
+            "App\\Models\\Card" => "App\\Observers\\CardsController",
+            "App\\Models\\Apple" => "App\\Policies\\ApplePolicy",
+            "App\\Models\\Banana" => "Tests\\API\\BananasTest",
+            "App\\Models\\User" => "Tests\\API\\UsersLoginTest"
+        ]);
+    }
 
-        foreach ($samples as $sample) {
-            [$class, $force, $expected] = $sample;
-            $this->assertEquals($expected, ClassResolver::getModelClass($class, $force));
-        }
+
+    /**
+     * @param string $expected
+     * @param string $caller
+     *
+     * @dataProvider getModelClassDataProvider
+     * @covers       \Mathrix\Lumen\Zero\Utils\ClassResolver::getModelClass
+     */
+    public function testGetModelClass(string $expected, string $caller)
+    {
+        $this->assertEquals($expected, ClassResolver::getModelClass($caller, true));
     }
 }

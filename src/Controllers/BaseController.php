@@ -17,6 +17,7 @@ use Mathrix\Lumen\Zero\Controllers\Actions\StandardPost;
 use Mathrix\Lumen\Zero\Controllers\Traits\HasAbilities;
 use Mathrix\Lumen\Zero\Controllers\Traits\HasRequestValidator;
 use Mathrix\Lumen\Zero\Exceptions\Http\Http400BadRequestException;
+use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use ReflectionException;
 
@@ -34,7 +35,7 @@ abstract class BaseController extends LumenController
 
     /** @var Request $request The Illuminate HTTP request */
     protected $request;
-    /** @var string|null The associated model class. */
+    /** @var BaseModel The associated model class. */
     protected $modelClass = null;
 
 

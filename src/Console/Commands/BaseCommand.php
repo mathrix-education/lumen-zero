@@ -14,7 +14,7 @@ use Illuminate\Console\Command;
  */
 abstract class BaseCommand extends Command
 {
-    abstract function handle();
+    abstract public function handle();
 
 
     /**

@@ -3,7 +3,10 @@
 namespace Mathrix\Lumen\Exceptions\Http;
 
 use Mathrix\Lumen\Zero\Exceptions\Http\HttpException;
+use Mathrix\Lumen\Zero\Testing\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 /**
  * Class HttpExceptionTest.
@@ -16,30 +19,27 @@ class HttpExceptionTest extends TestCase
 {
     public function getErrorDataProvider()
     {
-        return [
-            ["TooManyRequests", "Http429TooManyRequestsException"],
-            ["NotImplemented", "Http501NotImplementedException"],
-            ["ProductAlreadyBought", "ProductAlreadyBoughtException"]
-        ];
+        return DataProvider::makeDataProvider([
+            "TooManyRequests" => "Http429TooManyRequestsException",
+            "NotImplemented" => "Http501NotImplementedException",
+            "ProductAlreadyBought" => "ProductAlreadyBoughtException"
+        ]);
     }
 
 
     /**
-     * @dataProvider getErrorDataProvider
-     *
      * @param string $expected
      * @param string $vector
+     *
+     * @throws ReflectionException
+     *
+     * @dataProvider getErrorDataProvider
+     * @covers       \Mathrix\Lumen\Exceptions\Http\HttpException
      */
     public function testGetError(string $expected, string $vector)
     {
-        $this->assertEquals($expected, $this->getHttpException()->getError($vector));
-    }
-
-
-    public function getHttpException()
-    {
-        return new class() extends HttpException
-        {
-        };
+        /** @var MockObject|HttpException $subject */
+        $subject = $this->getMockForAbstractClass(HttpException::class);
+        $this->assertEquals($expected, $subject->getError($vector));
     }
 }

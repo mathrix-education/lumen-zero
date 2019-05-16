@@ -708,7 +708,6 @@ shot
 brush
 couple
 debate
-exit
 front
 lack
 living

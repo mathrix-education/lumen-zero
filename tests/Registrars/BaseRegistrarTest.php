@@ -5,7 +5,7 @@ namespace Mathrix\Lumen\Zero\Registrars;
 use Illuminate\Support\Collection;
 use Laravel\Lumen\Routing\Router;
 use Mathrix\Lumen\Zero\Testing\ModelMockFactory;
-use Mathrix\Lumen\Zero\Tests\Traits\ReflectorTrait;
+use Mathrix\Lumen\Zero\Testing\Traits\ReflectorTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;

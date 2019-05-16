@@ -19,6 +19,7 @@ abstract class BaseModel extends Model
 {
     use HasValidator;
 
+    /** @var array $aliases Aliases. */
     protected $aliases = [];
 
 
@@ -36,12 +37,21 @@ abstract class BaseModel extends Model
     /**
      * Get a random model from the database.
      *
-     * @param array $conditions The conditions
+     * @param array $args The where condition. Acceptable format:
+     * - ("key", "=", "value"),
+     * - (["key", "=", "value"])
+     * - ([["key1", "=", "value1"], ["key2", "=", "value2"]])
      *
-     * @return self
+     * @return static
      */
-    public static function random($conditions = [])
+    public static function random(...$args)
     {
+        if (count($args) === 3) {
+            $conditions = $args;
+        } else {
+            $conditions = empty($args) ? null : [$args];
+        }
+
         $query = self::query()->inRandomOrder();
 
         if (!empty($conditions)) {
@@ -65,7 +75,7 @@ abstract class BaseModel extends Model
      * @param string $key The column key
      * @param mixed $value The column value
      *
-     * @return self
+     * @return static
      */
     public static function findByOrFail(string $key, $value)
     {

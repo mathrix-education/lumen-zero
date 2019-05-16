@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Laravel\Lumen\Routing\Router;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
+use Mathrix\Lumen\Zero\Utils\RESTUtils;
 
 /**
  * Class BaseRegistrar.
@@ -68,63 +69,10 @@ abstract class BaseRegistrar
      */
     public function makeRESTRoute(string $key, $middleware = null)
     {
-        $singular = class_basename($this->modelClass);
-        $plural = Str::plural($singular);
-        $base = Str::lower($plural);
+        [$method, $uri] = RESTUtils::resolve($this->modelClass, $key);
+        $plural = Str::plural(class_basename($this->modelClass));
+
         $controller = ClassResolver::$ControllersNamespace . "\\{$plural}Controller";
-
-        /** @var BaseModel $model */
-        $model = new $this->modelClass();
-
-        $keyParts = explode(":", $key);
-        [$type, $method] = $keyParts;
-        $field = null;
-        $relation = null;
-        $uri = null;
-
-        if ($type === "std") {
-            $field = $keyParts[2] ?? $model->getKeyName();
-            $relation = null;
-            $identifier = lcfirst($singular) . ucfirst($field);
-
-            switch ($method) {
-                case "index":
-                    $method = "get";
-                    $uri = $base;
-                    break;
-                case "post":
-                    $uri = $base;
-                    break;
-                case "get":
-                case "patch":
-                case "delete":
-                    if ($field === $model->getKeyName()) {
-                        $uri = "$base/{{$identifier}}";
-                    } else {
-                        $uri = "$base/$field/{{$identifier}}";
-                    }
-                    break;
-            }
-        } else if ($type === "rel") {
-            if (count($keyParts) === 3) {
-                // Key shape: rel:{method}:{relation}
-                $field = $model->getKeyName();
-                $relation = $keyParts[2];
-            } else if (count($keyParts) === 4) {
-                // Key shape: rel:{method}:{field}:{relation}
-                $field = $keyParts[2];
-                $relation = $keyParts[3];
-            }
-
-            $identifier = lcfirst($singular) . ucfirst($field);
-
-            // GET and PATCH only
-            if ($field === $model->getKeyName()) {
-                $uri = "$base/{{$identifier}}/$relation";
-            } else {
-                $uri = "$base/$field/{{$identifier}}/$relation";
-            }
-        }
 
         $this->{$method}($uri, [
             "uses" => $controller, // We will use $controller::_invoke();

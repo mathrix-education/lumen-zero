@@ -13,10 +13,9 @@ use Mathrix\Lumen\Zero\Utils\ClassResolver;
  * Class PolicyServiceProvider.
  * Automatically register policies.
  *
- * @author    Mathieu Bour <mathieu.tin.bour@gmail.com>
- * @since     1.0.1
- * @copyright Mathrix Education SA
- * @package   App\Providers
+ * @author Mathieu Bour <mathieu@mathrix.fr>
+ * @copyright Mathrix Education SA.
+ * @since 1.0.1
  */
 class PolicyServiceProvider extends ServiceProvider
 {

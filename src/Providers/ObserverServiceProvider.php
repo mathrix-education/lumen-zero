@@ -12,10 +12,9 @@ use Mathrix\Lumen\Zero\Utils\ClassResolver;
  * Class ObserverServiceProvider.
  * Provides all observers to the corresponding models.
  *
- * @author    Mathieu Bour <mathieu.tin.bour@gmail.com>
- * @since     1.0.0
- * @copyright Mathrix Education SA
- * @package   App\Providers
+ * @author Mathieu Bour <mathieu@mathrix.fr>
+ * @copyright Mathrix Education SA.
+ * @since 1.0.0
  */
 class ObserverServiceProvider extends ServiceProvider
 {
