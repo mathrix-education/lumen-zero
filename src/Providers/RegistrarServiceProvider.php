@@ -1,13 +1,13 @@
 <?php
 
-namespace Mathrix\Lumen\Providers;
+namespace Mathrix\Lumen\Zero\Providers;
 
 use Exception;
+use HaydenPierce\ClassFinder\ClassFinder;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
-use Mathrix\Lumen\Bases\BaseRegistrar;
-use Mathrix\Lumen\Exceptions\ClassNotFoundException;
-use Mathrix\Lumen\Utils\ClassResolver;
+use Mathrix\Lumen\Zero\Registrars\BaseRegistrar;
+use Mathrix\Lumen\Zero\Utils\ClassResolver;
 
 /**
  * Class RegistrarServiceProvider.
@@ -25,27 +25,18 @@ class RegistrarServiceProvider extends ServiceProvider
 
 
     /**
-     * Register all Registrars.
+     * Auto-register routes from registrars.
+     *
      * @throws Exception
      */
     public function register(): void
     {
-        $registrarsPath = $this->app->basePath() . "/app/Registrars";
-        $registrarFiles = glob($registrarsPath . DIRECTORY_SEPARATOR . "*.php");
-
-        foreach ($registrarFiles as $registrarFile) {
-            $registrarClass = ClassResolver::$RegistrarNamespace . "\\" . mb_substr(basename($registrarFile), 0, -4);
-
-            if (in_array($registrarClass, self::$IgnoredRegistrars)) {
-                continue;
-            }
-
-            if (class_exists($registrarClass)) {
-                /** @var string|BaseRegistrar $registrar */
+        $registrars = ClassFinder::getClassesInNamespace(ClassResolver::$RegistrarNamespace);
+        foreach ($registrars as $registrarClass) {
+            if (!in_array($registrarClass, self::$IgnoredRegistrars)) {
+                /** @var BaseRegistrar|string $registrar */
                 $registrar = new $registrarClass($this->app->router);
                 $registrar->register();
-            } else {
-                throw new ClassNotFoundException($registrarClass);
             }
         }
     }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Mathrix\Lumen\Models\Traits;
+namespace Mathrix\Lumen\Zero\Models\Traits;
 
 use Illuminate\Support\Facades\Validator;
-use Mathrix\Lumen\Exceptions\ValidationException;
+use Mathrix\Lumen\Zero\Exceptions\ValidationException;
 
 /**
  * Trait HasValidator.
@@ -33,6 +33,7 @@ trait HasValidator
 
     /**
      * Validate model data after attributes mutation.
+     *
      * @throws ValidationException
      */
     public function validate()
@@ -49,6 +50,7 @@ trait HasValidator
 
     /**
      * Get the validation data. May be overridden if the model requires specific logic.
+     *
      * @return array
      */
     protected function getValidationData()
@@ -57,12 +59,14 @@ trait HasValidator
         $this->setHidden([]);
         $data = $this->toArray();
         $this->setHidden($hidden);
+
         return $data;
     }
 
 
     /**
      * Get the validation rules. May be overridden if the model requires specific logic.
+     *
      * @return array
      */
     protected function getValidationRules()

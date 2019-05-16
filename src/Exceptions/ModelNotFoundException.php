@@ -1,8 +1,8 @@
 <?php
 
-namespace Mathrix\Lumen\Exceptions\Models\Models;
+namespace Mathrix\Lumen\Zero\Exceptions\Models\Models;
 
-use Mathrix\Lumen\Exceptions\Http\Http404NotFoundException;
+use Mathrix\Lumen\Zero\Exceptions\Http\Http404NotFoundException;
 
 /**
  * Class ModelNotFoundException.

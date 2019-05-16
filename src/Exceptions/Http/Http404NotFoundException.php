@@ -1,6 +1,6 @@
 <?php
 
-namespace Mathrix\Lumen\Exceptions\Http;
+namespace Mathrix\Lumen\Zero\Exceptions\Http;
 
 /**
  * Class Http404NotFoundException.
