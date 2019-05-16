@@ -53,7 +53,7 @@ abstract class BaseModel extends Model
         } else if (!empty($args)) {
             if (!is_array($args[0])) {
                 $conditions = [$args];
-            } else {
+            } else if (!empty($args[0])) {
                 $conditions = $args;
             }
         }
