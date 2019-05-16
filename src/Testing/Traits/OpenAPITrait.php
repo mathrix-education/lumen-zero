@@ -2,6 +2,7 @@
 
 namespace Mathrix\Lumen\Zero\Testing\Traits;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Lumen\Application;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
@@ -80,32 +81,39 @@ trait OpenAPITrait
     public function getOpenAPIUri(string $method, $actualUri)
     {
         $currentRouter = $this->dispatch($method, $actualUri);
-        $uses = $currentRouter[1]["uses"];
-        $routes = $this->app->router->getRoutes();
 
-        $methodUpper = strtoupper($method);
-        $uri = null;
+        $filteredRoutes = Collection::make($this->app->router->getRoutes())
+            // Reject routes which do not match the method
+            ->reject(function ($routeData, $routeKey) use ($method) {
+                return !Str::startsWith($routeKey, strtoupper($method));
+            })
+            // Reject routes which do not match the controller/action
+            ->reject(function ($routeData) use ($currentRouter) {
+                if (!isset($routeData["action"]["uses"])) {
+                    return true;
+                }
 
-        foreach ($routes as $route => $routeData) {
-            if (
-                Str::startsWith($route, $methodUpper)
-                && isset($routeData["action"]["uses"]) // Required for routes handled by a closure
-                && $routeData["action"]["uses"] === $uses
-            ) {
-                $uri = $routeData["uri"];
-                break;
-            }
-        }
+                return $currentRouter[1]["uses"] !== $routeData["action"]["uses"];
+            })
+            // Reject routes which does not have the same arguments
+            ->reject(function ($routeData, $routeKey) use ($currentRouter) {
+                $paramKeys = Collection::make(array_keys($currentRouter[2]))->map(function ($param) {
+                    return "{{$param}}";
+                });
 
-        // If we did not found the URI, return null.
-        if ($uri === null) {
+                return !Str::contains($routeKey, $paramKeys->toArray());
+            });
+
+        if ($filteredRoutes->isEmpty()) {
             return null;
         }
 
-        // We now need to remove the Regex from the uri
-        $pattern = '/{([a-zA-Z]+):[a-zA-Z0-9\/' . preg_quote("\\+-_[]*{}|.^") . ']+}/';
-        $result = preg_replace($pattern, '{$1}', $uri);
+        $uri = $filteredRoutes->first()["uri"];
 
-        return $result;
+        // Clean uri params regex
+        $pattern = '/{([a-zA-Z]+):[a-zA-Z0-9\/' . preg_quote("\\+-_[]*{}|.^") . ']+}/';
+        $openAPIUri = preg_replace($pattern, '{$1}', $uri);
+
+        return $openAPIUri;
     }
 }
