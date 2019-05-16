@@ -172,7 +172,7 @@ trait RESTTrait
         }
 
         $this->assertResponseOk();
-        $this->assertOpenAPIResponse();
+        $this->assertOpenAPIResponse($uri);
         $this->event("after.assertions");
     }
 }
