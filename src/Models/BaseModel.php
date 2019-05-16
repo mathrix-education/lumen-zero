@@ -49,7 +49,7 @@ abstract class BaseModel extends Model
         if (count($args) === 3) {
             $conditions = $args;
         } else {
-            $conditions = empty($args) ? null : [$args];
+            $conditions = empty($args) ? null : [$args[0]];
         }
 
         $query = self::query()->inRandomOrder();
