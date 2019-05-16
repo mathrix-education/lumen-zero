@@ -30,7 +30,7 @@ trait StandardDelete
      * @return JsonResponse
      * @throws Exception
      */
-    protected function standardDelete(Request $request, string $key, $value): JsonResponse
+    public function standardDelete(Request $request, string $key, $value): JsonResponse
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::findByOrFail($key, $value);
