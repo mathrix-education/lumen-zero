@@ -97,23 +97,22 @@ trait OpenAPITrait
             })
             // Reject routes which does not have the same arguments
             ->reject(function ($routeData, $routeKey) use ($currentRouter) {
+                $pattern = "/{([a-zA-Z]+):[a-zA-Z0-9\/\\\+\-_\[\]\*\{\}\|\.\^]+}/";
+                $strippedUri = preg_replace($pattern, '{$1}', $routeKey);
+
                 $paramKeys = Collection::make(array_keys($currentRouter[2]))->map(function ($param) {
                     return "{{$param}}";
                 });
 
-                return !Str::contains($routeKey, $paramKeys->toArray());
+                return !Str::contains($strippedUri, $paramKeys->toArray());
             });
 
         if ($filteredRoutes->isEmpty()) {
-            return null;
+            return $actualUri;
+        } else {
+            $match = $filteredRoutes->first();
+
+            return $match["uri"];
         }
-
-        $uri = $filteredRoutes->first()["uri"];
-
-        // Clean uri params regex
-        $pattern = '/{([a-zA-Z]+):[a-zA-Z0-9\/' . preg_quote("\\+-_[]*{}|.^") . ']+}/';
-        $openAPIUri = preg_replace($pattern, '{$1}', $uri);
-
-        return $openAPIUri;
     }
 }
