@@ -16,6 +16,7 @@ abstract class BaseCommand extends Command
 {
     abstract function handle();
 
+
     /**
      * Print a success.
      *

@@ -6,7 +6,7 @@ use Exception;
 use HaydenPierce\ClassFinder\ClassFinder;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
-use Mathrix\Lumen\Zero\Events\BaseRegistrar;
+use Mathrix\Lumen\Zero\Registrars\BaseRegistrar;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
 
 /**
@@ -34,7 +34,7 @@ class RegistrarServiceProvider extends ServiceProvider
         $registrars = ClassFinder::getClassesInNamespace(ClassResolver::$RegistrarNamespace);
         foreach ($registrars as $registrarClass) {
             if (!in_array($registrarClass, self::$IgnoredRegistrars)) {
-                /** @var string|BaseRegistrar $registrar */
+                /** @var BaseRegistrar|string $registrar */
                 $registrar = new $registrarClass($this->app->router);
                 $registrar->register();
             }

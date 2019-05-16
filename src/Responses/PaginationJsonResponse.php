@@ -26,6 +26,7 @@ class PaginationJsonResponse extends SuccessJsonResponse
      * @param int $status The HTTP status code (default 200).
      * @param array $headers The custom HTTP headers.
      * @param int $options The json_encode function options.
+     *
      * @throws Http400BadRequestException
      */
     public function __construct($query, $status = 200, $headers = [], $options = 0)
@@ -60,6 +61,7 @@ class PaginationJsonResponse extends SuccessJsonResponse
      *
      * @param Request|null $request The Illuminate HTTP request. If given, query string analysis will be executed on it
      * instead of the Container's one.
+     *
      * @return array
      */
     public static function getPagination(Request $request = null)

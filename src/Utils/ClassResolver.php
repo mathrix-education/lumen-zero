@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
  */
 class ClassResolver
 {
+    /** @var string $ControllersNamespace The controllers namespace. */
+    public static $ControllersNamespace = "App\\Controllers";
     /** @var string $ModelsNamespace The models namespace. */
     public static $ModelsNamespace = "App\\Models";
     /** @var string $ObserversNamespace The observers namespace. */
@@ -22,11 +24,12 @@ class ClassResolver
     /** @var string $RegistrarNamespace The registrars namespace. */
     public static $RegistrarNamespace = "App\\Registrars";
     /** @var array $KnownCallers The possible callers. */
-    public static $KnownCallers = ["Controller", "Policy", "Test"];
+    public static $KnownCallers = ["Controller", "Policy", "Test", "Registrar"];
 
 
     /**
      * Get the model associated with a given class.
+     *
      * @param string|object $callerClass The caller class
      * @param bool $force If set to true, return the model class i=even if does not exist.
      *

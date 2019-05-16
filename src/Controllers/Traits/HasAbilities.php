@@ -51,21 +51,6 @@ trait HasAbilities
 
 
     /**
-     * Check if the controller should use a policy for a given ability.
-     *
-     * @param string $ability The policy ability.
-     *
-     * @return bool
-     */
-    protected function shouldUsePolicy(string $ability): bool
-    {
-        $policyClass = Gate::getPolicyFor($this->modelClass);
-
-        return $policyClass !== null && method_exists($policyClass, $ability);
-    }
-
-
-    /**
      * Check if the Gate denies the request.
      *
      * @param Request $request
@@ -82,5 +67,20 @@ trait HasAbilities
                 "ability" => $ability
             ], "Failed to pass $ability policy");
         }
+    }
+
+
+    /**
+     * Check if the controller should use a policy for a given ability.
+     *
+     * @param string $ability The policy ability.
+     *
+     * @return bool
+     */
+    protected function shouldUsePolicy(string $ability): bool
+    {
+        $policyClass = Gate::getPolicyFor($this->modelClass);
+
+        return $policyClass !== null && method_exists($policyClass, $ability);
     }
 }

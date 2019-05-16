@@ -48,18 +48,6 @@ abstract class HttpException extends Exception
     }
 
 
-    public function __toString()
-    {
-        $body = [
-            "error" => $this->error,
-            "message" => !empty($this->message) ? $this->message : "No message given",
-            "data" => $this->data ?? []
-        ];
-
-        return json_encode($body, JSON_PRETTY_PRINT);
-    }
-
-
     /**
      * Get the exception error, extracted from the class name.
      * Examples:
@@ -76,6 +64,18 @@ abstract class HttpException extends Exception
         $name = $name ?: class_basename($this);
 
         return preg_replace("/(?:Http[0-9]{3})?([A-Za-z]+)Exception/", "$1", $name);
+    }
+
+
+    public function __toString()
+    {
+        $body = [
+            "error" => $this->error,
+            "message" => !empty($this->message) ? $this->message : "No message given",
+            "data" => $this->data ?? []
+        ];
+
+        return json_encode($body, JSON_PRETTY_PRINT);
     }
 
 

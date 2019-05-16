@@ -34,41 +34,6 @@ abstract class BaseModel extends Model
 
 
     /**
-     * Handle aliases.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getAttribute($key)
-    {
-        if (isset($this->aliases[$key])) {
-            return parent::getAttribute($this->aliases[$key]);
-        } else {
-            return parent::getAttribute($key);
-        }
-    }
-
-
-    /**
-     * Handle aliases.
-     *
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return mixed
-     */
-    public function setAttribute($key, $value): void
-    {
-        if (isset($this->aliases[$key])) {
-            parent::setAttribute($this->aliases[$key], $value);
-        } else {
-            parent::setAttribute($key, $value);
-        }
-    }
-
-
-    /**
      * Get a random model from the database.
      *
      * @param array $conditions The conditions
@@ -110,6 +75,41 @@ abstract class BaseModel extends Model
             ->firstOrFail();
 
         return $model;
+    }
+
+
+    /**
+     * Handle aliases.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getAttribute($key)
+    {
+        if (isset($this->aliases[$key])) {
+            return parent::getAttribute($this->aliases[$key]);
+        } else {
+            return parent::getAttribute($key);
+        }
+    }
+
+
+    /**
+     * Handle aliases.
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    public function setAttribute($key, $value): void
+    {
+        if (isset($this->aliases[$key])) {
+            parent::setAttribute($this->aliases[$key], $value);
+        } else {
+            parent::setAttribute($key, $value);
+        }
     }
 
 
