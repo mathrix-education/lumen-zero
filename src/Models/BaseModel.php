@@ -46,19 +46,19 @@ abstract class BaseModel extends Model
      */
     public static function random(...$args)
     {
-        if (count($args) === 3) {
-            $conditions = $args;
-        } else {
-            $conditions = empty($args) ? null : [$args[0]];
-        }
-
         $query = self::query()->inRandomOrder();
 
-        if (!empty($conditions)) {
-            if (!is_array($conditions[0])) {
-                $conditions = [$conditions];
+        if (count($args) === 3) {
+            $conditions = $args;
+        } else if (!empty($args)) {
+            if (!is_array($args[0])) {
+                $conditions = [$args];
+            } else {
+                $conditions = $args;
             }
+        }
 
+        if (!empty($conditions)) {
             $query = $query->where($conditions);
         }
 
