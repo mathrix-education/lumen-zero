@@ -5,6 +5,7 @@ namespace Mathrix\Lumen\Zero\Controllers\Actions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Mathrix\Lumen\Zero\Models\BaseModel;
+use Mathrix\Lumen\Zero\Responses\SuccessJsonResponse;
 
 /**
  * Class StandardGet.
@@ -33,6 +34,6 @@ trait StandardGet
         $ability = $this->getAbility("get", "standard", $key);
         $this->canOrFail($request, $ability, $model);
 
-        return new JsonResponse($model);
+        return new SuccessJsonResponse($model);
     }
 }

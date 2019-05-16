@@ -5,6 +5,7 @@ namespace Mathrix\Lumen\Zero\Controllers\Actions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Mathrix\Lumen\Zero\Models\BaseModel;
+use Mathrix\Lumen\Zero\Responses\SuccessJsonResponse;
 
 /**
  * Trait StandardPatch.
@@ -35,6 +36,6 @@ trait StandardPatch
 
         $model->update($request->all());
 
-        return new JsonResponse($model);
+        return new SuccessJsonResponse($model);
     }
 }

@@ -88,11 +88,12 @@ trait OpenAPITrait
 
         foreach ($routes as $route => $routeData) {
             if (
-                Str::start($route, $methodUpper)
+                Str::startsWith($route, $methodUpper)
                 && isset($routeData["action"]["uses"]) // Required for routes handled by a closure
                 && $routeData["action"]["uses"] === $uses
             ) {
                 $uri = $routeData["uri"];
+                break;
             }
         }
 
