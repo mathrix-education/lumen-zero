@@ -29,7 +29,7 @@ trait RelationGet
      * @return PaginationJsonResponse
      * @throws Http400BadRequestException
      */
-    public function getRelation(Request $request, string $key, int $identifier, string $relation): JsonResponse
+    public function relationGet(Request $request, string $key, int $identifier, string $relation): JsonResponse
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::findByOrFail($key, $identifier);

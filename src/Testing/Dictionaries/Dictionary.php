@@ -17,6 +17,8 @@ class Dictionary
 {
     /** @var array The loaded dictionaries. */
     private static $loaded = [];
+    /** @var array The loaded dictionaries unique values. */
+    private static $uniques = [];
     /** @var string The class dictionary. */
     private $dictionary;
 
@@ -42,9 +44,33 @@ class Dictionary
                 ->reject(function ($word) {
                     return empty($word);
                 });
+
+            self::$uniques[$this->dictionary] = [];
         }
 
         return $this;
+    }
+
+
+    /**
+     * Get a random dictionary value.
+     *
+     * @param bool $unique
+     *
+     * @return mixed
+     */
+    public function random(bool $unique = true)
+    {
+        if ($unique) {
+            do {
+                $val = self::$loaded[$this->dictionary]->random();
+            } while (in_array($val, self::$uniques[$this->dictionary]));
+
+            self::$uniques[$this->dictionary][] = $val;
+            return $val;
+        } else {
+            return self::$loaded[$this->dictionary]->random();
+        }
     }
 
 

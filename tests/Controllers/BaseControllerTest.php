@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Mathrix\Lumen\Zero\Controllers\BaseController;
+use Mathrix\Lumen\Zero\Testing\DataProvider;
 use Mathrix\Lumen\Zero\Testing\Dictionaries\Dictionary;
 use Mathrix\Lumen\Zero\Testing\ModelMockFactory;
 use Mathrix\Lumen\Zero\Testing\Traits\ReflectorTrait;
@@ -42,7 +43,7 @@ class BaseControllerTest extends TestCase
         $data = [
             [
                 ["standardIndex", []],
-                "get", "/fruits"
+                "get", "/bananas"
             ]
         ];
 
@@ -51,15 +52,15 @@ class BaseControllerTest extends TestCase
 
             $data[] = [
                 ["standard$Method", ["id", $id]],
-                $method, "/fruits/$id"
+                $method, "/bananas/$id"
             ];
             $data[] = [
                 ["standard$Method", ["uuid", $uuid]],
-                $method, "/fruits/$uuid", "uuid"
+                $method, "/bananas/$uuid", "uuid"
             ];
             $data[] = [
                 ["standard$Method", ["slug", $slug]],
-                $method, "/fruits/slug/$slug"
+                $method, "/bananas/slug/$slug"
             ];
         }
 
@@ -68,15 +69,15 @@ class BaseControllerTest extends TestCase
 
             $data[] = [
                 ["relation$Method", ["id", $id, $relation]],
-                $method, "/fruits/$id/$relation"
+                $method, "/bananas/$id/$relation"
             ];
             $data[] = [
                 ["relation$Method", ["uuid", $uuid, $relation]],
-                $method, "/fruits/$uuid/$relation", "uuid"
+                $method, "/bananas/$uuid/$relation", "uuid"
             ];
             $data[] = [
                 ["relation$Method", ["slug", $slug, $relation]],
-                $method, "/fruits/slug/$slug/$relation"
+                $method, "/bananas/slug/$slug/$relation"
             ];
         }
 
@@ -114,7 +115,7 @@ class BaseControllerTest extends TestCase
 
         $request = Request::create($uri, $method);
 
-        // Mock FruitController
+        // Mock BananaController
         $subject = $this->getMockForAbstractClass(
             BaseController::class,
             [],
@@ -129,5 +130,64 @@ class BaseControllerTest extends TestCase
         $args = $this->invoke($subject, "prepareRESTRequest", []);
 
         $this->assertEquals($expected, $args);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function actionDataProvider()
+    {
+        return DataProvider::makeDataProvider([
+            "standardIndex" => ["index", null, "standard", null],
+            "standardGet" => ["get", "id", "standard", null],
+            "standardPost" => ["post", "id", "standard", null],
+            "standardPatch" => ["patch", "id", "standard", null],
+            "standardDelete" => ["delete", "id", "standard", null],
+            "getBySlug" => ["get", "slug", "standard", null],
+            "patchBySlug" => ["patch", "slug", "standard", null],
+            "deleteBySlug" => ["delete", "slug", "standard", null],
+            "relationGet" => ["get", "id", "relation", "bananas"],
+            "relationPatch" => ["patch", "id", "relation", "bananas"],
+            "getBananasBySlug" => ["get", "slug", "relation", "bananas"],
+            "patchBananasBySlug" => ["patch", "slug", "relation", "bananas"]
+        ]);
+    }
+
+
+    /**
+     * @param string $expected
+     * @param string $method
+     * @param string $field
+     * @param string $type
+     * @param string $relation
+     *
+     * @throws ReflectionException
+     *
+     * @dataProvider actionDataProvider
+     * @covers       \Mathrix\Lumen\Zero\Controllers\BaseController::action
+     */
+    public function testAction(string $expected, string $method, ?string $field, string $type, ?string $relation)
+    {
+        $modelClass = ModelMockFactory::make()
+            ->setName()
+            ->setMethod("public", "getKeyName", "id")
+            ->setMethod("public", "brands", null)
+            ->compile()
+            ->exec()
+            ->getClass();
+
+        // Mock BananaController
+        /** @var MockObject|BaseController $subject */
+        $subject = $this->getMockBuilder(BaseController::class)
+            ->setMethods([$expected])
+            ->setConstructorArgs([])
+            ->getMockForAbstractClass();
+
+        // Force request
+        $this->set($subject, "modelClass", $modelClass);
+
+        $actual = $this->invoke($subject, "action", [$method, $field, $type, $relation]);
+        $this->assertEquals($expected, $actual);
     }
 }

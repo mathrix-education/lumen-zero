@@ -28,7 +28,7 @@ trait RelationPatch
      * @return PaginationJsonResponse
      * @throws Http400BadRequestException
      */
-    public function patchRelation(Request $request, string $key, int $identifier, string $relation): PaginationJsonResponse
+    public function relationPatch(Request $request, string $key, int $identifier, string $relation): PaginationJsonResponse
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::findByOrFail($key, $identifier);

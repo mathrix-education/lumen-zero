@@ -6,6 +6,7 @@ use Illuminate\Container\BoundMethod;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use Laravel\Lumen\Routing\Controller as LumenController;
 use Mathrix\Lumen\Zero\Controllers\Actions\RelationGet;
 use Mathrix\Lumen\Zero\Controllers\Actions\RelationPatch;
@@ -67,37 +68,74 @@ abstract class BaseController extends LumenController
      * @throws Http400BadRequestException
      * @throws ReflectionException
      */
-    public function __invoke(array $args)
+    public function __invoke(...$args)
     {
         $this->request = app()->make(Request::class);
 
-        [$action, $args] = $this->prepareRESTRequest();
+        [$action, $args] = $this->prepareRESTRequest(...$args);
 
         return BoundMethod::call(app(), [$this, $action], $args, null);
     }
 
 
     /**
+     * Get the action based on extracted request parameters.
+     *
+     * @param string $method The HTTP method.
+     * @param string $field The field selector, if any.
+     * @param string $type The request type (standard/relation)
+     * @param string $relation The relation, if any.
+     *
+     * @return string
+     */
+    protected function action(string $method, ?string $field, string $type, ?string $relation)
+    {
+        if ($field === with(new $this->modelClass)->getKeyName()) {
+            $selector = ""; // Silent field
+        } else {
+            $selector = "By" . Str::ucfirst($field);
+        }
+
+        $action = null;
+
+        if ($type === "standard") {
+            $action = "$method{$selector}";
+        } else if ($type === "relation") {
+            $action = $method . Str::ucfirst($relation) . $selector;
+        }
+
+        if ($action !== null && method_exists($this, $action)) {
+            return $action;
+        }
+
+        return $type . ucfirst($method); // Fallback
+    }
+
+
+    /**
      * Prepare REST request: make [$action, $args].
+     *
+     * @param array $args
      *
      * @return array
      * @throws Http400BadRequestException
      */
-    protected function prepareRESTRequest()
+    protected function prepareRESTRequest(...$args)
     {
-        $args = func_get_args();
         // We split the request using the '/' as delimiter
         $parts = explode("/", trim($this->request->getRequestUri(), "/"));
 
         // Build args
         $method = strtolower($this->request->method());
-        $makeAction = function ($method, $relation) {
-            return $relation . ucfirst($method);
-        };
 
         switch (count($parts)) {
             case 1:
-                $action = $makeAction($method === "get" ? "index" : $method, "standard");
+                $action = $this->action(
+                    $method === "get" ? "index" : $method,
+                    with(new $this->modelClass)->getKeyName(),
+                    "standard",
+                    null
+                );
                 break;
             case 2:
             case 3:
@@ -106,13 +144,15 @@ abstract class BaseController extends LumenController
                     $key = isset($parts[2]) ? $parts[1] : with(new $this->modelClass)->getKeyName();
                     $value = isset($parts[2]) ? $parts[2] : $parts[1];
                     $args = array_merge([$key, $value], $args);
-                    $action = $makeAction($method, "standard");
+
+                    $action = $this->action($method, $key, "standard", null);
                 } else {
                     $key = isset($parts[3]) ? $parts[1] : with(new $this->modelClass)->getKeyName();
                     $value = isset($parts[3]) ? $parts[2] : $parts[1];
                     $relation = isset($parts[3]) ? $parts[3] : $parts[2];
                     $args = array_merge([$key, $value, $relation], $args);
-                    $action = $makeAction($method, "relation");
+
+                    $action = $this->action($method, $key, "relation", $relation);
                 }
                 break;
             default:

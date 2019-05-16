@@ -26,19 +26,19 @@ class BaseRegistrarTest extends TestCase
     {
         return Collection::make([
             // Standard
-            "std:index" => ["get", "fruits"],
-            "std:post" => ["post", "fruits"],
-            "std:get" => ["get", "fruits/{fruitId}"],
-            "std:patch" => ["patch", "fruits/{fruitId}"],
-            "std:delete" => ["delete", "fruits/{fruitId}"],
-            "std:get:slug" => ["get", "fruits/slug/{fruitSlug}"],
-            "std:patch:slug" => ["patch", "fruits/slug/{fruitSlug}"],
+            "std:index" => ["get", "pears"],
+            "std:post" => ["post", "pears"],
+            "std:get" => ["get", "pears/{pearId}"],
+            "std:patch" => ["patch", "pears/{pearId}"],
+            "std:delete" => ["delete", "pears/{pearId}"],
+            "std:get:slug" => ["get", "pears/slug/{pearSlug}"],
+            "std:patch:slug" => ["patch", "pears/slug/{pearSlug}"],
 
             // Relations
-            "rel:get:brands" => ["get", "fruits/{fruitId}/brands"],
-            "rel:patch:brands" => ["patch", "fruits/{fruitId}/brands"],
-            "rel:get:slug:brands" => ["get", "fruits/slug/{fruitSlug}/brands"],
-            "rel:patch:slug:brands" => ["patch", "fruits/slug/{fruitSlug}/brands"],
+            "rel:get:brands" => ["get", "pears/{pearId}/brands"],
+            "rel:patch:brands" => ["patch", "pears/{pearId}/brands"],
+            "rel:get:slug:brands" => ["get", "pears/slug/{pearSlug}/brands"],
+            "rel:patch:slug:brands" => ["patch", "pears/slug/{pearSlug}/brands"],
         ])->mapWithKeys(function ($value, string $key) {
             $value[] = $key;
 
@@ -58,11 +58,11 @@ class BaseRegistrarTest extends TestCase
      */
     public function testMakeRESTRoute($expectedMethod, $expectedUri, $routeKey): void
     {
-        $modelClass = "App\\Models\\Fruit";
+        $modelClass = "App\\Models\\Pear";
 
         if (!class_exists($modelClass)) {
             ModelMockFactory::make()
-                ->setName("Fruit")
+                ->setName("Pear")
                 ->setMethod("public", "getKeyName", "id")
                 ->compile()
                 ->exec();
@@ -75,7 +75,7 @@ class BaseRegistrarTest extends TestCase
         $registrar = $this->getMockForAbstractClass(
             BaseRegistrar::class,
             [$router],
-            "FruitsController",
+            "PearsController",
             true,
             true,
             true,

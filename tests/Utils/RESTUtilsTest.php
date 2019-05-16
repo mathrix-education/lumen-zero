@@ -20,7 +20,7 @@ class RESTUtilsTest extends TestCase
         parent::setUpBeforeClass();
 
         ModelMockFactory::make()
-            ->setName("Fruit")
+            ->setName("Apple")
             ->setMethod("public", "getKeyName", "id")
             ->setMethod("public", "brands", null)
             ->compile()
@@ -32,19 +32,19 @@ class RESTUtilsTest extends TestCase
     {
         return DataProvider::makeDataProvider([
             // Standard
-            "std:index" => ["get", "fruits", "id", null],
-            "std:post" => ["post", "fruits", "id", null],
-            "std:get" => ["get", "fruits/{fruitId}", "id", null],
-            "std:patch" => ["patch", "fruits/{fruitId}", "id", null],
-            "std:delete" => ["delete", "fruits/{fruitId}", "id", null],
-            "std:get:slug" => ["get", "fruits/slug/{fruitSlug}", "slug", null],
-            "std:patch:slug" => ["patch", "fruits/slug/{fruitSlug}", "slug", null],
+            "std:index" => ["get", "apples", "id", null],
+            "std:post" => ["post", "apples", "id", null],
+            "std:get" => ["get", "apples/{appleId}", "id", null],
+            "std:patch" => ["patch", "apples/{appleId}", "id", null],
+            "std:delete" => ["delete", "apples/{appleId}", "id", null],
+            "std:get:slug" => ["get", "apples/slug/{appleSlug}", "slug", null],
+            "std:patch:slug" => ["patch", "apples/slug/{appleSlug}", "slug", null],
 
             // Relations
-            "rel:get:brands" => ["get", "fruits/{fruitId}/brands", "id", "brands"],
-            "rel:patch:brands" => ["patch", "fruits/{fruitId}/brands", "id", "brands"],
-            "rel:get:slug:brands" => ["get", "fruits/slug/{fruitSlug}/brands", "slug", "brands"],
-            "rel:patch:slug:brands" => ["patch", "fruits/slug/{fruitSlug}/brands", "slug", "brands"],
+            "rel:get:brands" => ["get", "apples/{appleId}/brands", "id", "brands"],
+            "rel:patch:brands" => ["patch", "apples/{appleId}/brands", "id", "brands"],
+            "rel:get:slug:brands" => ["get", "apples/slug/{appleSlug}/brands", "slug", "brands"],
+            "rel:patch:slug:brands" => ["patch", "apples/slug/{appleSlug}/brands", "slug", "brands"],
         ]);
     }
 
@@ -62,7 +62,7 @@ class RESTUtilsTest extends TestCase
     public function testResolve(string $key, string $expectedMethod, string $expectedUri, string $expectedField,
                                 ?string $expectedRelation)
     {
-        [$method, $uri, $field, $relation] = RESTUtils::resolve(ClassResolver::getModelClass("Fruit"), $key);
+        [$method, $uri, $field, $relation] = RESTUtils::resolve(ClassResolver::getModelClass("Apple"), $key);
         $this->assertEquals($expectedMethod, $method);
         $this->assertEquals($expectedUri, $uri);
         $this->assertEquals($expectedField, $field);

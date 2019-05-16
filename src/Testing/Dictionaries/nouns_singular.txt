@@ -488,7 +488,6 @@ film
 water
 money
 example
-while
 business
 study
 game
@@ -525,7 +524,6 @@ company
 price
 size
 card
-list
 mind
 trade
 line
@@ -576,7 +574,6 @@ site
 demand
 exercise
 image
-case
 cause
 coast
 action
@@ -621,7 +618,6 @@ act
 birth
 car
 dog
-object
 scale
 sun
 note
@@ -703,7 +699,6 @@ voice
 capital
 challenge
 friend
-self
 shot
 brush
 couple
@@ -958,7 +953,6 @@ sentence
 shoulder
 smoke
 stomach
-string
 tourist
 towel
 vacation
@@ -996,7 +990,6 @@ mail
 mess
 native
 opening
-parent
 pattern
 pin
 pool
@@ -1081,7 +1074,6 @@ slouse
 snow
 specialist
 stroke
-switch
 trash
 tune
 zone
@@ -1142,7 +1134,6 @@ you
 it
 can
 will
-if
 one
 many
 most
@@ -1190,7 +1181,6 @@ cut
 natural
 physical
 show
-try
 check
 second
 call
@@ -1242,7 +1232,6 @@ green
 support
 glad
 remove
-return
 run
 complex
 due
@@ -1260,7 +1249,6 @@ watch
 beautiful
 charge
 active
-break
 negative
 safe
 stay
@@ -1278,7 +1266,6 @@ pick
 unique
 anything
 classic
-final
 lift
 mix
 stop
@@ -1348,7 +1335,6 @@ abuse
 beat
 burn
 deposit
-print
 raise
 sleep
 somewhere

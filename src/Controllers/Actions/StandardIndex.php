@@ -23,7 +23,7 @@ trait StandardIndex
      * @return PaginationJsonResponse
      * @throws Http400BadRequestException
      */
-    public function index(Request $request): PaginationJsonResponse
+    public function standardIndex(Request $request): PaginationJsonResponse
     {
         $ability = $this->getAbility("index", "standard");
         $this->canOrFail($request, $ability, $this->modelClass);
