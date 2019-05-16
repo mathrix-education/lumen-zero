@@ -33,6 +33,6 @@ trait StandardPost
 
         $model->save();
 
-        return new SuccessJsonResponse($model);
+        return new SuccessJsonResponse($model->refresh());
     }
 }

@@ -34,6 +34,6 @@ trait StandardGet
         $ability = $this->getAbility("get", "standard", $key);
         $this->canOrFail($request, $ability, $model);
 
-        return new SuccessJsonResponse($model);
+        return new SuccessJsonResponse($model->refresh());
     }
 }

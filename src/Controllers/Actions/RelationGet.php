@@ -36,8 +36,7 @@ trait RelationGet
 
         $ability = $this->getAbility("get", "relation", $key, $relation);
         $this->canOrFail($request, $ability, $model);
-        $related = $model->{$relation}();
 
-        return new PaginationJsonResponse($related);
+        return new PaginationJsonResponse($model->{$relation}());
     }
 }

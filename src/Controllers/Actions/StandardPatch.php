@@ -36,6 +36,6 @@ trait StandardPatch
 
         $model->update($request->all());
 
-        return new SuccessJsonResponse($model);
+        return new SuccessJsonResponse($model->refresh());
     }
 }
