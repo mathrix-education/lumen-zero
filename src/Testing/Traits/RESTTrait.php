@@ -156,7 +156,7 @@ trait RESTTrait
 
         // Make assertions
         $this->event("before.assertions");
-        if (in_array($method, ["post", "patch"])) {
+        if ($relation === null && in_array($method, ["post", "patch"])) {
             // On creation/edition, assert that the model has been successfully saved.
             $this->afterRequestData = $this->override(
                 $this->beforeRequestData,
@@ -164,7 +164,7 @@ trait RESTTrait
             );
 
             $this->assertInDatabase($this->modelClass::getTableName(), $this->afterRequestData);
-        } else if ($method === "delete") {
+        } else if ($relation === null && $method === "delete") {
             /*
              * On delete, assert that the model has been successfully deleted (its primary key does not exists in the
              * database anymore.
@@ -172,6 +172,22 @@ trait RESTTrait
             $this->assertNotInDatabase($this->modelClass::getTableName(), [
                 $this->requestModel->getKeyName() => $this->requestModel->getKey()
             ]);
+        } else if ($relation !== null && $method === "patch") {
+            // Assert that the pivot table has been updated
+            $this->afterRequestData = $this->override(
+                $this->beforeRequestData,
+                $after
+            );
+            $pivotTable = with($this->modelClass)->{$relation}()->getTable();
+            $parentKeyName = with($this->modelClass)->{$relation}()->getParentKeyName();
+            $relatedKeyName = with($this->modelClass)->{$relation}()->getRelatedKeyName();
+
+            foreach ($this->afterRequestData as $relatedKey) {
+                $this->assertInDatabase($pivotTable, [
+                    $parentKeyName => $this->requestModel->getKey(),
+                    $relatedKeyName => $relatedKey
+                ]);
+            }
         }
 
         $this->assertResponseOk();
