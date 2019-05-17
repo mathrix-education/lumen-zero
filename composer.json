@@ -1,7 +1,7 @@
 {
   "name": "mathrix/lumen-zero",
   "description": "The main library for Mathrix Lumen REST APIs.",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "library",
   "keywords": [
     "php",

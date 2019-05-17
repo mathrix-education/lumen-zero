@@ -70,8 +70,8 @@ class PaginationJsonResponse extends SuccessJsonResponse
         $request = $request ?? app()->make(Request::class);
 
         return [
-            $request->query("page", 0),
-            $request->query("perPage", 100)
+            (int)$request->query("page", 0),
+            (int)$request->query("perPage", 10)
         ];
     }
 }

@@ -122,8 +122,10 @@ abstract class BaseController extends LumenController
      */
     protected function prepareRESTRequest(...$args)
     {
+        $uri = $this->request->getRequestUri();
+        $uriWithoutQueryString = str_replace("?" . $this->request->getQueryString(), "", $uri);
         // We split the request using the '/' as delimiter
-        $parts = explode("/", trim($this->request->getRequestUri(), "/"));
+        $parts = explode("/", trim($uriWithoutQueryString, "/"));
 
         // Build args
         $method = strtolower($this->request->method());
