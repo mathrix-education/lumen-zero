@@ -86,6 +86,12 @@ trait OpenAPITrait
 
                 return $currentRouter[1]["uses"] !== $routeData["action"]["uses"];
             })
+            // Reject routes which have not the same amount of parts (splitted by "/")
+            ->reject(function ($routeData) use ($actualUri) {
+                $actualParts = explode("/", trim($actualUri, "/"));
+                $routeParts = explode("/", trim($routeData["uri"], "/"));
+                return count($actualParts) !== count($routeParts);
+            })
             // Reject routes which does not have the same arguments
             ->reject(function ($routeData, $routeKey) use ($currentRouter) {
                 $pattern = "/{([a-zA-Z]+):[a-zA-Z0-9\/\\\+\-_\[\]\*\{\}\|\.\^]+}/";

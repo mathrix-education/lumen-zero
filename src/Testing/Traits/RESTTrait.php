@@ -178,9 +178,9 @@ trait RESTTrait
                 $this->beforeRequestData,
                 $after
             );
-            $pivotTable = with($this->modelClass)->{$relation}()->getTable();
-            $parentKeyName = with($this->modelClass)->{$relation}()->getParentKeyName();
-            $relatedKeyName = with($this->modelClass)->{$relation}()->getRelatedKeyName();
+            $pivotTable = with(new $this->modelClass)->{$relation}()->getTable();
+            $parentKeyName = with(new $this->modelClass)->{$relation}()->getParentKeyName();
+            $relatedKeyName = with(new $this->modelClass)->{$relation}()->getRelatedKeyName();
 
             foreach ($this->afterRequestData as $relatedKey) {
                 $this->assertInDatabase($pivotTable, [
