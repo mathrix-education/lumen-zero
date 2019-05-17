@@ -40,15 +40,6 @@ trait OpenAPITrait
 
 
     /**
-     * Boot the OpenAPI trait.
-     */
-    protected static function bootOpenAPITrait(): void
-    {
-        self::$schema = new Schema(OpenAPITrait::$SpecPath);
-    }
-
-
-    /**
      * Assert that the current response follow the given OpenAPI specification.
      * We need the request URI since the specification does not use the
      *
