@@ -4,7 +4,6 @@ namespace Mathrix\Lumen\Zero\Registrars;
 
 use Illuminate\Support\Str;
 use Laravel\Lumen\Routing\Router;
-use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use Mathrix\Lumen\Zero\Utils\RESTUtils;
 
@@ -31,7 +30,7 @@ abstract class BaseRegistrar
      *
      * @param Router $router The Lumen Application Router.
      */
-    public function __construct(Router $router)
+    public function __construct(Router &$router)
     {
         $this->router = $router;
         $this->modelClass = ClassResolver::getModelClass($this);

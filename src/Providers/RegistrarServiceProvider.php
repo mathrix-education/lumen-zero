@@ -4,9 +4,10 @@ namespace Mathrix\Lumen\Zero\Providers;
 
 use Exception;
 use HaydenPierce\ClassFinder\ClassFinder;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Collection;
 use Laravel\Lumen\Application;
-use Mathrix\Lumen\Zero\Console\Commands\RoutesCacheCommand;
+use Laravel\Lumen\Routing\Router;
+use Mathrix\Lumen\Zero\Console\Commands\providers;
 use Mathrix\Lumen\Zero\Registrars\BaseRegistrar;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
 
@@ -19,60 +20,49 @@ use Mathrix\Lumen\Zero\Utils\ClassResolver;
  *
  * @property Application $app
  */
-class RegistrarServiceProvider extends ServiceProvider
+class RegistrarServiceProvider extends CacheableServiceProvider
 {
-    public const ROUTES_CACHE_FILE = "bootstrap/routes.php";
+    public const CACHE_FILE = "bootstrap/cache/routes.php";
 
     /** @var array Ignored registrars */
     public static $IgnoredRegistrars = [];
 
 
     /**
-     * Auto-register routes from registrars.
-     *
+     * @return array Dynamically load the routes from the registrars.
      * @throws Exception
      */
-    public function register(): void
+    public function loadDynamic(): array
     {
-        $this->commands([RoutesCacheCommand::class]);
+        $router = new Router(app());
 
-        if (file_exists(app()->basePath(self::ROUTES_CACHE_FILE))) {
-            $this->loadCachedRoutes();
-        } else {
-            $this->loadRegistrarRoutes();
-        }
+        // Load routes from registrar
+        Collection::make(ClassFinder::getClassesInNamespace(ClassResolver::$RegistrarNamespace))
+            ->reject(function (string $registrarClass) {
+                return in_array($registrarClass, self::$IgnoredRegistrars);
+            })
+            ->each(function (string $registrarClass) use (&$router) {
+                /** @var BaseRegistrar|string $registrar */
+                $registrar = new $registrarClass($router);
+                $registrar->register();
+            });
+
+        return Collection::make($router->getRoutes())
+            ->values()
+            ->map(function (array $route) {
+                return array_values($route);
+            })
+            ->toArray();
     }
 
 
     /**
-     * Load cached routes file. Run `php artisan routes:cache` to build the route cache.
+     * @param array $routes The data, from the cache or dynamically loaded.
      */
-    public function loadCachedRoutes()
+    public function apply($routes): void
     {
-        $routesFile = app()->basePath(self::ROUTES_CACHE_FILE);
-
-        $routes = require $routesFile;
-
         foreach ($routes as $route) {
             app()->router->addRoute(...array_values($route));
-        }
-    }
-
-
-    /**
-     * Load registrar routes (dynamically handled, but much, much slower).
-     *
-     * @throws Exception
-     */
-    public function loadRegistrarRoutes()
-    {
-        $registrars = ClassFinder::getClassesInNamespace(ClassResolver::$RegistrarNamespace);
-        foreach ($registrars as $registrarClass) {
-            if (!in_array($registrarClass, self::$IgnoredRegistrars)) {
-                /** @var BaseRegistrar|string $registrar */
-                $registrar = new $registrarClass($this->app->router);
-                $registrar->register();
-            }
         }
     }
 }
