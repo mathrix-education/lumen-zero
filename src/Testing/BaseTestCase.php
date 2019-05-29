@@ -37,8 +37,15 @@ abstract class BaseTestCase extends TestCase
 
             if (method_exists($class, $method) && !in_array($trait, self::$bootedTraits)) {
                 forward_static_call([$class, $method]);
-                self::$bootedTraits[] = $trait;
+                static::$bootedTraits[] = $trait;
             }
         }
+    }
+
+
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        static::$bootedTraits = []; // Clear booted traits
     }
 }

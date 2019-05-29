@@ -17,7 +17,7 @@ use Mathrix\Lumen\Zero\Providers\RegistrarServiceProvider;
  */
 class ProvidersCacheCommand extends BaseCommand
 {
-    protected $signature = "providers:cache";
+    protected $signature = "providers:cache {--f|force : Force cache refresh}";
     protected $description = "Manually trigger Service Providers cache.";
 
 
@@ -39,11 +39,13 @@ class ProvidersCacheCommand extends BaseCommand
      */
     public function cache($serviceProviderClass)
     {
+        $force = $this->option("force");
+
         /** @var CacheableServiceProvider $serviceProvider */
         $serviceProvider = new $serviceProviderClass(app());
         $cacheFile = $serviceProvider->getCacheFile();
 
-        if (!$serviceProvider->isCached()) {
+        if (!$serviceProvider->isCached() || $force) {
             $serviceProvider->writeCache();
             $this->line("<comment>Written:</comment> $cacheFile");
         } else {

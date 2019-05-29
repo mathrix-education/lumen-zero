@@ -3,8 +3,10 @@
 namespace Mathrix\Lumen\Zero\Testing\Traits;
 
 use Exception;
+use Illuminate\Http\Response;
+use Laravel\Lumen\Application;
+use Laravel\Lumen\Http\Request;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
-use Mathrix\Lumen\Zero\Testing\OpenAPI\OpenAPITrait;
 
 /**
  * Trait DebugTrait.
@@ -13,9 +15,8 @@ use Mathrix\Lumen\Zero\Testing\OpenAPI\OpenAPITrait;
  * @copyright Mathrix Education SA.
  * @since 1.0.0
  *
- * @mixin JsonResponseTrait
+ * @property Application $app
  * @mixin MakesHttpRequests
- * @mixin OpenAPITrait
  */
 trait DebugTrait
 {
@@ -26,10 +27,16 @@ trait DebugTrait
      */
     public function debug()
     {
-        if ($this->response !== null) {
+        /** @var Request $request */
+        $request = $this->app["request"] ?? $this->request ?? null;
+        /** @var Response $response */
+        $response = $this->response ?? null;
+
+        if ($response !== null && $request !== null) {
             $status = $this->response->getStatusCode();
-            $method = strtoupper($this->requestMethod);
-            $uri = $this->requestUri;
+            $method = strtoupper($request->getMethod());
+            $uri = $request->getUri();
+
             $content = json_encode(json_decode($this->response->getContent()),
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 

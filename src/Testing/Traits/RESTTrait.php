@@ -4,6 +4,8 @@ namespace Mathrix\Lumen\Zero\Testing\Traits;
 
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\FactoryBuilder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
@@ -25,17 +27,25 @@ use PHPUnit\Framework\Assert;
  */
 trait RESTTrait
 {
-    use DatabaseTrait, EventHandlersTrait, JsonResponseTrait, OpenAPITrait;
+    use DatabaseTrait, EventHandlersTrait;
+
+    /** @var BaseModel|string $modelClass */
+    protected static $modelClass = null;
+
+    /** @var array The test keys. */
+    protected $testKeys = [];
+
+    /** @var Request $request */
+    protected $request;
 
     /** @var Factory $factory */
     protected $factory = null;
-    /** @var BaseModel|string $modelClass */
-    protected $modelClass = null;
     /** @var BaseModel The request model (used in get, patch and delete). */
     protected $requestModel = null;
 
     /** @var array exceptFactoryFields Field to ignore from the model factory. */
     protected $exceptFactoryFields = ["created_at", "updated_at"];
+
     /** @var array The data before the request is sent. */
     protected $beforeRequestData = [];
     /** @var array The data after the request has been sent. */
@@ -45,16 +55,10 @@ trait RESTTrait
     /**
      * Initialize the REST Trait.
      */
-    public function initializeREST(): void
+    public static function bootRESTTrait(): void
     {
-        $this->factory = app()->make(Factory::class);
-
-        $this->handler("before.json", function (string $method, string $uri) {
-            $this->requestMethod = $method;
-            $this->requestUri = "/" . trim($uri, "/");
-        });
-
-        $this->modelClass = ClassResolver::getModelClass($this);
+        $class = get_called_class();
+        static::$modelClass = ClassResolver::getModelClass(get_called_class());
     }
 
 
@@ -84,13 +88,15 @@ trait RESTTrait
     protected function getFactoryBuilder(array $options): FactoryBuilder
     {
         // Build args
-        $args = [$this->modelClass];
+        $args = [static::$modelClass];
         if (!empty($options["subFactory"])) {
             $args[] = $options["subFactory"];
         }
 
-        /** @var FactoryBuilder $factory */
-        return call_user_func_array([$this->factory, "of"], $args);
+        /** @var Factory $factory */
+        $factory = app()->make(Factory::class);
+
+        return $factory->of(...$args);
     }
 
 
@@ -124,17 +130,18 @@ trait RESTTrait
      * @param null $after The after modifier.
      * @param array $options The request options.
      */
-    public function makeRESTJsonRequest(string $key, $before = null, $after = null, $options = [])
+    public function makeRESTJsonRequest(string $key, $before = null, $after = null, $options = []): void
     {
-        [$method, $uri, $field, $relation] = RESTUtils::resolve($this->modelClass, $key);
+        [$method, $uri, $field, $relation] = RESTUtils::resolve(static::$modelClass, $key);
         $uri = "/" . ltrim($uri, "/"); // Be sure to prepend $uri by a slash
 
         if (in_array($method, ["get", "patch", "delete"])) {
             // Set the request model
-            $this->requestModel = $this->modelClass::random($options["conditions"] ?? []);
+            $this->requestModel = static::$modelClass::random($options["conditions"] ?? []);
 
-            $placeholder = "{" . lcfirst(class_basename($this->modelClass)) . Str::ucfirst($field) . "}";
+            $placeholder = "{" . lcfirst(class_basename(static::$modelClass)) . Str::ucfirst($field) . "}";
             $identifier = $this->requestModel->{$field};
+
             $uri = str_replace($placeholder, $identifier, $uri);
         }
 
@@ -152,6 +159,7 @@ trait RESTTrait
         // Make the JSON request
         $this->event("before.json", $method, $uri);
         $this->json($method, $uri, $this->beforeRequestData ?? []);
+        $this->request = $this->app["request"];
         $this->event("after.json", $method, $uri);
 
         // Make assertions
@@ -163,13 +171,13 @@ trait RESTTrait
                 $after
             );
 
-            $this->assertInDatabase($this->modelClass::getTableName(), $this->afterRequestData);
+            $this->assertInDatabase(static::$modelClass::getTableName(), $this->afterRequestData);
         } else if ($relation === null && $method === "delete") {
             /*
              * On delete, assert that the model has been successfully deleted (its primary key does not exists in the
              * database anymore.
              */
-            $this->assertNotInDatabase($this->modelClass::getTableName(), [
+            $this->assertNotInDatabase(static::$modelClass::getTableName(), [
                 $this->requestModel->getKeyName() => $this->requestModel->getKey()
             ]);
         } else if ($relation !== null && $method === "patch") {
@@ -178,9 +186,12 @@ trait RESTTrait
                 $this->beforeRequestData,
                 $after
             );
-            $pivotTable = with(new $this->modelClass)->{$relation}()->getTable();
-            $parentKeyName = with(new $this->modelClass)->{$relation}()->getParentKeyName();
-            $relatedKeyName = with(new $this->modelClass)->{$relation}()->getRelatedKeyName();
+
+            /** @var BelongsToMany $relation */
+            $relation = with(new static::$modelClass)->{$relation}();
+            $pivotTable = $relation->getTable();
+            $parentKeyName = $relation->getForeignPivotKeyName();
+            $relatedKeyName = $relation->getRelatedPivotKeyName();
 
             foreach ($this->afterRequestData as $relatedKey) {
                 $this->assertInDatabase($pivotTable, [
@@ -191,7 +202,30 @@ trait RESTTrait
         }
 
         $this->assertResponseOk();
-        $this->assertOpenAPIResponse();
         $this->event("after.assertions");
+    }
+
+
+    /**
+     * Declare the test keys for "standard" REST tests.
+     * @return array
+     */
+    public function restDataProvider(): array
+    {
+        $data = array_map(function (string $key) {
+            return [$key];
+        }, $this->testKeys);
+
+        return array_combine($this->testKeys, $data);
+    }
+
+
+    /**
+     * Test the "standard" REST using test keys.
+     * @dataProvider restDataProvider
+     */
+    public function testREST(string $key): void
+    {
+        $this->makeRESTJsonRequest($key);
     }
 }

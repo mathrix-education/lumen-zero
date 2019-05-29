@@ -5,7 +5,7 @@ namespace Mathrix\Lumen\Zero\Testing\Traits;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
-use Mathrix\Lumen\Zero\Events\BaseModel;
+use Mathrix\Lumen\Zero\Models\BaseModel;
 
 /**
  * Trait DatabaseTrait.
@@ -55,14 +55,14 @@ trait DatabaseTrait
         foreach ($data as $key => $value) {
             if ($value instanceof Carbon) {
                 $builder = $builder->where($key, "=", $value->format("Y-m-d H:i:s"));
-            } else if (is_bool($value) && $value) {
+            } elseif (is_bool($value) && $value) {
                 $builder = $builder->where($key, "=", 1);
-            } else if (is_bool($value) && !$value) {
+            } elseif (is_bool($value) && !$value) {
                 $builder = $builder->where($key, "=", 0);
-            } else if (is_array($value)) {
+            } elseif (is_array($value)) {
                 $builder = $builder->whereJsonContains($key, $value)
                     ->whereJsonLength($key, count($value));
-            } else if (is_null($value)) {
+            } elseif (is_null($value)) {
                 $builder = $builder->whereNull($key);
             } else {
                 $builder = $builder->where($key, "=", $value);

@@ -21,7 +21,7 @@ abstract class CacheableServiceProvider extends ServiceProvider
     public const CACHE_MODE_ALWAYS = 0;
     public const CACHE_ON_DEMAND = 1;
     private static $CommandsRegistered = false;
-    public static $CacheMode = self::CACHE_MODE_ALWAYS;
+    public static $CacheMode = self::CACHE_ON_DEMAND;
 
 
     /**
