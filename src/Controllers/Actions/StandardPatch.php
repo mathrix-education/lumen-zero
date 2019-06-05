@@ -32,7 +32,7 @@ trait StandardPatch
         $model = $this->modelClass::findByOrFail($key, $identifier);
 
         $ability = $this->getAbility("patch", "standard", $key);
-        $this->canOrFail($request, "patch", $ability);
+        $this->canOrFail($request, $ability, $model);
 
         $model->update($request->all());
 
