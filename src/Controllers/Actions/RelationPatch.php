@@ -36,8 +36,10 @@ trait RelationPatch
         $ability = $this->getAbility("patch", "relation", $key, $relation);
         $this->canOrFail($request, $ability, $model);
 
+        $relatedTable = $model->{$relation}()->getRelated()->getTable();
+
         $this->validate($request, [
-            "*" => "distinct|exists:{$this->modelClass::getTableName()},$key"
+            "*" => "distinct|exists:$relatedTable,$key"
         ]);
 
         $model->{$relation}()->sync($request->all());
