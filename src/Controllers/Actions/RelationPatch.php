@@ -21,9 +21,9 @@ trait RelationPatch
      * PATCH /models/{key}/{identifier}/{relation}
      *
      * @param Request $request The HTTP request.
-     * @param string $relation The model relation.
      * @param string $key The model key.
      * @param int $identifier The model identifier.
+     * @param string $relation The model relation.
      *
      * @return PaginationJsonResponse
      * @throws Http400BadRequestException
@@ -44,6 +44,9 @@ trait RelationPatch
 
         $model->{$relation}()->sync($request->all());
 
-        return new PaginationJsonResponse($model->{$relation}());
+        $query = $model->{$relation}()
+            ->with($this->with["rel:patch:$relation"] ?? []);
+
+        return new PaginationJsonResponse($query);
     }
 }

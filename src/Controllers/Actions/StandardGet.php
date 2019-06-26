@@ -29,7 +29,10 @@ trait StandardGet
     public function standardGet(Request $request, string $key, $identifier): JsonResponse
     {
         /** @var BaseModel $model */
-        $model = $this->modelClass::findByOrFail($key, $identifier);
+        $model = $this->modelClass::query()
+            ->with($this->with["std:get"] ?? [])
+            ->where($key, "=", $identifier)
+            ->firstOrFail();
 
         $ability = $this->getAbility("get", "standard", $key);
         $this->canOrFail($request, $ability, $model);

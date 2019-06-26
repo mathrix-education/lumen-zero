@@ -3,6 +3,7 @@
 namespace Mathrix\Lumen\Zero\Utils;
 
 use Illuminate\Support\Str;
+use Mathrix\Lumen\Zero\Models\BaseModel;
 
 /**
  * Class ClassResolver.
@@ -31,7 +32,7 @@ class ClassResolver
      * @param string|object $callerClass The caller class
      * @param bool $force If set to true, return the model class i=even if does not exist.
      *
-     * @return string|null The full model class if found, null otherwise.
+     * @return BaseModel|string|null The full model class if found, null otherwise.
      */
     public static function getModelClass($callerClass, $force = false): ?string
     {
