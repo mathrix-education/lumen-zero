@@ -33,6 +33,8 @@ trait StandardPost
 
         $model->save();
 
+        $model->load($this->with["std:post"] ?? []);
+
         return new SuccessJsonResponse($model->refresh());
     }
 }

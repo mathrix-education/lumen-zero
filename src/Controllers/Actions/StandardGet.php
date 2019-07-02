@@ -20,22 +20,21 @@ trait StandardGet
      * GET /models/{identifier} (if key is "id")
      * GET /models/{key}/{identifier}
      *
-     * @param Request $request The request
-     * @param string $key
-     * @param mixed $identifier
+     * @param Request $request The Illuminate HTTP request.
+     * @param string $key The model key.
+     * @param string|int $identifier The model identifier.
      *
      * @return JsonResponse
      */
     public function standardGet(Request $request, string $key, $identifier): JsonResponse
     {
         /** @var BaseModel $model */
-        $model = $this->modelClass::query()
-            ->with($this->with["std:get"] ?? [])
-            ->where($key, "=", $identifier)
-            ->firstOrFail();
+        $model = $this->modelClass::findByOrFail($key, $identifier);
 
         $ability = $this->getAbility("get", "standard", $key);
         $this->canOrFail($request, $ability, $model);
+
+        $model->load($this->with["std:get"] ?? []);
 
         return new SuccessJsonResponse($model->refresh());
     }

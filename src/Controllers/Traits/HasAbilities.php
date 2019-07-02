@@ -36,7 +36,7 @@ trait HasAbilities
             }
 
             return $method;
-        } else if ($type === "relation") {
+        } elseif ($type === "relation") {
             $relation = ucfirst(Str::camel($relation));
 
             if ($key !== "id") {
