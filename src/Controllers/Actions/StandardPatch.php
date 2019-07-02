@@ -35,6 +35,7 @@ trait StandardPatch
         $this->canOrFail($request, $ability, $model);
 
         $model->update($request->all());
+        $model->load($this->with["std:patch"] ?? []);
 
         return new SuccessJsonResponse($model->refresh());
     }

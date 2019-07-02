@@ -2,6 +2,7 @@
 
 namespace Mathrix\Lumen\Zero\Controllers\Actions;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Mathrix\Lumen\Zero\Exceptions\Http\Http400BadRequestException;
 use Mathrix\Lumen\Zero\Responses\PaginationJsonResponse;
@@ -28,6 +29,10 @@ trait StandardIndex
         $ability = $this->getAbility("index", "standard");
         $this->canOrFail($request, $ability, $this->modelClass);
 
-        return new PaginationJsonResponse($this->modelClass::query());
+        // Make the Eloquent query
+        $query = $this->modelClass::query()
+            ->with($this->with["std:index"] ?? []);
+
+        return new PaginationJsonResponse($query);
     }
 }

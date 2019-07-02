@@ -25,7 +25,7 @@ trait StandardDelete
      *
      * @param Request $request The Illuminate HTTP request.
      * @param string $key The model key.
-     * @param mixed $value The model value.
+     * @param string|int $value The model value.
      *
      * @return JsonResponse
      * @throws Exception

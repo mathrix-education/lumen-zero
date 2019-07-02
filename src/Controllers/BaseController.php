@@ -38,6 +38,8 @@ abstract class BaseController extends LumenController
     protected $request;
     /** @var BaseModel The associated model class. */
     protected $modelClass = null;
+    /** @var array The relation loaded with model. */
+    protected $with = [];
 
 
     /**
@@ -184,6 +186,13 @@ abstract class BaseController extends LumenController
         } else {
             // Edgy case: count($args) === 3
             return method_exists($this->modelClass, $parts[2]);
+        }
+    }
+
+    protected function with(string $key)
+    {
+        if (isset($key)) {
+
         }
     }
 }

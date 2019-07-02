@@ -22,14 +22,14 @@ trait RelationGet
      * GET /models/{key}/{identifier}/{relation}
      *
      * @param Request $request The HTTP request.
-     * @param string $relation The model relation.
      * @param string $key The model key.
-     * @param int $identifier The model identifier.
+     * @param string|int $identifier The model identifier.
+     * @param string $relation The model relation.
      *
      * @return PaginationJsonResponse
      * @throws Http400BadRequestException
      */
-    public function relationGet(Request $request, string $key, int $identifier, string $relation): JsonResponse
+    public function relationGet(Request $request, string $key, $identifier, string $relation): JsonResponse
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::findByOrFail($key, $identifier);
@@ -37,6 +37,10 @@ trait RelationGet
         $ability = $this->getAbility("get", "relation", $key, $relation);
         $this->canOrFail($request, $ability, $model);
 
-        return new PaginationJsonResponse($model->{$relation}());
+        // Make the Eloquent query
+        $query = $model->{$relation}()
+            ->with($this->with["rel:get:$relation"] ?? []);
+
+        return new PaginationJsonResponse($query);
     }
 }
