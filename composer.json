@@ -1,7 +1,7 @@
 {
   "name": "mathrix/lumen-zero",
   "description": "The main library for Mathrix Lumen REST APIs.",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "type": "library",
   "keywords": [
     "php",
@@ -31,12 +31,12 @@
     "ext-pdo": "*",
     "brick/varexporter": "^0.2.1",
     "haydenpierce/class-finder": "^0.3.1",
-    "illuminate/mail": "^5.8",
-    "illuminate/notifications": "^5.8",
+    "illuminate/mail": "5.8.*",
+    "illuminate/notifications": "5.8.*",
     "laravel/lumen-framework": "5.8.*"
   },
   "require-dev": {
-    "phpunit/phpunit": "7.0 || ^8.0"
+    "phpunit/phpunit": "^8.0"
   },
   "autoload": {
     "psr-4": {
