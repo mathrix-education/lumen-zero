@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RESTUtilsTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
