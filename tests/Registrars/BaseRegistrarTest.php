@@ -74,7 +74,7 @@ class BaseRegistrarTest extends TestCase
         /** @var MockObject|BaseRegistrar $registrar */
         $registrar = $this->getMockForAbstractClass(
             BaseRegistrar::class,
-            [$router],
+            [&$router],
             "PearsController",
             true,
             true,
