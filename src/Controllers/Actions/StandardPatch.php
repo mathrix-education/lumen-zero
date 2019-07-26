@@ -24,9 +24,9 @@ trait StandardPatch
      * @param string $key The model key.
      * @param string|int $identifier The model identifier.
      *
-     * @return JsonResponse
+     * @return SuccessJsonResponse
      */
-    public function standardPatch(Request $request, string $key, $identifier): JsonResponse
+    public function standardPatch(Request $request, string $key, $identifier): SuccessJsonResponse
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::findByOrFail($key, $identifier);

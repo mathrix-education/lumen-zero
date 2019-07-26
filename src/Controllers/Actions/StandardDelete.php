@@ -27,10 +27,10 @@ trait StandardDelete
      * @param string $key The model key.
      * @param string|int $value The model value.
      *
-     * @return JsonResponse
+     * @return SuccessJsonResponse
      * @throws Exception
      */
-    public function standardDelete(Request $request, string $key, $value): JsonResponse
+    public function standardDelete(Request $request, string $key, $value): SuccessJsonResponse
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::findByOrFail($key, $value);

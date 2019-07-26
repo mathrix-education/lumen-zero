@@ -21,9 +21,9 @@ trait StandardPost
      *
      * @param Request $request The Illuminate HTTP request.
      *
-     * @return JsonResponse
+     * @return SuccessJsonResponse
      */
-    public function standardPost(Request $request): JsonResponse
+    public function standardPost(Request $request): SuccessJsonResponse
     {
         /** @var BaseModel $model */
         $model = new $this->modelClass($request->all());

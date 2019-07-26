@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Mathrix\Lumen\Zero\Exceptions\Http\Http400BadRequestException;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Responses\PaginationJsonResponse;
+use Mathrix\Lumen\Zero\Responses\SuccessJsonResponse;
 
 /**
  * Trait RelationGet.
@@ -29,7 +30,7 @@ trait RelationGet
      * @return PaginationJsonResponse
      * @throws Http400BadRequestException
      */
-    public function relationGet(Request $request, string $key, $identifier, string $relation): JsonResponse
+    public function relationGet(Request $request, string $key, $identifier, string $relation): SuccessJsonResponse
     {
         /** @var BaseModel $model */
         $model = $this->modelClass::findByOrFail($key, $identifier);
