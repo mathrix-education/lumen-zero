@@ -2,6 +2,7 @@
 
 namespace Mathrix\Lumen\Zero\Responses;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -23,13 +24,14 @@ class PaginationJsonResponse extends SuccessJsonResponse
      * PaginationJsonResponse constructor.
      *
      * @param Builder|Relation $query
+     * @param Closure|null $callback
      * @param int $status The HTTP status code (default 200).
      * @param array $headers The custom HTTP headers.
      * @param int $options The json_encode function options.
      *
      * @throws Http400BadRequestException
      */
-    public function __construct($query, $status = 200, $headers = [], $options = 0)
+    public function __construct($query, ?Closure $callback = null, $status = 200, $headers = [], $options = 0)
     {
         [$page, $perPage] = self::getPagination();
 
@@ -44,6 +46,10 @@ class PaginationJsonResponse extends SuccessJsonResponse
         $models = $query->limit($perPage)
             ->offset($page * $perPage)
             ->get();
+
+        if ($callback !== null) {
+            $models = $callback($models);
+        }
 
         $meta = [
             "page" => $page,
