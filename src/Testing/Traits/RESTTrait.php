@@ -204,28 +204,4 @@ trait RESTTrait
         $this->assertResponseOk();
         $this->event("after.assertions");
     }
-
-
-    /**
-     * Declare the test keys for "standard" REST tests.
-     * @return array
-     */
-    public function restDataProvider(): array
-    {
-        $data = array_map(function (string $key) {
-            return [$key];
-        }, $this->testKeys);
-
-        return array_combine($this->testKeys, $data);
-    }
-
-
-    /**
-     * Test the "standard" REST using test keys.
-     * @dataProvider restDataProvider
-     */
-    public function testREST(string $key): void
-    {
-        $this->makeRESTJsonRequest($key);
-    }
 }
