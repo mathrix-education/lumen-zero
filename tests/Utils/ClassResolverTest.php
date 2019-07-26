@@ -3,6 +3,7 @@
 namespace Mathrix\Lumen\Zero\Utils;
 
 use Mathrix\Lumen\Zero\Testing\DataProvider;
+use Mathrix\Lumen\Zero\Testing\ModelMockFactory;
 use PHPUnit\Framework\TestCase;
 
 
@@ -20,9 +21,10 @@ class ClassResolverTest extends TestCase
         return DataProvider::makeDataProvider([
             "App\\Models\\Cake" => "App\\Controllers\\CakesController",
             "App\\Models\\Card" => "App\\Observers\\CardsController",
-            "App\\Models\\Apple" => "App\\Policies\\ApplePolicy",
+            "App\\Models\\Blueberry" => "App\\Policies\\BlueberryPolicy",
             "App\\Models\\Banana" => "Tests\\API\\BananasTest",
-            "App\\Models\\User" => "Tests\\API\\UsersLoginTest"
+            "App\\Models\\User" => "Tests\\API\\UsersLoginTest",
+            "App\\Models\\LineItem" => "App\\Observers\\LineItemObserver"
         ]);
     }
 
@@ -36,6 +38,11 @@ class ClassResolverTest extends TestCase
      */
     public function testGetModelClass(string $expected, string $caller)
     {
-        $this->assertEquals($expected, ClassResolver::getModelClass($caller, true));
+        ModelMockFactory::make()
+            ->setFullyQualifiedName($expected)
+            ->compile()
+            ->exec();
+
+        $this->assertEquals($expected, ClassResolver::getModelClass($caller));
     }
 }

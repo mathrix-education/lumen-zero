@@ -38,15 +38,27 @@ class ClassResolver
     {
         $snakedClass = Str::snake(class_basename($callerClass));
         $parts = explode("_", $snakedClass);
-        $potentialModel = Str::singular(Str::ucfirst($parts[0]));
-        $potentialModelClass = self::$ModelsNamespace . "\\$potentialModel";
+        $partsCount = count($parts);
+        $potentialModel = "";
 
-        $exists = class_exists($potentialModelClass);
+        /*
+         * Model have multiple words, line LineItem.
+         * If we pass LineItemObserver as $callerClass, we would get ["Line", "Item", "Observer"].
+         */
+        while (count($parts) > 1 || $partsCount === 1) {
+            $part = array_shift($parts);
+            $potentialModel .= Str::singular(Str::ucfirst($part));
+            $potentialModelClass = self::$ModelsNamespace . "\\$potentialModel";
 
-        if ($force || $exists) {
-            return $potentialModelClass;
-        } else {
-            return null;
+            $exists = class_exists($potentialModelClass);
+
+            if ($force || $exists) {
+                return $potentialModelClass;
+            } elseif ($partsCount === 1) {
+                return null;
+            }
         }
+
+        return null;
     }
 }

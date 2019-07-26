@@ -39,6 +39,25 @@ class ModelMockFactory
 
 
     /**
+     * Set the mock namespace and class name
+     *
+     * @param string $fullyQualifiedName
+     *
+     * @return ModelMockFactory
+     */
+    public function setFullyQualifiedName(string $fullyQualifiedName): self
+    {
+        $class = class_basename($fullyQualifiedName);
+        $namespace = str_replace("\\$class", "", $fullyQualifiedName);
+
+        $this->setNamespace($namespace);
+        $this->setName($class);
+
+        return $this;
+    }
+
+
+    /**
      * Set the mock namespace.
      *
      * @param string $namespace
