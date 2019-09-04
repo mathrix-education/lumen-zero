@@ -2,6 +2,7 @@
 
 namespace Mathrix\Lumen\Zero\Controllers\Actions;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Mathrix\Lumen\Zero\Exceptions\Http\Http400BadRequestException;
@@ -39,9 +40,13 @@ trait RelationGet
         $this->canOrFail($request, $ability, $model);
 
         // Make the Eloquent query
-        $query = $model->{$relation}()
-            ->with($this->with["rel:get:$relation"] ?? []);
+        $relation = $model->{$relation}();
 
+        if ($relation instanceof BelongsTo) {
+            return new SuccessJsonResponse($model->{$relation});
+        }
+
+        $query = $relation->with($this->with["rel:get:$relation"] ?? []);
         return new PaginationJsonResponse($query);
     }
 }
