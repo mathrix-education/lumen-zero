@@ -40,13 +40,14 @@ trait RelationGet
         $this->canOrFail($request, $ability, $model);
 
         // Make the Eloquent query
-        $relation = $model->{$relation}();
+        $rel = $model->{$relation}();
 
-        if ($relation instanceof BelongsTo) {
+        if ($rel instanceof BelongsTo) {
             return new SuccessJsonResponse($model->{$relation});
         }
 
-        $query = $relation->with($this->with["rel:get:$relation"] ?? []);
+        $query = $rel->with($this->with["rel:get:$relation"] ?? []);
         return new PaginationJsonResponse($query);
     }
 }
+
