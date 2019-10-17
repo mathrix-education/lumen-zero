@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Mathrix\Lumen\Zero\Exceptions\Http;
 
-class Http405MethodNotAllowed extends Http
+class Http400BadRequest extends Http
 {
     /** THE HTTP error standard code */
-    protected const CODE = 405;
+    protected const CODE = 400;
 }

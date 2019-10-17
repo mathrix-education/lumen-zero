@@ -1,27 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Mathrix\Lumen\Zero\Models\Traits\HasValidator;
+use Mathrix\Lumen\Zero\Models\Traits\IsSearchable;
+use function count;
+use function is_array;
+use function with;
 
 /**
- * Class BaseModel.
  * Base for all models, implement validation on save useless manual disable.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 1.0.0
  */
 abstract class BaseModel extends Model
 {
     use HasValidator;
+    use IsSearchable;
 
     /** @var array $aliases Aliases. */
     protected $aliases = [];
-
 
     /**
      * Get the table name.
@@ -33,14 +34,13 @@ abstract class BaseModel extends Model
         return with(new static())->getTable();
     }
 
-
     /**
      * Get a random model from the database.
      *
      * @param array $args The where condition. Acceptable format:
-     * - ("key", "=", "value"),
-     * - (["key", "=", "value"])
-     * - ([["key1", "=", "value1"], ["key2", "=", "value2"]])
+     *                    - ("key", "=", "value"),
+     *                    - (["key", "=", "value"])
+     *                    - ([["key1", "=", "value1"], ["key2", "=", "value2"]])
      *
      * @return static
      */
@@ -50,10 +50,10 @@ abstract class BaseModel extends Model
 
         if (count($args) === 3) {
             $conditions = $args;
-        } else if (!empty($args)) {
+        } elseif (!empty($args)) {
             if (!is_array($args[0])) {
                 $conditions = [$args];
-            } else if (!empty($args[0])) {
+            } elseif (!empty($args[0])) {
                 $conditions = $args;
             }
         }
@@ -68,12 +68,11 @@ abstract class BaseModel extends Model
         return $model;
     }
 
-
     /**
      * Shortcut for self::query()->where($key, "=", $value)->firstOrFail()
      *
-     * @param string $key The column key
-     * @param mixed $value The column value
+     * @param string $key   The column key
+     * @param mixed  $value The column value
      *
      * @return static
      */
@@ -81,12 +80,11 @@ abstract class BaseModel extends Model
     {
         /** @var self $model */
         $model = self::query()
-            ->where($key, "=", $value)
+            ->where($key, '=', $value)
             ->firstOrFail();
 
         return $model;
     }
-
 
     /**
      * Handle aliases.
@@ -99,17 +97,16 @@ abstract class BaseModel extends Model
     {
         if (isset($this->aliases[$key])) {
             return parent::getAttribute($this->aliases[$key]);
-        } else {
-            return parent::getAttribute($key);
         }
-    }
 
+        return parent::getAttribute($key);
+    }
 
     /**
      * Handle aliases.
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return mixed
      */
@@ -122,19 +119,18 @@ abstract class BaseModel extends Model
         }
     }
 
-
     /**
      * Set default date format to be in compliance with the OpenAPI date-time format.
+     *
+     * @link https://swagger.io/docs/specification/data-models/data-types/#string
+     * @link https://tools.ietf.org/html/rfc3339#section-5.6
      *
      * @param DateTimeInterface $date The DateTimeInterface.
      *
      * @return string The serialized date.
-     *
-     * @link https://swagger.io/docs/specification/data-models/data-types/#string
-     * @link https://tools.ietf.org/html/rfc3339#section-5.6
      */
     protected function serializeDate(DateTimeInterface $date)
     {
-        return Carbon::instance($date)->format("c");
+        return Carbon::instance($date)->format('c');
     }
 }

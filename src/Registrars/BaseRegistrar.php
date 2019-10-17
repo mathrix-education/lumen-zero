@@ -1,19 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Registrars;
 
 use Illuminate\Support\Str;
 use Laravel\Lumen\Routing\Router;
+use Mathrix\Lumen\Zero\Exceptions\InvalidArgument;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
-use Mathrix\Lumen\Zero\Utils\RESTUtils;
+use function call_user_func_array;
+use function class_basename;
 
 /**
- * Class BaseRegistrar.
  * Allow object oriented routes declaration.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 1.0.0
  *
  * @mixin Router
  */
@@ -24,71 +23,71 @@ abstract class BaseRegistrar
     /** @var Router */
     private $router;
 
-
     /**
-     * BaseRegistrar constructor.
-     *
      * @param Router $router The Lumen Application Router.
      */
     public function __construct(Router &$router)
     {
-        $this->router = $router;
+        $this->router     = $router;
         $this->modelClass = ClassResolver::getModelClass($this);
     }
 
-
     /**
-     * Pipe everything to the Router instance.
+     * Forward everything to the Router instance.
      *
-     * @param $name
-     * @param $arguments
+     * @param string $name      The method name
+     * @param array  $arguments The method arguments
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         call_user_func_array([$this->router, $name], $arguments);
     }
-
 
     /**
      * Register the routes.
      */
     abstract public function register(): void;
 
-
     /**
      * Register a route based on the route key.
      * Example of keys:
-     * std:{method}
-     * std:{method}:{field}
-     * rel:{method}:{relation}
-     * rel:{method}:{field}:{relation}
+     * list
+     * create
+     * read
+     * update
+     * delete
+     * read:{relation}
+     * reorder:{relation}
      *
-     * @param string $key The key.
-     * @param null $middleware The route middleware.
+     * @param string $key        The key.
+     * @param null   $middleware The route middleware.
+     *
+     * @throws InvalidArgument
      */
-    public function makeRESTRoute(string $key, $middleware = null)
+    public function registerCRUDRoute(string $key, $middleware = null)
     {
-        [$method, $uri] = RESTUtils::resolve($this->modelClass, $key);
-        $plural = Str::plural(class_basename($this->modelClass));
+        [$method, $uri] = ZeroRouter::resolve($key, $this->modelClass);
 
+        $plural     = Str::plural(class_basename($this->modelClass));
         $controller = ClassResolver::$ControllersNamespace . "\\{$plural}Controller";
 
         $this->{$method}($uri, [
-            "uses" => $controller, // We will use $controller::_invoke();
-            "middleware" => $middleware ?? null
+            'uses'       => $controller, // We will use $controller::_invoke();
+            'middleware' => $middleware ?? null,
         ]);
     }
 
-
     /**
-     * Register REST-style routes.
+     * Register CRUD-style routes.
      *
      * @param array $declarations The middleware
+     *
+     * @throws InvalidArgument
      */
-    protected function rest(array $declarations = []): void
+    protected function registerCRUDRoutes(array $declarations = []): void
     {
         foreach ($declarations as $key => $middleware) {
-            $this->makeRESTRoute($key, $middleware);
+            $this->registerCRUDRoute($key, $middleware);
         }
     }
 }

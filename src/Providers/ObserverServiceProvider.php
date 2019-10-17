@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Providers;
 
 use Exception;
@@ -7,42 +9,37 @@ use HaydenPierce\ClassFinder\ClassFinder;
 use Illuminate\Support\Collection;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
+use function in_array;
 
 /**
- * Class ObserverServiceProvider.
  * Provides all observers to the corresponding models.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 1.0.0
  */
 class ObserverServiceProvider extends CacheableServiceProvider
 {
-    public const CACHE_FILE = "bootstrap/cache/observers.php";
+    public const CACHE_FILE = 'bootstrap/cache/observers.php';
 
     /** @var array Ignored observers */
     public static $IgnoredObservers = [];
 
-
     /**
      * @return array Dynamically load the model observers.
+     *
      * @throws Exception
      */
     public function loadDynamic(): array
     {
         return Collection::make(ClassFinder::getClassesInNamespace(ClassResolver::$ObserversNamespace))
-            ->reject(function (string $observerClass) {
+            ->reject(static function (string $observerClass) {
                 return in_array($observerClass, self::$IgnoredObservers)
                     || ClassResolver::getModelClass($observerClass) === null;
             })
-            ->mapWithKeys(function (string $observerClass) {
+            ->mapWithKeys(static function (string $observerClass) {
                 $modelClass = ClassResolver::getModelClass($observerClass);
 
                 return [$modelClass => $observerClass];
             })
             ->toArray();
     }
-
 
     /**
      * @param mixed $data The data, from the cache or dynamically loaded.

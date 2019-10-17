@@ -1,14 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Testing;
 
-/**
- * Class DataProvider.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 2.0.0
- */
+use function array_merge;
+use function is_array;
+
 class DataProvider
 {
     /**

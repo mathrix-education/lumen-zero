@@ -1,22 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Testing;
 
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Testing\Dictionaries\Dictionary;
+use function class_basename;
+use function str_replace;
+use function trim;
+use function var_export;
 
 /**
- * Class ModelMockFactory.
  * Custom factory to make model mocks, since we use it in a non-standard way.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 2.0.0
  */
 class ModelMockFactory
 {
     /** @var string $namespace The model namespace. */
-    private $namespace = "App\\Models";
+    private $namespace = 'App\\Models';
     /** @var string $name The model name. */
     private $name;
     /** @var array $properties The properties of the mock. */
@@ -25,7 +26,6 @@ class ModelMockFactory
     private $methods = [];
     /** @var string $code The actual code of the mock. */
     private $code;
-
 
     /**
      * Make a new ModelMockFactory
@@ -37,7 +37,6 @@ class ModelMockFactory
         return new self();
     }
 
-
     /**
      * Set the mock namespace and class name
      *
@@ -47,15 +46,14 @@ class ModelMockFactory
      */
     public function setFullyQualifiedName(string $fullyQualifiedName): self
     {
-        $class = class_basename($fullyQualifiedName);
-        $namespace = str_replace("\\$class", "", $fullyQualifiedName);
+        $class     = class_basename($fullyQualifiedName);
+        $namespace = str_replace("\\$class", '', $fullyQualifiedName);
 
         $this->setNamespace($namespace);
         $this->setName($class);
 
         return $this;
     }
-
 
     /**
      * Set the mock namespace.
@@ -66,11 +64,10 @@ class ModelMockFactory
      */
     public function setNamespace(string $namespace): self
     {
-        $this->namespace = trim($namespace, "\\");
+        $this->namespace = trim($namespace, '\\');
 
         return $this;
     }
-
 
     /**
      * Set the mock name. If set to null, we will use the Dictionary to generate a random model name.
@@ -85,7 +82,6 @@ class ModelMockFactory
 
         return $this;
     }
-
 
     /**
      * Set the mock property.
@@ -103,7 +99,6 @@ class ModelMockFactory
         return $this;
     }
 
-
     /**
      * Set the mock method.
      *
@@ -120,7 +115,6 @@ class ModelMockFactory
         return $this;
     }
 
-
     /**
      * Compile the code.
      *
@@ -130,24 +124,24 @@ class ModelMockFactory
     {
         $baseModel = BaseModel::class;
 
-        $code = "namespace $this->namespace;\n\n";
+        $code  = "namespace $this->namespace;\n\n";
         $code .= "class $this->name extends \\$baseModel {\n";
 
         // Implements properties
         foreach ($this->properties as $property) {
             [$visibility, $name, $value] = $property;
-            $value = var_export($value, true);
-            $code .= "    $visibility \$$name = $value;\n";
+            $value                       = var_export($value, true);
+            $code                       .= "    $visibility \$$name = $value;\n";
         }
 
         // Implements methods
         foreach ($this->methods as $method) {
             [$visibility, $name, $value] = $method;
-            $value = var_export($value, true);
-            $code .= "\n    $visibility function $name()\n";
-            $code .= "    {\n";
-            $code .= "        return $value;\n";
-            $code .= "    }\n";
+            $value                       = var_export($value, true);
+            $code                       .= "\n    $visibility function $name()\n";
+            $code                       .= "    {\n";
+            $code                       .= "        return $value;\n";
+            $code                       .= "    }\n";
         }
         $code .= "}\n";
 
@@ -155,7 +149,6 @@ class ModelMockFactory
 
         return $this;
     }
-
 
     /**
      * Eval the generated code.
@@ -169,7 +162,6 @@ class ModelMockFactory
         return $this;
     }
 
-
     /**
      * Get the mock actual code.
      *
@@ -179,7 +171,6 @@ class ModelMockFactory
     {
         return $this->code;
     }
-
 
     /**
      * Get the mock actual full class name.

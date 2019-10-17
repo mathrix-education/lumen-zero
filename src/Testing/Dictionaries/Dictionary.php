@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Testing\Dictionaries;
 
 use Illuminate\Support\Collection;
+use function call_user_func_array;
+use function explode;
+use function file_get_contents;
+use function in_array;
 
 /**
- * Class Dictionary.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 2.0.0
- *
  * @mixin Collection
  */
 class Dictionary
@@ -22,13 +22,11 @@ class Dictionary
     /** @var string The class dictionary. */
     private $dictionary;
 
-
-    public function __construct(string $file = __DIR__ . "/nouns_singular.txt")
+    public function __construct(string $file = __DIR__ . '/nouns_singular.txt')
     {
         $this->dictionary = $file;
         $this->load();
     }
-
 
     /**
      * Load a dictionary, which is a simple text file, one wor per line.
@@ -41,7 +39,7 @@ class Dictionary
             $words = file_get_contents($this->dictionary);
 
             self::$loaded[$this->dictionary] = Collection::make(explode("\n", $words))
-                ->reject(function ($word) {
+                ->reject(static function ($word) {
                     return empty($word);
                 });
 
@@ -50,7 +48,6 @@ class Dictionary
 
         return $this;
     }
-
 
     /**
      * Get a random dictionary value.
@@ -67,12 +64,12 @@ class Dictionary
             } while (in_array($val, self::$uniques[$this->dictionary]));
 
             self::$uniques[$this->dictionary][] = $val;
-            return $val;
-        } else {
-            return self::$loaded[$this->dictionary]->random();
-        }
-    }
 
+            return $val;
+        }
+
+        return self::$loaded[$this->dictionary]->random();
+    }
 
     /**
      * Forward method call to the Collection
