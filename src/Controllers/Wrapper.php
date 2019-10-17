@@ -133,7 +133,7 @@ class Wrapper
         $this->offset = $this->request->query('page', 0) * $this->limit;
 
         // Order
-        [$this->orderColumn, $this->orderDirection] = $this->extract(
+        [$this->orderDirection, $this->orderColumn] = $this->extract(
             $this->request->query('sort', '+' . $this->getKey()),
             self::SORT_OPERATORS,
             '+'
