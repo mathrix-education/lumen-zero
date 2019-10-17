@@ -105,7 +105,7 @@ abstract class BaseController extends LumenController
      *
      * @return array
      */
-    public function getAction(Request $request, array $args = []): array
+    public function getAction(Request $request, array $args): array
     {
         // Get the request uri without the querystring.
         $uri = strtok($request->getRequestUri(), '?');
