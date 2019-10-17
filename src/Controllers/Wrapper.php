@@ -27,7 +27,7 @@ class Wrapper
     /** @var string[] The Eloquent query builder with. */
     private $with;
     /** @var array The Eloquent query builder conditions */
-    private $wheres;
+    private $wheres = [];
     /** @var int The Eloquent query builder limit */
     private $limit = self::MAX_LIMIT;
     /** @var int The Eloquent query builder offset */
