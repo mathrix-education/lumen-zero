@@ -26,7 +26,7 @@ trait DeleteAction
      *
      * @throws Exception
      */
-    final protected function defaultDelete(Request $request, $identifier): DataResponse
+    final public function defaultDelete(Request $request, $identifier): DataResponse
     {
         $wrapper = new Wrapper($request, $this->modelClass);
 

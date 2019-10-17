@@ -21,7 +21,7 @@ trait ListAction
      *
      * @return PaginationResponse
      */
-    final protected function defaultList(Request $request): PaginationResponse
+    final public function defaultList(Request $request): PaginationResponse
     {
         $wrapper = new Wrapper($request, $this->modelClass);
 

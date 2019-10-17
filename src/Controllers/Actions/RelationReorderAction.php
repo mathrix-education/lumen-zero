@@ -29,7 +29,7 @@ trait RelationReorderAction
      *
      * @throws Http400BadRequest
      */
-    final protected function defaultRelationReorder(Request $request, $identifier, string $relation): DataResponse
+    final public function defaultRelationReorder(Request $request, $identifier, string $relation): DataResponse
     {
         $wrapper = new Wrapper($request, $this->modelClass);
 

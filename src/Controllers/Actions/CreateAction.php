@@ -18,7 +18,7 @@ trait CreateAction
      *
      * @return DataResponse
      */
-    final protected function defaultCreate(Request $request): DataResponse
+    final public function defaultCreate(Request $request): DataResponse
     {
         $wrapper = new Wrapper($request, $this->modelClass);
 

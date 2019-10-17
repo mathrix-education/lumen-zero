@@ -23,7 +23,7 @@ trait UpdateAction
      *
      * @return DataResponse
      */
-    protected function defaultUpdate(Request $request, $identifier): DataResponse
+    final public function defaultUpdate(Request $request, $identifier): DataResponse
     {
         $wrapper = new Wrapper($request, $this->modelClass);
 

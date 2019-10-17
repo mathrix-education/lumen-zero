@@ -23,7 +23,7 @@ trait ReadAction
      *
      * @return DataResponse
      */
-    final protected function defaultRead(Request $request, $identifier): DataResponse
+    final public function defaultRead(Request $request, $identifier): DataResponse
     {
         $wrapper = new Wrapper($request, $this->modelClass);
 

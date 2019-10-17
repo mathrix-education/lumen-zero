@@ -27,7 +27,7 @@ trait RelationReadAction
      *
      * @return DataResponse
      */
-    final protected function defaultRelationRead(Request $request, $identifier, string $relation): DataResponse
+    final public function defaultRelationRead(Request $request, $identifier, string $relation): DataResponse
     {
         $wrapper = new Wrapper($request, $this->modelClass);
 
