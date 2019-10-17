@@ -27,8 +27,8 @@ class PaginationResponse extends DataResponse
         }
 
         $meta = [
-            'page'     => (int)($query->offset / $query->limit),
-            'per_page' => $query->limit,
+            'page'     => (int)($query->getQuery()->offset / $query->getQuery()->limit),
+            'per_page' => $query->getQuery()->limit,
             'total'    => $total,
         ];
 
