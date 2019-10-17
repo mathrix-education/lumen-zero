@@ -145,8 +145,15 @@ class Wrapper
         // Conditions
         $searchColumns = $this->modelClass::getSearchableColumns();
         foreach ($searchColumns as $key) {
+            $queryStringValue = $this->request->query($key);
+
+            // Skip if not provided in query string
+            if ($queryStringValue === null) {
+                continue;
+            }
+
             [$operator, $value] = $this->extract(
-                $this->request->query($key),
+                $queryStringValue,
                 self::FILTER_OPERATORS,
                 '='
             );
