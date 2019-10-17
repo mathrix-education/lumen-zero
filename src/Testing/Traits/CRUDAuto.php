@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mathrix\Lumen\Zero\Testing\Traits;
 
+use Mathrix\Lumen\Zero\Exceptions\InvalidArgument;
 use function array_combine;
 use function array_map;
 
@@ -20,7 +21,7 @@ trait CRUDAuto
      *
      * @return array
      */
-    public function restDataProvider(): array
+    public function CRUDDataProvider(): array
     {
         $data = array_map(static function (string $key) {
             return [$key];
@@ -34,9 +35,11 @@ trait CRUDAuto
      *
      * @param string $key
      *
-     * @dataProvider restDataProvider
+     * @throws InvalidArgument
+     *
+     * @dataProvider CRUDDataProvider$
      */
-    public function testREST(string $key): void
+    public function testCRUD(string $key): void
     {
         $this->makeRequest($key);
     }

@@ -59,7 +59,7 @@ trait CRUD
      *
      * @noinspection PhpUnused
      */
-    public static function bootCRUDTrait(): void
+    public static function bootCRUD(): void
     {
         static::$modelClass = ClassResolver::getModelClass(static::class);
     }
@@ -122,7 +122,7 @@ trait CRUD
      */
     public function makeRequest(string $key, $before = null, $after = null, $options = []): void
     {
-        [$method, $uri] = ZeroRouter::resolve(static::$modelClass, $key);
+        [$method, $uri] = ZeroRouter::resolve($key, static::$modelClass);
         /**
          * @var bool $isRelationRequest if the request is a relation request (which means that the key contains a ':'
          */
