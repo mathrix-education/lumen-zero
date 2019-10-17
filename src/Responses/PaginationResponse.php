@@ -26,6 +26,10 @@ class PaginationResponse extends DataResponse
             $models = $callback($models);
         }
 
+        if ($query instanceof Relation) {
+            $query = $query->getQuery();
+        }
+
         $meta = [
             'page'     => (int)($query->getQuery()->offset / $query->getQuery()->limit),
             'per_page' => $query->getQuery()->limit,
