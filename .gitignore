@@ -1,3 +1,4 @@
 .idea/
 .scannerwork/
+composer.lock
 vendor/
