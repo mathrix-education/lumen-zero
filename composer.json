@@ -51,7 +51,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Mathrix\\Lumen\\Zero\\": "tests"
+      "Mathrix\\Lumen\\Zero\\Tests\\": "tests"
     }
   },
   "minimum-stability": "dev",

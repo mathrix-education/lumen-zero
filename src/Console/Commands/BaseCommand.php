@@ -8,6 +8,8 @@ use Illuminate\Console\Command;
 
 /**
  * Base class for Artisan commands.
+ *
+ * @codeCoverageIgnore
  */
 abstract class BaseCommand extends Command
 {

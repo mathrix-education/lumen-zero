@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mathrix\Lumen\Zero\Registrars;
+namespace Mathrix\Lumen\Zero\Tests\Registrars;
 
 use Mathrix\Lumen\Zero\Exceptions\InvalidArgument;
+use Mathrix\Lumen\Zero\Registrars\ZeroRouter;
 use Mathrix\Lumen\Zero\Testing\ModelMockFactory;
 use PHPUnit\Framework\TestCase;
 use function class_exists;
