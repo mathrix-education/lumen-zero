@@ -6,6 +6,9 @@ namespace Mathrix\Lumen\Zero\Events;
 
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @codeCoverageIgnore
+ */
 abstract class BaseEvent
 {
     use SerializesModels;

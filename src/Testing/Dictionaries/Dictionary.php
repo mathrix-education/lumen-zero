@@ -29,7 +29,7 @@ class Dictionary
     }
 
     /**
-     * Load a dictionary, which is a simple text file, one wor per line.
+     * Load a dictionary, which is a simple text file, one word per line.
      *
      * @return Dictionary
      */
