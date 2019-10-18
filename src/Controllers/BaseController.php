@@ -26,6 +26,7 @@ use function app;
 use function array_splice;
 use function count;
 use function explode;
+use function method_exists;
 use function strtok;
 use function strtolower;
 use function trim;
@@ -80,6 +81,7 @@ abstract class BaseController extends LumenController
     public function __invoke(...$args)
     {
         [$default, $actual, $args] = BoundMethod::call(app(), [$this, 'getAction'], [$args]);
+
         /** @var string $action The action to execute. */
         $action = method_exists($this, $actual) ? $actual : $default;
 

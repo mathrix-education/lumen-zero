@@ -9,8 +9,11 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Mathrix\Lumen\Zero\Models\Traits\HasValidator;
 use Mathrix\Lumen\Zero\Models\Traits\IsSearchable;
+use function class_basename;
 use function count;
 use function is_array;
+use function lcfirst;
+use function ucfirst;
 use function with;
 
 /**
@@ -117,6 +120,21 @@ abstract class BaseModel extends Model
         } else {
             parent::setAttribute($key, $value);
         }
+    }
+
+    /**
+     * Get the selector name based on a given.
+     *
+     * @param string|null $key The selector key. If not provided, we will use the model primary key instead.
+     *
+     * @return string
+     */
+    public function getSelector(?string $key = null): string
+    {
+        $key  = $key ?? $this->getKeyName();
+        $name = class_basename($this);
+
+        return lcfirst($name) . ucfirst($key);
     }
 
     /**
