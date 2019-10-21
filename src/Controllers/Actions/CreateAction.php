@@ -26,6 +26,9 @@ trait CreateAction
         $model = new $this->modelClass($request->all());
 
         $this->canOrFail($request, 'create', $model);
+        if ($wrapper->hasExpand()) {
+            
+        }
 
         $model->save();
         $model->load($wrapper->getWith());

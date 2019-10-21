@@ -61,6 +61,16 @@ class Wrapper
     }
 
     /**
+     * If the query has an expand querystring.
+     *
+     * @return bool
+     */
+    public function hasExpand(): bool
+    {
+        return !empty($this->with);
+    }
+
+    /**
      * @return array
      */
     public function getWheres(): array
