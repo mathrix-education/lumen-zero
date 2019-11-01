@@ -14,8 +14,8 @@ use function with;
 
 class Wrapper
 {
-    public const MAX_LIMIT        = 100;
-    public const SORT_OPERATORS   = ['+', '-'];
+    public const MAX_LIMIT = 100;
+    public const SORT_OPERATORS = ['+', '-'];
     public const FILTER_OPERATORS = ['=', '<', '>', '<=', '>=', '%', '!='];
 
     /** @var Request The incoming Illuminate request */
@@ -39,7 +39,7 @@ class Wrapper
 
     public function __construct(Request $request, string $modelClass)
     {
-        $this->request    = $request;
+        $this->request = $request;
         $this->modelClass = $modelClass;
         $this->parse();
     }
@@ -113,9 +113,9 @@ class Wrapper
     /**
      * Extract an operator from a input string.
      *
-     * @param string   $input           The input string.
-     * @param string[] $operators       The allowed operators.
-     * @param string   $defaultOperator The default operator.
+     * @param string $input The input string.
+     * @param string[] $operators The allowed operators.
+     * @param string $defaultOperator The default operator.
      *
      * @return array [operator, value]
      */
@@ -138,8 +138,8 @@ class Wrapper
     private function parse(): void
     {
         // Setup the request boundaries
-        $this->key    = $this->request->query('key', with(new $this->modelClass())->getKeyName());
-        $this->limit  = $this->request->query('per_page', self::MAX_LIMIT);
+        $this->key = $this->request->query('key', with(new $this->modelClass())->getKeyName());
+        $this->limit = $this->request->query('per_page', self::MAX_LIMIT);
         $this->offset = $this->request->query('page', 0) * $this->limit;
 
         // Order
@@ -155,24 +155,28 @@ class Wrapper
         // Conditions
         $searchColumns = $this->modelClass::getSearchableColumns();
         foreach ($searchColumns as $key) {
-            $queryStringValue = $this->request->query($key);
+            if ($this->request->query('query') !== null) {
+                $this->wheres[] = [$key, 'LIKE', '%' . $this->request->query('query') . '%'];
+            } else {
+                $queryStringValue = $this->request->query($key);
 
-            // Skip if not provided in query string
-            if ($queryStringValue === null) {
-                continue;
+                // Skip if not provided in query string
+                if ($queryStringValue === null) {
+                    continue;
+                }
+
+                [$operator, $value] = $this->extract(
+                    $queryStringValue,
+                    self::FILTER_OPERATORS,
+                    '='
+                );
+
+                $this->wheres[] = [$key, $operator, $value];
             }
-
-            [$operator, $value] = $this->extract(
-                $queryStringValue,
-                self::FILTER_OPERATORS,
-                '='
-            );
-
-            $this->wheres[] = [$key, $operator, $value];
         }
 
         // Expand and with
-        $expand     = $this->request->query('expand', null);
+        $expand = $this->request->query('expand', null);
         $this->with = !empty($expand) ? explode(',', $expand) : [];
     }
 }
