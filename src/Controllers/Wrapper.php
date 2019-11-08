@@ -138,7 +138,7 @@ class Wrapper
     private function parse(): void
     {
         // Setup the request boundaries
-        $this->key    = (int)$this->request->query('key', with(new $this->modelClass())->getKeyName());
+        $this->key    = (string)$this->request->query('key', with(new $this->modelClass())->getKeyName());
         $this->limit  = (int)$this->request->query('per_page', self::MAX_LIMIT);
         $this->offset = (int)$this->request->query('page', 0) * $this->limit;
 

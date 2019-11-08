@@ -9,6 +9,7 @@ use Mathrix\Lumen\Zero\Controllers\Actions\CreateAction;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Responses\DataResponse;
 use PHPUnit\Framework\TestCase;
+use function get_class;
 
 /**
  * @coversDefaultClass \Mathrix\Lumen\Zero\Controllers\Actions\CreateAction
