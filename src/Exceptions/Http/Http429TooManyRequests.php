@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Mathrix\Lumen\Zero\Exceptions\Http;
 
+/**
+ * @codeCoverageIgnore
+ */
 class Http429TooManyRequests extends Http
 {
     /** THE HTTP error standard code */

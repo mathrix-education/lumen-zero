@@ -7,6 +7,8 @@ namespace Mathrix\Lumen\Zero\Console\Commands;
 use Illuminate\Console\Command;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Base class for Artisan commands.
  *
  * @codeCoverageIgnore
