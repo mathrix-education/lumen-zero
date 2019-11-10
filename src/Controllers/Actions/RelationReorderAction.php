@@ -35,7 +35,7 @@ trait RelationReorderAction
         Request $request,
         $identifier,
         string $relation,
-        string $column = 'order'
+        string $column
     ): DataResponse {
         $wrapper = new Wrapper($request, $this->modelClass);
 
@@ -56,8 +56,8 @@ trait RelationReorderAction
 
         if ($column !== null) {
             $sync = collect($request->all())
-                ->mapWithKeys(static function (int $itemId, int $order) {
-                    return [$itemId => ['order' => $order]];
+                ->mapWithKeys(static function (int $itemId, int $order) use ($column) {
+                    return [$itemId => [$column => $order]];
                 })
                 ->toArray();
         } else {

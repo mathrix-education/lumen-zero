@@ -24,6 +24,7 @@ use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use ReflectionException;
 use function app;
 use function array_splice;
+use function array_unshift;
 use function count;
 use function explode;
 use function method_exists;
@@ -144,6 +145,8 @@ abstract class BaseController extends LumenController
                     case 'get':
                         return ['defaultRelationRead', 'read' . ucfirst($relation), $args];
                     case 'patch':
+                        array_unshift($args, 'order');
+
                         return ['defaultRelationReorder', 'reorder' . ucfirst($relation), $args];
                 }
         }
