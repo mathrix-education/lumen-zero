@@ -145,7 +145,7 @@ abstract class BaseController extends LumenController
                     case 'get':
                         return ['defaultRelationRead', 'read' . ucfirst($relation), $args];
                     case 'patch':
-                        array_unshift($args, 'order');
+                        array_push($args, 'order');
 
                         return ['defaultRelationReorder', 'reorder' . ucfirst($relation), $args];
                 }

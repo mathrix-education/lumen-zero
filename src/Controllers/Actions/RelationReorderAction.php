@@ -47,7 +47,7 @@ trait RelationReorderAction
         /** @var BelongsToMany $rel */
         $rel = $model->$relation();
 
-        if (!($request instanceof BelongsToMany)) {
+        if (!($rel instanceof BelongsToMany)) {
             throw new Http400BadRequest([], "{$this->modelClass}::$relation() is not orderable");
         }
 

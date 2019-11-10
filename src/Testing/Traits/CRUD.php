@@ -126,15 +126,13 @@ trait CRUD
         /**
          * @var bool $isRelationRequest if the request is a relation request (which means that the key contains a ':'
          */
-        $isRelationRequest = Str::contains($uri, ':');
+        $isRelationRequest = Str::contains($key, ':');
 
         // Replace {identifier} by a real model identifier
-        if (!$isRelationRequest) {
-            // Set the request model
-            $this->requestModel = static::$modelClass::random($options['conditions'] ?? []);
+        // Set the request model
+        $this->requestModel = static::$modelClass::random($options['conditions'] ?? []);
 
-            $uri = str_replace("{{$this->requestModel->getSelector()}}", $this->requestModel->getKey(), $uri);
-        }
+        $uri = str_replace("{{$this->requestModel->getSelector()}}", $this->requestModel->getKey(), $uri);
 
         // Build the request body if necessary
         if (in_array($method, ['post', 'patch'])) {
@@ -146,6 +144,7 @@ trait CRUD
             } else {
                 $ids                     = [1, 2, 3, 4]; // TODO: Automatically generate that
                 $this->beforeRequestData = $this->override($ids, $before);
+                $relation                = str_replace(strtok($key, ':') . ':', '', $key);
             }
         }
 
@@ -157,7 +156,7 @@ trait CRUD
 
         // Make assertions
         $this->event('before.assertions');
-        $this->debug();
+
         if (!$isRelationRequest && in_array($method, ['post', 'patch'])) {
             // On creation/edition, assert that the model has been successfully saved.
             $this->afterRequestData = $this->override(
