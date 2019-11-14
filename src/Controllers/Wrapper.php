@@ -17,6 +17,7 @@ class Wrapper
     public const MAX_LIMIT        = 100;
     public const SORT_OPERATORS   = ['+', '-'];
     public const FILTER_OPERATORS = ['=', '<', '>', '<=', '>=', '%', '!='];
+    public const EXPAND_SEPARATOR = ';';
 
     /** @var Request The incoming Illuminate request */
     private $request;
@@ -177,6 +178,6 @@ class Wrapper
 
         // Expand and with
         $expand     = $this->request->query('expand', null);
-        $this->with = !empty($expand) ? explode(',', $expand) : [];
+        $this->with = !empty($expand) ? explode(self::EXPAND_SEPARATOR, $expand) : [];
     }
 }
