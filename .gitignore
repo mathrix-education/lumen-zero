@@ -1,4 +1,5 @@
 .idea/
 .scannerwork/
 composer.lock
+storage/
 vendor/
