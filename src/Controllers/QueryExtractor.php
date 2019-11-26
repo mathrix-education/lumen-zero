@@ -12,7 +12,7 @@ use function strlen;
 use function substr;
 use function with;
 
-class Wrapper
+class QueryExtractor
 {
     public const MAX_LIMIT        = 100;
     public const SORT_OPERATORS   = ['+', '-'];
@@ -154,7 +154,8 @@ class Wrapper
         $this->orderDirection = $this->orderDirection === '+' ? 'asc' : 'desc';
 
         // Conditions
-        $searchColumns = $this->modelClass::getSearchableColumns();
+        $searchColumns = with(new $this->modelClass())->getSearchableColumns();
+
         foreach ($searchColumns as $key) {
             if ($this->request->query('query') !== null) {
                 $this->wheres[] = [$key, 'LIKE', '%' . $this->request->query('query') . '%', 'or'];

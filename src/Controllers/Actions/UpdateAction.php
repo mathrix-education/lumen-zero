@@ -6,7 +6,7 @@ namespace Mathrix\Lumen\Zero\Controllers\Actions;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Mathrix\Lumen\Zero\Controllers\Wrapper;
+use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Responses\DataResponse;
 
@@ -25,7 +25,7 @@ trait UpdateAction
      */
     final public function defaultUpdate(Request $request, $identifier): DataResponse
     {
-        $wrapper = new Wrapper($request, $this->modelClass);
+        $wrapper = new QueryExtractor($request, $this->modelClass);
 
         /** @var BaseModel $model */
         $model = $this->query()

@@ -6,7 +6,7 @@ namespace Mathrix\Lumen\Zero\Controllers\Actions;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Mathrix\Lumen\Zero\Controllers\Wrapper;
+use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Responses\PaginationResponse;
 
 /**
@@ -23,7 +23,7 @@ trait ListAction
      */
     final public function defaultList(Request $request): PaginationResponse
     {
-        $wrapper = new Wrapper($request, $this->modelClass);
+        $wrapper = new QueryExtractor($request, $this->modelClass);
 
         $this->canOrFail($request, 'list', $this->modelClass);
 

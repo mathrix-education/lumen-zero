@@ -23,8 +23,8 @@ use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use ReflectionException;
 use function app;
+use function array_push;
 use function array_splice;
-use function array_unshift;
 use function count;
 use function explode;
 use function method_exists;
@@ -108,7 +108,7 @@ abstract class BaseController extends LumenController
      *
      * @return array
      */
-    public function getAction(Request $request, array $args): array
+    public function getAction(Request $request, array $args): ?array
     {
         // Get the request uri without the querystring.
         $uri = strtok($request->getRequestUri(), '?');

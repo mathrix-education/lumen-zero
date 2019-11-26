@@ -14,8 +14,6 @@ trait HasValidator
 {
     /** @var array The Validation rules */
     protected $rules = [];
-    /** @var bool|array The validation errors */
-    protected $validationErrors = [];
 
     /**
      * The HashValidator boot function.

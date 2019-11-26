@@ -15,12 +15,6 @@ use function ucfirst;
 
 class ZeroRouter
 {
-    public const LIST_ACTION   = 'list';
-    public const CREATE_ACTION = 'create';
-    public const READ_ACTION   = 'read';
-    public const UPDATE_ACTION = 'update';
-    public const DELETE_ACTION = 'delete';
-
     /**
      * @param string $key
      * @param string $modelClass

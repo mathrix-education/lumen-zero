@@ -44,10 +44,10 @@ class ZeroRouterTest extends TestCase
 
         if (!class_exists($modelClass)) {
             ModelMockFactory::make()
-                ->setName('Pear')
-                ->setMethod('public', 'getKeyName', 'id')
-                ->compile()
-                ->exec();
+                            ->setName('Pear')
+                            ->setMethod('public', 'getKeyName', 'id')
+                            ->compile()
+                            ->exec();
         }
 
         [$actualMethod, $actualUri] = ZeroRouter::resolve($key, $modelClass);

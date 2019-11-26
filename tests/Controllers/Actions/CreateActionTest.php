@@ -6,48 +6,44 @@ namespace Mathrix\Lumen\Zero\Tests\Controllers\Actions;
 
 use Illuminate\Http\Request;
 use Mathrix\Lumen\Zero\Controllers\Actions\CreateAction;
-use Mathrix\Lumen\Zero\Models\BaseModel;
+use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Responses\DataResponse;
-use PHPUnit\Framework\TestCase;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use function get_class;
 
 /**
  * @coversDefaultClass \Mathrix\Lumen\Zero\Controllers\Actions\CreateAction
  */
-class CreateActionTest extends TestCase
+class CreateActionTest extends MockeryTestCase
 {
     /**
      * @covers ::defaultCreate
      */
     public function testDefaultCreate(): void
     {
-        /** @var CreateAction $trait */
-        $trait = $this->getMockForTrait(
-            CreateAction::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['canOrFail']
-        );
+        // Static data
+        $data    = ['name' => 'golden'];
+        $request = Request::create('/apples', 'post', $data);
 
-        /** @var BaseModel $modelMock */
-        $modelMock = $this->getMockForAbstractClass(
-            BaseModel::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['save', 'load']
-        );
+        // Mock QueryExtractor
+        $extractor = Mockery::mock('overload:' . QueryExtractor::class);
+        $extractor->shouldReceive('getWith')->withNoArgs()->andReturn([])->once();
 
-        $trait->modelClass = get_class($modelMock);
+        // Mock BaseModel (\Apple)
+        $model = Mockery::mock('overload:\Apple');
+        $model->shouldReceive('fill')->with($data)->once();
+        $model->shouldReceive('save')->withNoArgs()->andReturnNull()->once();
+        $model->shouldReceive('load')->with([])->andReturnNull()->once();
 
-        $request = Request::create('/apples', 'post');
-        $result  = $trait->defaultCreate($request);
+        // Mock DataResponse
+        Mockery::mock('overload:' . DataResponse::class);
 
-        $this->assertInstanceOf(DataResponse::class, $result);
+        // Setup CreateAction
+        $trait = Mockery::mock(CreateAction::class);
+        $trait->shouldReceive('canOrFail')->andReturnNull()->once(); // cannot test args
+        $trait->modelClass = get_class($model);
+
+        $trait->defaultCreate($request);
     }
 }
