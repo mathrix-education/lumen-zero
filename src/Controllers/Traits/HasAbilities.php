@@ -6,10 +6,8 @@ namespace Mathrix\Lumen\Zero\Controllers\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 use Mathrix\Lumen\Zero\Exceptions\Http\Http401Unauthorized;
 use function method_exists;
-use function ucfirst;
 
 /**
  * Trait HasAbilities.

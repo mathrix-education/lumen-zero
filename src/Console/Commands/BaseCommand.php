@@ -10,7 +10,6 @@ use Illuminate\Console\Command;
  * @codeCoverageIgnore
  *
  * Base class for Artisan commands.
- *
  * @codeCoverageIgnore
  */
 abstract class BaseCommand extends Command

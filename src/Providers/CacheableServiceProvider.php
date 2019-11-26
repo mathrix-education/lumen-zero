@@ -64,7 +64,7 @@ abstract class CacheableServiceProvider extends ServiceProvider
      */
     public function getCacheFile(): string
     {
-        return app()->basePath(static::CACHE_FILE);
+        return app()->basePath(self::CACHE_FILE);
     }
 
     /**

@@ -23,6 +23,7 @@ use function in_array;
 use function is_array;
 use function is_callable;
 use function str_replace;
+use function strtok;
 use function with;
 
 /**
