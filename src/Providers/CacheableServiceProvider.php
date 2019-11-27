@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Providers;
 
 use Brick\VarExporter\ExportException;
@@ -7,45 +9,45 @@ use Brick\VarExporter\VarExporter;
 use Illuminate\Support\ServiceProvider;
 use Mathrix\Lumen\Zero\Console\Commands\ProvidersCacheClearCommand;
 use Mathrix\Lumen\Zero\Console\Commands\ProvidersCacheCommand;
+use const LOCK_EX;
+use function app;
+use function dirname;
+use function file_exists;
+use function file_put_contents;
+use function is_dir;
+use function mkdir;
 
-/**
- * Class CacheableServiceProvider.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 2.0.6
- */
 abstract class CacheableServiceProvider extends ServiceProvider
 {
-    public const CACHE_FILE = null;
-    public const CACHE_MODE_ALWAYS = 0;
-    public const CACHE_ON_DEMAND = 1;
+    public const CACHE_FILE            = null;
+    public const CACHE_MODE_ALWAYS     = 0;
+    public const CACHE_ON_DEMAND       = 1;
     private static $CommandsRegistered = false;
-    public static $CacheMode = self::CACHE_ON_DEMAND;
-
+    public static $CacheMode           = self::CACHE_ON_DEMAND;
 
     /**
      * Register cache commands only once.
      */
     public function register()
     {
-        if (!self::$CommandsRegistered) {
-            $this->commands([
-                ProvidersCacheCommand::class,
-                ProvidersCacheClearCommand::class
-            ]);
+        if (self::$CommandsRegistered) {
+            return;
         }
-    }
 
+        $this->commands([
+            ProvidersCacheCommand::class,
+            ProvidersCacheClearCommand::class,
+        ]);
+    }
 
     /**
      * Boot the service provider.
      *
      * @throws ExportException
      */
-    public final function boot()
+    final public function boot()
     {
-        if (!$this->isCached() && static::$CacheMode === static::CACHE_MODE_ALWAYS) {
+        if (!$this->isCached() && static::$CacheMode === self::CACHE_MODE_ALWAYS) {
             $this->writeCache();
         }
 
@@ -57,15 +59,13 @@ abstract class CacheableServiceProvider extends ServiceProvider
         }
     }
 
-
     /**
      * @return string The cache file real path.
      */
     public function getCacheFile(): string
     {
-        return app()->basePath(static::CACHE_FILE);
+        return app()->basePath(self::CACHE_FILE);
     }
-
 
     /**
      * @return bool If the cache file exists.
@@ -75,7 +75,6 @@ abstract class CacheableServiceProvider extends ServiceProvider
         return file_exists($this->getCacheFile());
     }
 
-
     /**
      * @return mixed Load the cached data.
      */
@@ -84,7 +83,6 @@ abstract class CacheableServiceProvider extends ServiceProvider
         /** @noinspection PhpIncludeInspection */
         return require $this->getCacheFile();
     }
-
 
     /**
      * Write the cache file.
@@ -98,7 +96,7 @@ abstract class CacheableServiceProvider extends ServiceProvider
         $code = "<?php\n$code";
 
         $cacheFilePath = $this->getCacheFile();
-        $cacheFileDir = dirname($cacheFilePath);
+        $cacheFileDir  = dirname($cacheFilePath);
 
         if (!is_dir($cacheFileDir)) {
             mkdir($cacheFileDir, 0755, true);
@@ -107,12 +105,10 @@ abstract class CacheableServiceProvider extends ServiceProvider
         file_put_contents($this->getCacheFile(), $code, LOCK_EX);
     }
 
-
     /**
      * @return mixed Dynamically load the data required by the service provider.
      */
     abstract public function loadDynamic();
-
 
     /**
      * @param mixed $data The data, from the cache or dynamically loaded.

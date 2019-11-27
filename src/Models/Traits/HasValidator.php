@@ -1,52 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Models\Traits;
 
 use Illuminate\Support\Facades\Validator;
-use Mathrix\Lumen\Zero\Exceptions\ValidationException;
+use Mathrix\Lumen\Zero\Exceptions\Validation;
 
 /**
  * Trait HasValidator.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 1.0.0
  */
 trait HasValidator
 {
     /** @var array The Validation rules */
     protected $rules = [];
-    /** @var bool|array The validation errors */
-    protected $validationErrors = [];
-
 
     /**
      * The HashValidator boot function.
      */
     protected static function bootHasValidator()
     {
-        static::saving(function (self $model) {
+        static::saving(static function (self $model) {
             $model->validate();
         });
     }
 
-
     /**
      * Validate model data after attributes mutation.
      *
-     * @throws ValidationException
+     * @throws Validation
      */
     public function validate()
     {
         $validator = Validator::make($this->getValidationData(), $this->getValidationRules());
 
         if ($validator->fails()) {
-            throw new ValidationException($validator->errors()->getMessages());
+            throw new Validation($validator->errors()->getMessages());
         }
 
         return true;
     }
-
 
     /**
      * Get the validation data. May be overridden if the model requires specific logic.
@@ -62,7 +55,6 @@ trait HasValidator
 
         return $data;
     }
-
 
     /**
      * Get the validation rules. May be overridden if the model requires specific logic.

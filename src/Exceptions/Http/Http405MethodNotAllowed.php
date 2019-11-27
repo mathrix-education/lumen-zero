@@ -1,15 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Exceptions\Http;
 
 /**
- * Class Http405MethodNotAllowed.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 1.0.0
+ * @codeCoverageIgnore
  */
-class Http405MethodNotAllowed extends HttpException
+class Http405MethodNotAllowed extends Http
 {
     /** THE HTTP error standard code */
     protected const CODE = 405;

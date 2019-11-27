@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Providers;
 
 use Exception;
@@ -8,35 +10,31 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
+use function in_array;
 
 /**
- * Class PolicyServiceProvider.
  * Automatically register policies.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 1.0.1
  */
 class PolicyServiceProvider extends CacheableServiceProvider
 {
-    public const CACHE_FILE = "bootstrap/cache/policies.php";
+    public const CACHE_FILE = 'bootstrap/cache/policies.php';
 
     /** @var array Ignored policies */
     public static $IgnoredPolicies = [];
 
-
     /**
      * @return array Dynamically load polices.
+     *
      * @throws Exception
      */
     public function loadDynamic()
     {
         return Collection::make(ClassFinder::getClassesInNamespace(ClassResolver::$PoliciesNamespace))
-            ->reject(function (string $policyClass) {
+            ->reject(static function (string $policyClass) {
                 return in_array($policyClass, self::$IgnoredPolicies)
                     || ClassResolver::getModelClass($policyClass) === null;
             })
-            ->mapWithKeys(function ($policyClass) {
+            ->mapWithKeys(static function ($policyClass) {
                 /** @var BaseModel|null $modelClass */
                 $modelClass = ClassResolver::getModelClass($policyClass);
 
@@ -44,7 +42,6 @@ class PolicyServiceProvider extends CacheableServiceProvider
             })
             ->toArray();
     }
-
 
     /**
      * @param mixed $data The data, from the cache or dynamically loaded.

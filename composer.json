@@ -1,7 +1,7 @@
 {
-  "name": "mathrix/lumen-zero",
+  "name": "mathrix-education/lumen-zero",
   "description": "The main library for Mathrix Lumen REST APIs.",
-  "version": "2.4.1",
+  "version": "3.0.0-beta.1",
   "type": "library",
   "keywords": [
     "php",
@@ -25,17 +25,25 @@
     "source": "https://github.com/mathrix-education/lumen-zero",
     "docs": "https://github.com/mathrix-education/lumen-zero"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:mathrix-education/coding-standard.git"
+    }
+  ],
   "require": {
     "php": ">=7.2",
     "ext-json": "*",
     "ext-pdo": "*",
     "brick/varexporter": "^0.2.1",
     "haydenpierce/class-finder": "^0.3.1",
-    "illuminate/mail": "5.8.*",
-    "illuminate/notifications": "5.8.*",
-    "laravel/lumen-framework": "5.8.*"
+    "illuminate/mail": "^6.3",
+    "laravel/lumen-framework": "5.8.* || ^6.0"
   },
   "require-dev": {
+    "codedungeon/phpunit-result-printer": "^0.26.2",
+    "mathrix/coding-standard": "0.9.1",
+    "mockery/mockery": "^1.3",
     "phpunit/phpunit": "^8.0"
   },
   "autoload": {
@@ -45,7 +53,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Mathrix\\Lumen\\Zero\\": "tests"
+      "Mathrix\\Lumen\\Zero\\Tests\\": "tests"
     }
   },
   "minimum-stability": "dev",

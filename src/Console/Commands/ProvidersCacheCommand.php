@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Console\Commands;
 
 use Brick\VarExporter\ExportException;
@@ -7,19 +9,12 @@ use Mathrix\Lumen\Zero\Providers\CacheableServiceProvider;
 use Mathrix\Lumen\Zero\Providers\ObserverServiceProvider;
 use Mathrix\Lumen\Zero\Providers\PolicyServiceProvider;
 use Mathrix\Lumen\Zero\Providers\RegistrarServiceProvider;
+use function app;
 
-/**
- * Class ProvidersCache.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 2.0.5
- */
 class ProvidersCacheCommand extends BaseCommand
 {
-    protected $signature = "providers:cache {--f|force : Force cache refresh}";
-    protected $description = "Manually trigger Service Providers cache.";
-
+    protected $signature   = 'providers:cache {--f|force : Force cache refresh}';
+    protected $description = 'Manually trigger Service Providers cache.';
 
     /**
      * @throws ExportException
@@ -31,19 +26,18 @@ class ProvidersCacheCommand extends BaseCommand
         $this->cache(RegistrarServiceProvider::class);
     }
 
-
     /**
-     * @param $serviceProviderClass
+     * @param CacheableServiceProvider|string $serviceProviderClass The service provider class.
      *
      * @throws ExportException
      */
     public function cache($serviceProviderClass)
     {
-        $force = $this->option("force");
+        $force = $this->option('force');
 
         /** @var CacheableServiceProvider $serviceProvider */
         $serviceProvider = new $serviceProviderClass(app());
-        $cacheFile = $serviceProvider->getCacheFile();
+        $cacheFile       = $serviceProvider->getCacheFile();
 
         if (!$serviceProvider->isCached() || $force) {
             $serviceProvider->writeCache();

@@ -1,38 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mathrix\Lumen\Zero\Controllers;
 
 use Illuminate\Container\BoundMethod;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Str;
 use Laravel\Lumen\Routing\Controller as LumenController;
-use Mathrix\Lumen\Zero\Controllers\Actions\RelationGet;
-use Mathrix\Lumen\Zero\Controllers\Actions\RelationPatch;
-use Mathrix\Lumen\Zero\Controllers\Actions\StandardDelete;
-use Mathrix\Lumen\Zero\Controllers\Actions\StandardGet;
-use Mathrix\Lumen\Zero\Controllers\Actions\StandardIndex;
-use Mathrix\Lumen\Zero\Controllers\Actions\StandardPatch;
-use Mathrix\Lumen\Zero\Controllers\Actions\StandardPost;
+use Mathrix\Lumen\Zero\Controllers\Actions\CreateAction;
+use Mathrix\Lumen\Zero\Controllers\Actions\DeleteAction;
+use Mathrix\Lumen\Zero\Controllers\Actions\ListAction;
+use Mathrix\Lumen\Zero\Controllers\Actions\ReadAction;
+use Mathrix\Lumen\Zero\Controllers\Actions\RelationReadAction;
+use Mathrix\Lumen\Zero\Controllers\Actions\RelationReorderAction;
+use Mathrix\Lumen\Zero\Controllers\Actions\UpdateAction;
 use Mathrix\Lumen\Zero\Controllers\Traits\HasAbilities;
 use Mathrix\Lumen\Zero\Controllers\Traits\HasRequestValidator;
-use Mathrix\Lumen\Zero\Exceptions\Http\Http400BadRequestException;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use ReflectionException;
+use function app;
+use function array_push;
+use function array_splice;
+use function count;
+use function explode;
+use function method_exists;
+use function strtok;
+use function strtolower;
+use function trim;
+use function ucfirst;
 
-/**
- * Class BaseController.
- *
- * @author Mathieu Bour <mathieu@mathrix.fr>
- * @copyright Mathrix Education SA.
- * @since 2.0.0
- */
 abstract class BaseController extends LumenController
 {
-    use StandardIndex, StandardPost, StandardGet, StandardPatch, StandardDelete, RelationGet, RelationPatch,
-        HasAbilities, HasRequestValidator;
+    use ListAction;
+    use CreateAction;
+    use ReadAction;
+    use UpdateAction;
+    use DeleteAction;
+    use RelationReadAction;
+    use RelationReorderAction;
+    use HasAbilities;
+    use HasRequestValidator;
 
     /** @var Request $request The Illuminate HTTP request */
     protected $request;
@@ -40,7 +51,6 @@ abstract class BaseController extends LumenController
     protected $modelClass = null;
     /** @var array The relation loaded with model. */
     protected $with = [];
-
 
     /**
      * BaseController constructor
@@ -51,148 +61,96 @@ abstract class BaseController extends LumenController
         $this->modelClass = $this->modelClass ?? ClassResolver::getModelClass($this);
     }
 
-
     /**
-     * A standard route has the following shape:
-     * GET /models
-     * POST /models
-     * GET/PATH/DELETE /models/{identifier}
-     * GET/PATH/DELETE /models/{key}/{identifier}
+     * A L-CRUD route has the following shape:
+     * GET /models (list)
+     * POST /models (create)
+     * GET /models/{identifier} (read)
+     * PATCH /models/{identifier} (update)
+     * DELETE /models/{identifier} (delete)
      *
      * A relation route has the following shape:
-     * GET /models/{identifier}/{relation}
-     * GET /models/{key}/{identifier}/{relation}
-     * PATCH /models/{identifier}/{relation}
+     * GET /models/{identifier}/{relation} (relationRead)
+     * PATCH /models/{identifier}/{relation} (relationReorder)
      *
      * @param array $args The request arguments.
      *
      * @return JsonResponse|Response
-     * @throws Http400BadRequestException
+     *
      * @throws ReflectionException
      */
     public function __invoke(...$args)
     {
-        $this->request = app()->make(Request::class);
+        [$default, $actual, $args] = BoundMethod::call(app(), [$this, 'getAction'], [$args]);
 
-        [$action, $args] = $this->prepareRESTRequest(...$args);
+        /** @var string $action The action to execute. */
+        $action = method_exists($this, $actual) ? $actual : $default;
 
-        return BoundMethod::call(app(), [$this, $action], $args, null);
+        return BoundMethod::call(app(), [$this, $action], $args);
     }
 
-
     /**
-     * Get the action based on extracted request parameters.
+     * Get an Eloquent query builder based on the current controller  associated model class.
      *
-     * @param string $method The HTTP method.
-     * @param string $field The field selector, if any.
-     * @param string $type The request type (standard/relation)
-     * @param string $relation The relation, if any.
-     *
-     * @return string
+     * @return Builder
      */
-    protected function action(string $method, ?string $field, string $type, ?string $relation)
+    protected function query(): Builder
     {
-        if ($field === with(new $this->modelClass)->getKeyName()) {
-            $selector = ""; // Silent field
-        } else {
-            $selector = "By" . Str::ucfirst($field);
-        }
+        /** @var BaseModel $instance */
+        $instance = (new $this->modelClass());
 
-        $action = null;
-
-        if ($type === "standard") {
-            $action = "$method{$selector}";
-        } else if ($type === "relation") {
-            $action = $method . Str::ucfirst($relation) . $selector;
-        }
-
-        if ($action !== null && method_exists($this, $action)) {
-            return $action;
-        }
-
-        return $type . ucfirst($method); // Fallback
+        return $instance->newQuery();
     }
 
-
     /**
-     * Prepare REST request: make [$action, $args].
-     *
-     * @param array $args
+     * @param Request $request The Illuminate HTTP request.
+     * @param array   $args    The request path arguments.
      *
      * @return array
-     * @throws Http400BadRequestException
      */
-    protected function prepareRESTRequest(...$args)
+    public function getAction(Request $request, array $args): ?array
     {
-        $uri = $this->request->getRequestUri();
-        $uriWithoutQueryString = str_replace("?" . $this->request->getQueryString(), "", $uri);
+        // Get the request uri without the querystring.
+        $uri = strtok($request->getRequestUri(), '?');
         // We split the request using the '/' as delimiter
-        $parts = explode("/", trim($uriWithoutQueryString, "/"));
+        $parts = explode('/', trim($uri, '/'));
 
         // Build args
-        $method = strtolower($this->request->method());
+        $method = strtolower($request->method());
 
         switch (count($parts)) {
             case 1:
-                $action = $this->action(
-                    $method === "get" ? "index" : $method,
-                    with(new $this->modelClass)->getKeyName(),
-                    "standard",
-                    null
-                );
-                break;
-            case 2:
-            case 3:
-            case 4:
-                if (!$this->isRelationAction($parts)) {
-                    $key = isset($parts[2]) ? $parts[1] : with(new $this->modelClass)->getKeyName();
-                    $value = isset($parts[2]) ? $parts[2] : $parts[1];
-                    $args = array_merge([$key, $value], $args);
-
-                    $action = $this->action($method, $key, "standard", null);
-                } else {
-                    $key = isset($parts[3]) ? $parts[1] : with(new $this->modelClass)->getKeyName();
-                    $value = isset($parts[3]) ? $parts[2] : $parts[1];
-                    $relation = isset($parts[3]) ? $parts[3] : $parts[2];
-                    $args = array_merge([$key, $value, $relation], $args);
-
-                    $action = $this->action($method, $key, "relation", $relation);
+                switch ($method) {
+                    case 'get':
+                        return ['defaultList', 'list', $args];
+                    case 'post':
+                        return ['defaultCreate', 'create', $args];
                 }
                 break;
-            default:
-                throw new Http400BadRequestException();
+            case 2:
+                switch ($method) {
+                    case 'get':
+                        return ['defaultRead', 'read', $args];
+                    case 'patch':
+                        return ['defaultUpdate', 'update', $args];
+                    case 'delete':
+                        return ['defaultDelete', 'delete', $args];
+                }
+                break;
+            case 3:
+                $relation = $parts[2];
+                array_splice($args, 1, 0, $parts[2]);
+
+                switch ($method) {
+                    case 'get':
+                        return ['defaultRelationRead', 'read' . ucfirst($relation), $args];
+                    case 'patch':
+                        array_push($args, 'order');
+
+                        return ['defaultRelationReorder', 'reorder' . ucfirst($relation), $args];
+                }
         }
 
-        return [$action, $args];
-    }
-
-
-    /**
-     * We need to determine if the action is a "relation" action, or a standard action. Most of time, the number of
-     * "uri-parts" is sufficient. The only edge case is the following:
-     * (A): /cakes/slug/cheese-cake VS (B): /cakes/17/ingredients (both 3 args)
-     * Fortunately, the third "uri-part" is a method of the model Cake, which help us to cover this edgy case.
-     *
-     * @param array $parts
-     *
-     * @return bool
-     */
-    protected function isRelationAction(array $parts)
-    {
-        if (count($parts) < 3) {
-            return false;
-        } else if (count($parts) > 3) {
-            return true;
-        } else {
-            // Edgy case: count($args) === 3
-            return method_exists($this->modelClass, $parts[2]);
-        }
-    }
-
-    protected function with(string $key)
-    {
-        if (isset($key)) {
-
-        }
+        return null;
     }
 }
