@@ -10,7 +10,6 @@ use Mathrix\Lumen\Zero\Models\BaseModel;
 use function explode;
 use function strlen;
 use function substr;
-use function with;
 
 class QueryExtractor
 {
