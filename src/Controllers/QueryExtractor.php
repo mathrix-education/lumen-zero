@@ -120,7 +120,7 @@ class QueryExtractor
      *
      * @return array [operator, value]
      */
-    public function extract(string $input, array $operators, string $defaultOperator): array
+    private function extract(string $input, array $operators, string $defaultOperator): array
     {
         foreach ($operators as $operator) {
             if (Str::startsWith($input, $operator)) {
@@ -138,8 +138,11 @@ class QueryExtractor
      */
     private function parse(): void
     {
+        /** @var BaseModel $model */
+        $model = new $this->modelClass();
+
         // Setup the request boundaries
-        $this->key    = (string)$this->request->query('key', with(new $this->modelClass())->getKeyName());
+        $this->key    = (string)$this->request->query('key', $model->getKeyName());
         $this->limit  = (int)$this->request->query('per_page', self::MAX_LIMIT);
         $this->offset = (int)$this->request->query('page', 0) * $this->limit;
 
@@ -154,7 +157,7 @@ class QueryExtractor
         $this->orderDirection = $this->orderDirection === '+' ? 'asc' : 'desc';
 
         // Conditions
-        $searchColumns = with(new $this->modelClass())->getSearchableColumns();
+        $searchColumns = $model->getSearchableColumns();
 
         foreach ($searchColumns as $key) {
             if ($this->request->query('query') !== null) {
