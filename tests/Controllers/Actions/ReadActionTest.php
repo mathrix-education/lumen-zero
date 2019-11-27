@@ -10,6 +10,7 @@ use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Responses\DataResponse;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 use function get_class;
 
 /**
@@ -44,7 +45,8 @@ class ReadActionTest extends MockeryTestCase
         // Mock DataResponse
         Mockery::mock('overload:' . DataResponse::class);
 
-        // Setup CreateAction
+        // Setup ReadAction trait
+        /** @var ReadAction|MockInterface $trait */
         $trait = Mockery::mock(ReadAction::class);
         $trait->shouldReceive('query')->andReturn($query);
         $trait->shouldReceive('canOrFail')->with($request, 'read', $model)->andReturnNull();

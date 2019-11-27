@@ -10,6 +10,7 @@ use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Responses\DataResponse;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 use function get_class;
 
 /**
@@ -39,7 +40,8 @@ class CreateActionTest extends MockeryTestCase
         // Mock DataResponse
         Mockery::mock('overload:' . DataResponse::class);
 
-        // Setup CreateAction
+        // Setup CreateAction trait
+        /** @var CreateAction|MockInterface $trait */
         $trait = Mockery::mock(CreateAction::class);
         $trait->shouldReceive('canOrFail')->andReturnNull()->once(); // cannot test args
         $trait->modelClass = get_class($model);

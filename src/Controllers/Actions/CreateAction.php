@@ -9,6 +9,9 @@ use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Responses\DataResponse;
 
+/**
+ * @property string $modelClass
+ */
 trait CreateAction
 {
     /**

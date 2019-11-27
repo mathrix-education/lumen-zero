@@ -11,6 +11,7 @@ use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Responses\PaginationResponse;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 
 /**
  * @coversDefaultClass \Mathrix\Lumen\Zero\Controllers\Actions\ListAction
@@ -52,7 +53,8 @@ class ListActionTest extends MockeryTestCase
         // Mock PaginationResponse
         Mockery::mock('overload:' . PaginationResponse::class);
 
-        // Setup ListAction
+        // Setup ListAction trait
+        /** @var ListAction|MockInterface $trait */
         $trait = Mockery::mock(ListAction::class);
         $trait->shouldReceive('canOrFail')->withArgs([$request, 'list', '\Ananas']);
         $trait->shouldReceive('query')->withNoArgs()->andReturn($query);

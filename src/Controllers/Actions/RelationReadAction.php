@@ -14,6 +14,7 @@ use Mathrix\Lumen\Zero\Responses\DataResponse;
 use Mathrix\Lumen\Zero\Responses\PaginationResponse;
 
 /**
+ * @property string $modelClass
  * @method Builder query()
  */
 trait RelationReadAction

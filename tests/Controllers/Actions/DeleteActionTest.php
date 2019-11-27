@@ -11,6 +11,8 @@ use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Responses\DataResponse;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
+use function get_class;
 
 /**
  * @coversDefaultClass \Mathrix\Lumen\Zero\Controllers\Actions\DeleteAction
@@ -47,7 +49,8 @@ class DeleteActionTest extends MockeryTestCase
         // Mock DataResponse
         Mockery::mock('overload:' . DataResponse::class);
 
-        // Setup DeleteAction
+        // Setup DeleteAction trait
+        /** @var DeleteAction|MockInterface $trait */
         $trait = Mockery::mock(DeleteAction::class);
         $trait->shouldReceive('query')->andReturn($query)->once();
         $trait->shouldReceive('canOrFail')

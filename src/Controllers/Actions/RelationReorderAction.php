@@ -15,6 +15,7 @@ use Mathrix\Lumen\Zero\Responses\PaginationResponse;
 use function collect;
 
 /**
+ * @property string $modelClass
  * @method Builder query()
  */
 trait RelationReorderAction
@@ -41,8 +42,8 @@ trait RelationReorderAction
 
         /** @var BaseModel $model */
         $model = $this->query()
-                      ->where($wrapper->getKey(), '=', $identifier)
-                      ->firstOrFail();
+            ->where($wrapper->getKey(), '=', $identifier)
+            ->firstOrFail();
 
         /** @var BelongsToMany $rel */
         $rel = $model->$relation();
@@ -68,9 +69,9 @@ trait RelationReorderAction
         $rel->with($wrapper->getWith());
 
         $query = $rel->where($wrapper->getWheres())
-                     ->orderBy($wrapper->getOrderColumn(), $wrapper->getOrderDirection())
-                     ->limit($wrapper->getLimit())
-                     ->offset($wrapper->getOffset());
+            ->orderBy($wrapper->getOrderColumn(), $wrapper->getOrderDirection())
+            ->limit($wrapper->getLimit())
+            ->offset($wrapper->getOffset());
 
         return new PaginationResponse($query);
     }

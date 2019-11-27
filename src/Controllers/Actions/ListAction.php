@@ -10,6 +10,7 @@ use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Responses\PaginationResponse;
 
 /**
+ * @property string $modelClass
  * @method Builder query()
  */
 trait ListAction

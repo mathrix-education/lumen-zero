@@ -14,6 +14,7 @@ use Mathrix\Lumen\Zero\Responses\DataResponse;
 use Mathrix\Lumen\Zero\Responses\PaginationResponse;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 use function get_class;
 
 /**
@@ -88,7 +89,8 @@ class RelationReadActionTest extends MockeryTestCase
             ->once();
         $query->shouldReceive('firstOrFail')->andReturn($model);
 
-        // Setup trait
+        // Setup RelationReadAction trait
+        /** @var RelationReadAction|MockInterface $trait */
         $trait = Mockery::mock(RelationReadAction::class);
         $trait->shouldReceive('query')->withNoArgs()->andReturn($query)->once();
         $trait->modelClass = get_class($model);
