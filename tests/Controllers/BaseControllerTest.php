@@ -6,14 +6,12 @@ namespace Mathrix\Lumen\Zero\Tests\Controllers;
 
 use Illuminate\Http\Request;
 use Mathrix\Lumen\Zero\Controllers\BaseController;
-use Mathrix\Lumen\Zero\Testing\Traits\Reflector;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 
-class BaseControllerTest extends TestCase
+class BaseControllerTest extends MockeryTestCase
 {
-    use Reflector;
-
     public function getActionDataProvider(): array
     {
         return [
@@ -39,8 +37,8 @@ class BaseControllerTest extends TestCase
     {
         $request = Request::create($uri, $method);
 
-        /** @var BaseController|MockObject $controller */
-        $controller = $this->getMockForAbstractClass(BaseController::class);
+        /** @var BaseController|MockInterface $controller */
+        $controller = Mockery::mock(BaseController::class)->makePartial();
 
         [$default, $actual] = $controller->getAction($request, []);
 

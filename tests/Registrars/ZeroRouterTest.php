@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Mathrix\Lumen\Zero\Tests\Registrars;
 
 use Mathrix\Lumen\Zero\Exceptions\InvalidArgument;
-use PHPUnit\Framework\TestCase;
+use Mathrix\Lumen\Zero\Registrars\ZeroRouter;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use function get_class;
 
 /**
  * @coversDefaultClass \Mathrix\Lumen\Zero\Registrars\ZeroRouter
  */
-class ZeroRouterTest extends TestCase
+class ZeroRouterTest extends MockeryTestCase
 {
     public function resolveDataProvider()
     {
@@ -37,20 +40,11 @@ class ZeroRouterTest extends TestCase
      */
     public function testResolve(string $key, string $expectedMethod, string $expectedUri)
     {
-        $this->markTestSkipped();
-        //        $modelClass = 'App\\Models\\Pear';
-        //
-        //        if (!class_exists($modelClass)) {
-        //            ModelMockFactory::make()
-        //                            ->setName('Pear')
-        //                            ->setMethod('public', 'getKeyName', 'id')
-        //                            ->compile()
-        //                            ->exec();
-        //        }
-        //
-        //        [$actualMethod, $actualUri] = ZeroRouter::resolve($key, $modelClass);
-        //
-        //        $this->assertEquals($expectedMethod, $actualMethod);
-        //        $this->assertEquals($expectedUri, $actualUri);
+        $model = Mockery::mock('overload:\Pear');
+        $model->shouldReceive('getKeyName')->withNoArgs()->andReturn('id')->once();
+        [$actualMethod, $actualUri] = ZeroRouter::resolve($key, get_class($model));
+
+        $this->assertEquals($expectedMethod, $actualMethod);
+        $this->assertEquals($expectedUri, $actualUri);
     }
 }
