@@ -8,13 +8,13 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Throwable;
-use const JSON_PRETTY_PRINT;
 use function class_basename;
 use function env;
 use function explode;
 use function get_class;
 use function json_encode;
 use function preg_replace;
+use const JSON_PRETTY_PRINT;
 
 /**
  * Define the HTTP Exceptions basics.
@@ -39,7 +39,7 @@ abstract class Http extends Exception
      */
     public function __construct($data = null, $message = null, ?Throwable $previous = null)
     {
-        parent::__construct($message ?? $this->message ?? '', self::CODE, $previous);
+        parent::__construct($message ?? $this->message ?? '', static::CODE, $previous); // phpcs:ignore
 
         $this->data = $data;
 

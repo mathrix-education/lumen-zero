@@ -19,17 +19,22 @@ trait Orderable
 
     public static function bootOrderable()
     {
-        static::saved(static function (self $model) {
-            $model->orderSaved();
+        static::saving(static function (self $model) {
+            $model->orderSaving();
         });
         static::deleted(static function (self $model) {
             $model->orderDeleted();
         });
     }
 
-    public function getOrder(): int
+    public function getOrder(): ?int
     {
         return $this->getAttribute($this->orderColumn);
+    }
+
+    public function setOrder(int $order): void
+    {
+        $this->setAttribute($this->orderColumn, $order);
     }
 
     /**
@@ -53,13 +58,12 @@ trait Orderable
      *
      * @throws Validation
      */
-    public function orderSaved(): void
+    public function orderSaving(): void
     {
         $modelCount = $this->getOrderQuery()->count();
 
         if ($this->getOrder() === null) {
-            $this->setAttribute($this->orderColumn, $modelCount);
-            $this->save();
+            $this->setOrder($modelCount);
 
             return;
         }
