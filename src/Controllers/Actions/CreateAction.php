@@ -34,6 +34,6 @@ trait CreateAction
         $model->save();
         $model->load($wrapper->getWith());
 
-        return new DataResponse($model);
+        return new DataResponse($model->refresh()); // refresh is necessary to have the fully hydrated model
     }
 }
