@@ -7,7 +7,7 @@ namespace Mathrix\Lumen\Zero\Controllers\Actions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
-use Mathrix\Lumen\Zero\Controllers\Wrapper;
+use Mathrix\Lumen\Zero\Controllers\QueryExtractor;
 use Mathrix\Lumen\Zero\Exceptions\Http\Http400BadRequest;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Responses\DataResponse;
@@ -38,7 +38,7 @@ trait RelationReorderAction
         string $relation,
         string $column
     ): DataResponse {
-        $wrapper = new Wrapper($request, $this->modelClass);
+        $wrapper = new QueryExtractor($request, $this->modelClass);
 
         /** @var BaseModel $model */
         $model = $this->query()
