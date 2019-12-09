@@ -16,14 +16,14 @@ class ProvidersCacheClearCommand extends BaseCommand
     protected $signature   = 'providers:cache:clear';
     protected $description = 'Clear Service Providers cache.';
 
-    public function handle()
+    public function handle(): void
     {
         $this->clear(ObserverServiceProvider::class);
         $this->clear(PolicyServiceProvider::class);
         $this->clear(RegistrarServiceProvider::class);
     }
 
-    public function clear($serviceProviderClass)
+    public function clear(string $serviceProviderClass): void
     {
         /** @var CacheableServiceProvider $serviceProvider */
         $serviceProvider = new $serviceProviderClass(app());

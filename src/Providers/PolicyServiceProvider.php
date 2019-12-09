@@ -7,18 +7,13 @@ namespace Mathrix\Lumen\Zero\Providers;
 use Exception;
 use Illuminate\Support\Facades\Gate;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
-use function in_array;
 
 /**
  * Automatically register policies.
- * By default, the provider will look for classes in the App\Policies.
  */
 class PolicyServiceProvider extends CacheableServiceProvider
 {
     public const CACHE_FILE = 'bootstrap/cache/policies.php';
-
-    /** @var array Ignored policies */
-    public static $IgnoredPolicies = [];
 
     /**
      * @return array Dynamically load polices.
@@ -27,14 +22,13 @@ class PolicyServiceProvider extends CacheableServiceProvider
      */
     public function loadDynamic()
     {
-        $policies = ClassResolver::getClassesInNamespace(config('zero.namespaces.policies'));
+        $policies = array_diff(
+            ClassResolver::getClassesInNamespace(config('zero.namespaces.policies')),
+            config('zero.ignore.policies', [])
+        );
         $map      = [];
 
         foreach ($policies as $policy) {
-            if (!in_array($policy, self::$IgnoredPolicies)) {
-                continue;
-            }
-
             $model = ClassResolver::getModelClass($policy);
 
             if ($model === null) {

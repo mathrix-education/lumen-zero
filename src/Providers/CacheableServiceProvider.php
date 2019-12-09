@@ -7,22 +7,19 @@ namespace Mathrix\Lumen\Zero\Providers;
 use Brick\VarExporter\ExportException;
 use Brick\VarExporter\VarExporter;
 use Illuminate\Support\ServiceProvider;
-use Mathrix\Lumen\Zero\Console\Commands\ProvidersCacheClearCommand;
-use Mathrix\Lumen\Zero\Console\Commands\ProvidersCacheCommand;
-use const LOCK_EX;
 use function app;
 use function dirname;
 use function file_exists;
 use function file_put_contents;
 use function is_dir;
 use function mkdir;
+use const LOCK_EX;
 
 abstract class CacheableServiceProvider extends ServiceProvider
 {
-    public const CACHE_FILE            = null;
-    public const CACHE_MODE_ALWAYS     = 0;
-    public const CACHE_ON_DEMAND       = 1;
-    public static $CacheMode           = self::CACHE_ON_DEMAND;
+    public const CACHE_FILE        = null;
+    public const CACHE_MODE_ALWAYS = 0;
+    public const CACHE_ON_DEMAND   = 1;
 
     /**
      * Boot the service provider.
@@ -31,7 +28,7 @@ abstract class CacheableServiceProvider extends ServiceProvider
      */
     final public function boot()
     {
-        if (!$this->isCached() && static::$CacheMode === self::CACHE_MODE_ALWAYS) {
+        if (!$this->isCached() && config('zero.cache') === self::CACHE_MODE_ALWAYS) {
             $this->writeCache();
         }
 

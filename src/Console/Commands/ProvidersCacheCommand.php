@@ -9,7 +9,6 @@ use Mathrix\Lumen\Zero\Providers\CacheableServiceProvider;
 use Mathrix\Lumen\Zero\Providers\ObserverServiceProvider;
 use Mathrix\Lumen\Zero\Providers\PolicyServiceProvider;
 use Mathrix\Lumen\Zero\Providers\RegistrarServiceProvider;
-use function app;
 
 class ProvidersCacheCommand extends BaseCommand
 {
@@ -19,7 +18,7 @@ class ProvidersCacheCommand extends BaseCommand
     /**
      * @throws ExportException
      */
-    public function handle()
+    public function handle(): void
     {
         $this->cache(ObserverServiceProvider::class);
         $this->cache(PolicyServiceProvider::class);
@@ -31,12 +30,12 @@ class ProvidersCacheCommand extends BaseCommand
      *
      * @throws ExportException
      */
-    public function cache($serviceProviderClass)
+    public function cache($serviceProviderClass): void
     {
         $force = $this->option('force');
 
         /** @var CacheableServiceProvider $serviceProvider */
-        $serviceProvider = new $serviceProviderClass(app());
+        $serviceProvider = new $serviceProviderClass($this->getLaravel());
         $cacheFile       = $serviceProvider->getCacheFile();
 
         if (!$serviceProvider->isCached() || $force) {

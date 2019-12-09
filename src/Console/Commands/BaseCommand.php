@@ -7,12 +7,9 @@ namespace Mathrix\Lumen\Zero\Console\Commands;
 use Illuminate\Console\Command;
 
 /**
- * @codeCoverageIgnore
- *
  * Base class for Artisan commands.
- * @codeCoverageIgnore
  */
 abstract class BaseCommand extends Command
 {
-    abstract public function handle();
+    abstract public function handle(): void;
 }

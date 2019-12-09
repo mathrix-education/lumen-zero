@@ -10,14 +10,11 @@ use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use function in_array;
 
 /**
- * n * By default, the provider will look for classes in the App\Observers.
+ * Link the observers with their associated model.
  */
 class ObserverServiceProvider extends CacheableServiceProvider
 {
     public const CACHE_FILE = 'bootstrap/cache/observers.php';
-
-    /** @var array Ignored observers */
-    public static $IgnoredObservers = [];
 
     /**
      * @return array Dynamically load the model observers.
@@ -26,14 +23,13 @@ class ObserverServiceProvider extends CacheableServiceProvider
      */
     public function loadDynamic(): array
     {
-        $observers = ClassResolver::getClassesInNamespace(config('zero.namespaces.observers'));
+        $observers = array_diff(
+            ClassResolver::getClassesInNamespace(config('zero.namespaces.observers')),
+            config('zero.ignored.observers', [])
+        );
         $map       = [];
 
         foreach ($observers as $observer) {
-            if (!in_array($observer, self::$IgnoredObservers)) {
-                continue;
-            }
-
             $model = ClassResolver::getModelClass($observer);
 
             if ($model === null) {

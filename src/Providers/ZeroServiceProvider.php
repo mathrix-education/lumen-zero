@@ -12,7 +12,13 @@ class ZeroServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        $this->mergeConfigFrom(__DIR__ . '/../config/zero.php', 'zero');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'zero');
+
+        // Register Lumen Zero service providers
+        $this->app->register(ObserverServiceProvider::class);
+        $this->app->register(PolicyServiceProvider::class);
+        $this->app->register(RegistrarServiceProvider::class);
 
         $this->commands([
             ProvidersCacheCommand::class,
