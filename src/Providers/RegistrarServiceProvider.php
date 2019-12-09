@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Mathrix\Lumen\Zero\Providers;
 
-use Exception;
-use HaydenPierce\ClassFinder\ClassFinder;
-use Illuminate\Support\Collection;
 use Laravel\Lumen\Application;
 use Laravel\Lumen\Routing\Router;
 use Mathrix\Lumen\Zero\Registrars\BaseRegistrar;
@@ -16,6 +13,9 @@ use function array_values;
 use function in_array;
 
 /**
+ * Register and cache the routes declared in the registrars.
+ * By default, the provider will look for classes in the App\Registrars.
+ *
  * @property Application $app
  */
 class RegistrarServiceProvider extends CacheableServiceProvider
@@ -27,30 +27,25 @@ class RegistrarServiceProvider extends CacheableServiceProvider
 
     /**
      * @return array Dynamically load the routes from the registrars.
-     *
-     * @throws Exception
      */
     public function loadDynamic(): array
     {
-        $router = new Router(app());
+        $router     = new Router(app());
+        $registrars = ClassResolver::getClassesInNamespace(config('zero.namespaces.registrars'));
 
-        // Load routes from registrar
-        Collection::make(ClassFinder::getClassesInNamespace(ClassResolver::$RegistrarNamespace))
-            ->reject(static function (string $registrarClass) {
-                return in_array($registrarClass, self::$IgnoredRegistrars);
-            })
-            ->each(static function (string $registrarClass) use (&$router) {
-                /** @var BaseRegistrar|string $registrar */
-                $registrar = new $registrarClass($router);
-                $registrar->register();
-            });
+        foreach ($registrars as $registrar) {
+            if (in_array($registrar, self::$IgnoredRegistrars)) {
+                continue;
+            }
 
-        return Collection::make($router->getRoutes())
-            ->values()
-            ->map(static function (array $route) {
-                return array_values($route);
-            })
-            ->toArray();
+            /** @var BaseRegistrar $instance */
+            $instance = new $registrar($router);
+            $instance->register();
+        }
+
+        return array_map(static function (array $route) {
+            return array_values($route);
+        }, array_values($router->getRoutes()));
     }
 
     /**

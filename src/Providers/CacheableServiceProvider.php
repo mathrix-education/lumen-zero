@@ -22,23 +22,7 @@ abstract class CacheableServiceProvider extends ServiceProvider
     public const CACHE_FILE            = null;
     public const CACHE_MODE_ALWAYS     = 0;
     public const CACHE_ON_DEMAND       = 1;
-    private static $CommandsRegistered = false;
     public static $CacheMode           = self::CACHE_ON_DEMAND;
-
-    /**
-     * Register cache commands only once.
-     */
-    public function register()
-    {
-        if (self::$CommandsRegistered) {
-            return;
-        }
-
-        $this->commands([
-            ProvidersCacheCommand::class,
-            ProvidersCacheClearCommand::class,
-        ]);
-    }
 
     /**
      * Boot the service provider.

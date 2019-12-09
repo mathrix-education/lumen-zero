@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Mathrix\Lumen\Zero\Utils;
 
+use Exception;
+use HaydenPierce\ClassFinder\ClassFinder;
 use Illuminate\Support\Str;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use function array_shift;
@@ -14,17 +16,6 @@ use function explode;
 
 class ClassResolver
 {
-    /** @var string $ControllersNamespace The controllers namespace. */
-    public static $ControllersNamespace = 'App\\Controllers';
-    /** @var string $ModelsNamespace The models namespace. */
-    public static $ModelsNamespace = 'App\\Models';
-    /** @var string $ObserversNamespace The observers namespace. */
-    public static $ObserversNamespace = 'App\\Observers';
-    /** @var string $PoliciesNamespace The policies namespace. */
-    public static $PoliciesNamespace = 'App\\Policies';
-    /** @var string $RegistrarNamespace The registrars namespace. */
-    public static $RegistrarNamespace = 'App\\Registrars';
-
     /**
      * Get the model associated with a given class.
      *
@@ -46,8 +37,8 @@ class ClassResolver
          */
         while (count($parts) > 1 || $partsCount === 1) {
             $part                = array_shift($parts);
-            $potentialModel     .= Str::singular(Str::ucfirst($part));
-            $potentialModelClass = self::$ModelsNamespace . "\\$potentialModel";
+            $potentialModel      .= Str::singular(Str::ucfirst($part));
+            $potentialModelClass = config('zero.namespaces.models') . "\\$potentialModel";
 
             $exists = class_exists($potentialModelClass);
 
@@ -61,5 +52,21 @@ class ClassResolver
         }
 
         return null;
+    }
+
+    /**
+     * Get the classes in a given name space. Return an empty array if the namespace could not be found.
+     *
+     * @param string $namespace The namespace to explore.
+     *
+     * @return string[] The classes full qualified names.
+     */
+    public static function getClassesInNamespace(string $namespace): array
+    {
+        try {
+            return ClassFinder::getClassesInNamespace($namespace);
+        } catch (Exception $exception) {
+            return [];
+        }
     }
 }

@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Mathrix\Lumen\Zero\Providers;
 
 use Exception;
-use HaydenPierce\ClassFinder\ClassFinder;
-use Illuminate\Support\Collection;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use function in_array;
 
 /**
- * Provides all observers to the corresponding models.
+ * n * By default, the provider will look for classes in the App\Observers.
  */
 class ObserverServiceProvider extends CacheableServiceProvider
 {
@@ -28,17 +26,24 @@ class ObserverServiceProvider extends CacheableServiceProvider
      */
     public function loadDynamic(): array
     {
-        return Collection::make(ClassFinder::getClassesInNamespace(ClassResolver::$ObserversNamespace))
-            ->reject(static function (string $observerClass) {
-                return in_array($observerClass, self::$IgnoredObservers)
-                    || ClassResolver::getModelClass($observerClass) === null;
-            })
-            ->mapWithKeys(static function (string $observerClass) {
-                $modelClass = ClassResolver::getModelClass($observerClass);
+        $observers = ClassResolver::getClassesInNamespace(config('zero.namespaces.observers'));
+        $map       = [];
 
-                return [$modelClass => $observerClass];
-            })
-            ->toArray();
+        foreach ($observers as $observer) {
+            if (!in_array($observer, self::$IgnoredObservers)) {
+                continue;
+            }
+
+            $model = ClassResolver::getModelClass($observer);
+
+            if ($model === null) {
+                continue;
+            }
+
+            $map[$model] = $observer;
+        }
+
+        return $map;
     }
 
     /**
@@ -48,7 +53,7 @@ class ObserverServiceProvider extends CacheableServiceProvider
     {
         /**
          * @var BaseModel|string $modelClass
-         * @var string $observerClass
+         * @var string           $observerClass
          */
         foreach ($data as $modelClass => $observerClass) {
             $modelClass::observe($observerClass);

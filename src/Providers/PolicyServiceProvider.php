@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace Mathrix\Lumen\Zero\Providers;
 
 use Exception;
-use HaydenPierce\ClassFinder\ClassFinder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
-use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use function in_array;
 
 /**
  * Automatically register policies.
+ * By default, the provider will look for classes in the App\Policies.
  */
 class PolicyServiceProvider extends CacheableServiceProvider
 {
@@ -29,18 +27,24 @@ class PolicyServiceProvider extends CacheableServiceProvider
      */
     public function loadDynamic()
     {
-        return Collection::make(ClassFinder::getClassesInNamespace(ClassResolver::$PoliciesNamespace))
-            ->reject(static function (string $policyClass) {
-                return in_array($policyClass, self::$IgnoredPolicies)
-                    || ClassResolver::getModelClass($policyClass) === null;
-            })
-            ->mapWithKeys(static function ($policyClass) {
-                /** @var BaseModel|null $modelClass */
-                $modelClass = ClassResolver::getModelClass($policyClass);
+        $policies = ClassResolver::getClassesInNamespace(config('zero.namespaces.policies'));
+        $map      = [];
 
-                return [$modelClass => $policyClass];
-            })
-            ->toArray();
+        foreach ($policies as $policy) {
+            if (!in_array($policy, self::$IgnoredPolicies)) {
+                continue;
+            }
+
+            $model = ClassResolver::getModelClass($policy);
+
+            if ($model === null) {
+                continue;
+            }
+
+            $map[$model] = $policy;
+        }
+
+        return $map;
     }
 
     /**
