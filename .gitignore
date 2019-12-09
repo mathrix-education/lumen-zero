@@ -1,5 +1,5 @@
 .idea/
 .scannerwork/
-composer.lock
+.phpunit.result.cache
 storage/
 vendor/
