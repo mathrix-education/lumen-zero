@@ -64,7 +64,7 @@ abstract class BaseRegistrar
      *
      * @throws InvalidArgument
      */
-    public function registerCRUDRoute(string $key, $middleware = null)
+    public function registerCRUDRoute(string $key, $middleware = null): void
     {
         [$method, $uri] = ZeroRouter::resolve($key, $this->modelClass);
 

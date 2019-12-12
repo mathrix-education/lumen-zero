@@ -10,7 +10,7 @@ use Mathrix\Lumen\Zero\Console\Commands\ProvidersCacheCommand;
 
 class ZeroServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/zero.php', 'zero');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'zero');
