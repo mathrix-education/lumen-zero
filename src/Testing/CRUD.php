@@ -60,7 +60,7 @@ trait CRUD
      *
      * @noinspection PhpUnused
      */
-    public static function bootCRUD(): void
+    public function setupCRUD(): void
     {
         static::$modelClass = ClassResolver::getModelClass(static::class);
     }
