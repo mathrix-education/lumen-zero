@@ -7,6 +7,8 @@ namespace Mathrix\Lumen\Zero\Providers;
 use Exception;
 use Illuminate\Support\Facades\Gate;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
+use function array_diff;
+use function config;
 
 /**
  * Automatically register policies.

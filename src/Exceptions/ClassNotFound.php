@@ -6,13 +6,19 @@ namespace Mathrix\Lumen\Zero\Exceptions;
 
 use Mathrix\Lumen\Zero\Exceptions\Http\Http500InternalServerError;
 use Throwable;
+use function trans;
 
+/**
+ * Thrown when a class cannot be found.
+ */
 class ClassNotFound extends Http500InternalServerError
 {
     public function __construct(string $class, ?Throwable $previous = null)
     {
-        $data    = ['class' => $class];
-        $message = "Could not find class $class";
-        parent::__construct($data, $message, $previous);
+        parent::__construct(
+            ['class' => $class],
+            trans('zero.exceptions.class_not_found', ['class' => $class]),
+            $previous
+        );
     }
 }

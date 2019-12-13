@@ -8,6 +8,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
  * Send a HTTP/400 Bad Request
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+ *
  * @codeCoverageIgnore
  */
 abstract class Http400BadRequest extends Http

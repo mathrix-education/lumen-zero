@@ -11,6 +11,7 @@ use Mathrix\Lumen\Zero\Models\BaseModel;
 use function array_shift;
 use function class_basename;
 use function class_exists;
+use function config;
 use function count;
 use function explode;
 
@@ -37,7 +38,7 @@ class ClassResolver
          */
         while (count($parts) > 1 || $partsCount === 1) {
             $part                = array_shift($parts);
-            $potentialModel      .= Str::singular(Str::ucfirst($part));
+            $potentialModel     .= Str::singular(Str::ucfirst($part));
             $potentialModelClass = config('zero.namespaces.models') . "\\$potentialModel";
 
             $exists = class_exists($potentialModelClass);

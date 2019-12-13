@@ -7,11 +7,13 @@ namespace Mathrix\Lumen\Zero\Providers;
 use Brick\VarExporter\ExportException;
 use Brick\VarExporter\VarExporter;
 use Illuminate\Support\ServiceProvider;
+use const LOCK_EX;
 use function app;
+use function config;
 use function dirname;
 use function file_exists;
 use function file_put_contents;
-use const LOCK_EX;
+use function mkdirp;
 
 abstract class CacheableServiceProvider extends ServiceProvider
 {

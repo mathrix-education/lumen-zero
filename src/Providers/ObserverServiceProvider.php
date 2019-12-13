@@ -7,7 +7,8 @@ namespace Mathrix\Lumen\Zero\Providers;
 use Exception;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
-use function in_array;
+use function array_diff;
+use function config;
 
 /**
  * Link the observers with their associated model.
