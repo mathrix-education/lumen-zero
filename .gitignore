@@ -1,5 +1,5 @@
 .idea/
 .scannerwork/
 .phpunit.result.cache
-storage/
+sandbox/
 vendor/
