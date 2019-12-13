@@ -4,53 +4,43 @@ declare(strict_types=1);
 
 namespace Mathrix\Lumen\Zero\Providers;
 
-use Exception;
-use HaydenPierce\ClassFinder\ClassFinder;
-use Illuminate\Support\Collection;
 use Laravel\Lumen\Application;
 use Laravel\Lumen\Routing\Router;
 use Mathrix\Lumen\Zero\Registrars\BaseRegistrar;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
-use function app;
+use function array_diff;
+use function array_map;
 use function array_values;
-use function in_array;
+use function config;
 
 /**
+ * Register and cache the routes declared in the registrars.
+ *
  * @property Application $app
  */
 class RegistrarServiceProvider extends CacheableServiceProvider
 {
     public const CACHE_FILE = 'bootstrap/cache/routes.php';
 
-    /** @var array Ignored registrars */
-    public static $IgnoredRegistrars = [];
-
     /**
      * @return array Dynamically load the routes from the registrars.
-     *
-     * @throws Exception
      */
     public function loadDynamic(): array
     {
-        $router = new Router(app());
+        $router     = new Router($this->app);
+        $namespace  = config('zero.namespaces.registrars', '\\App\\Registrars');
+        $registrars = array_diff(
+            ClassResolver::getClassesInNamespace($namespace),
+            config('zero.ignore.registrars', [])
+        );
 
-        // Load routes from registrar
-        Collection::make(ClassFinder::getClassesInNamespace(ClassResolver::$RegistrarNamespace))
-            ->reject(static function (string $registrarClass) {
-                return in_array($registrarClass, self::$IgnoredRegistrars);
-            })
-            ->each(static function (string $registrarClass) use (&$router) {
-                /** @var BaseRegistrar|string $registrar */
-                $registrar = new $registrarClass($router);
-                $registrar->register();
-            });
+        foreach ($registrars as $registrar) {
+            /** @var BaseRegistrar $instance */
+            $instance = new $registrar($router);
+            $instance->register();
+        }
 
-        return Collection::make($router->getRoutes())
-            ->values()
-            ->map(static function (array $route) {
-                return array_values($route);
-            })
-            ->toArray();
+        return array_map(fn(array $route) => array_values($route), array_values($router->getRoutes()));
     }
 
     /**
@@ -59,7 +49,7 @@ class RegistrarServiceProvider extends CacheableServiceProvider
     public function apply($routes): void
     {
         foreach ($routes as $route) {
-            app()->router->addRoute(...array_values($route));
+            $this->app->router->addRoute(...array_values($route));
         }
     }
 }

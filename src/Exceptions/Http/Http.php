@@ -8,13 +8,14 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Throwable;
+use const JSON_PRETTY_PRINT;
+use const JSON_THROW_ON_ERROR;
 use function class_basename;
 use function env;
 use function explode;
 use function get_class;
 use function json_encode;
 use function preg_replace;
-use const JSON_PRETTY_PRINT;
 
 /**
  * Define the HTTP Exceptions basics.
@@ -26,11 +27,11 @@ abstract class Http extends Exception
     /** THE HTTP error standard code */
     protected const CODE = null;
     /** @var string Exception error; will be displayed in the JSON response */
-    protected $error;
+    protected string $error;
     /** @var string Exception message; has to be manually defined */
     protected $message;
     /** @var array Exception data; has to be manually defined */
-    protected $data;
+    protected ?array $data;
 
     /**
      * @param string         $message
@@ -65,7 +66,7 @@ abstract class Http extends Exception
     {
         $name = $name ?: class_basename($this);
 
-        return preg_replace('/(?:Http[0-9]{3})?([A-Za-z]+)Exception/', '$1', $name);
+        return preg_replace('/(?:Http\d{3})?([A-Za-z]+)Exception/', '$1', $name);
     }
 
     public function __toString()
@@ -76,7 +77,7 @@ abstract class Http extends Exception
             'data'    => $this->data ?? [],
         ];
 
-        return json_encode($body, JSON_PRETTY_PRINT);
+        return (string)json_encode($body, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT, 512);
     }
 
     /**

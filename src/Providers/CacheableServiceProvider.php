@@ -7,47 +7,28 @@ namespace Mathrix\Lumen\Zero\Providers;
 use Brick\VarExporter\ExportException;
 use Brick\VarExporter\VarExporter;
 use Illuminate\Support\ServiceProvider;
-use Mathrix\Lumen\Zero\Console\Commands\ProvidersCacheClearCommand;
-use Mathrix\Lumen\Zero\Console\Commands\ProvidersCacheCommand;
 use const LOCK_EX;
 use function app;
+use function config;
 use function dirname;
 use function file_exists;
 use function file_put_contents;
-use function is_dir;
-use function mkdir;
+use function mkdirp;
 
 abstract class CacheableServiceProvider extends ServiceProvider
 {
-    public const CACHE_FILE            = null;
-    public const CACHE_MODE_ALWAYS     = 0;
-    public const CACHE_ON_DEMAND       = 1;
-    private static $CommandsRegistered = false;
-    public static $CacheMode           = self::CACHE_ON_DEMAND;
-
-    /**
-     * Register cache commands only once.
-     */
-    public function register()
-    {
-        if (self::$CommandsRegistered) {
-            return;
-        }
-
-        $this->commands([
-            ProvidersCacheCommand::class,
-            ProvidersCacheClearCommand::class,
-        ]);
-    }
+    public const CACHE_FILE        = null;
+    public const CACHE_MODE_ALWAYS = 0;
+    public const CACHE_ON_DEMAND   = 1;
 
     /**
      * Boot the service provider.
      *
      * @throws ExportException
      */
-    final public function boot()
+    final public function boot(): void
     {
-        if (!$this->isCached() && static::$CacheMode === self::CACHE_MODE_ALWAYS) {
+        if (!$this->isCached() && config('zero.cache') === self::CACHE_MODE_ALWAYS) {
             $this->writeCache();
         }
 
@@ -98,9 +79,7 @@ abstract class CacheableServiceProvider extends ServiceProvider
         $cacheFilePath = $this->getCacheFile();
         $cacheFileDir  = dirname($cacheFilePath);
 
-        if (!is_dir($cacheFileDir)) {
-            mkdir($cacheFileDir, 0755, true);
-        }
+        mkdirp($cacheFileDir, 0755);
 
         file_put_contents($this->getCacheFile(), $code, LOCK_EX);
     }

@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Mathrix\Lumen\Zero\Exceptions\Http;
 
 /**
+ * Send a HTTP/401 Unauthorized
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+ *
  * @codeCoverageIgnore
  */
-class Http401Unauthorized extends Http
+abstract class Http401Unauthorized extends Http
 {
     /** THE HTTP error standard code */
     protected const CODE = 401;

@@ -6,30 +6,38 @@ namespace Mathrix\Lumen\Zero\Controllers\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Mathrix\Lumen\Zero\Exceptions\Http\Http401Unauthorized;
+use Mathrix\Lumen\Zero\Exceptions\PolicyDenied;
+use function get_class;
 use function method_exists;
 
 /**
- * Trait HasAbilities.
+ * Allow controllers to check the user authorization via policies.
  */
 trait HasAbilities
 {
     /**
+     * Get a policy object based on the controller model class.
+     *
+     * @return mixed
+     */
+    protected function getPolicy()
+    {
+        return Gate::getPolicyFor($this->modelClass);
+    }
+
+    /**
      * Check if the Gate denies the request.
      *
-     * @param Request $request
-     * @param string  $ability
-     * @param null    $model
+     * @param Request $request The Illuminate HTTP request.
+     * @param string  $ability The policy ability.
+     * @param null    $model   The policy model.
      *
-     * @throws Http401Unauthorized
+     * @throws PolicyDenied
      */
-    protected function canOrFail(Request $request, string $ability, $model = null)
+    protected function canOrFail(Request $request, string $ability, $model = null): void
     {
         if ($this->shouldUsePolicy($ability) && Gate::forUser($request->user())->denies($ability, $model)) {
-            throw new Http401Unauthorized([
-                'model_class' => $this->modelClass,
-                'ability' => $ability,
-            ], "Failed to pass $ability policy");
+            throw new PolicyDenied(get_class($this->getPolicy()), $ability);
         }
     }
 
@@ -42,8 +50,8 @@ trait HasAbilities
      */
     protected function shouldUsePolicy(string $ability): bool
     {
-        $policyClass = Gate::getPolicyFor($this->modelClass);
+        $policy = $this->getPolicy();
 
-        return $policyClass !== null && method_exists($policyClass, $ability);
+        return $policy !== null && method_exists($policy, $ability);
     }
 }

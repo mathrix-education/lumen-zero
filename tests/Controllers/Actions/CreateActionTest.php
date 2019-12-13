@@ -36,6 +36,7 @@ class CreateActionTest extends MockeryTestCase
         $model->shouldReceive('fill')->with($data)->once();
         $model->shouldReceive('save')->withNoArgs()->andReturnNull()->once();
         $model->shouldReceive('load')->with([])->andReturnNull()->once();
+        $model->shouldReceive('refresh')->withNoArgs()->andReturnSelf()->once();
 
         // Mock DataResponse
         Mockery::mock('overload:' . DataResponse::class);

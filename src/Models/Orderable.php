@@ -17,7 +17,7 @@ trait Orderable
     protected $orderColumn       = 'order';
     protected $orderGroupColumns = [];
 
-    public static function bootOrderable()
+    public static function bootOrderable(): void
     {
         static::saving(static function (self $model) {
             $model->orderSaving();
@@ -27,11 +27,21 @@ trait Orderable
         });
     }
 
+    /**
+     * Get the model order.
+     *
+     * @return int|null
+     */
     public function getOrder(): ?int
     {
         return $this->getAttribute($this->orderColumn);
     }
 
+    /**
+     * Set the model order.
+     *
+     * @param int $order
+     */
     public function setOrder(int $order): void
     {
         $this->setAttribute($this->orderColumn, $order);

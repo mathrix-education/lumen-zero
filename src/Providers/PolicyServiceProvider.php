@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Mathrix\Lumen\Zero\Providers;
 
 use Exception;
-use HaydenPierce\ClassFinder\ClassFinder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
-use Mathrix\Lumen\Zero\Models\BaseModel;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
-use function in_array;
+use function array_diff;
+use function config;
 
 /**
  * Automatically register policies.
@@ -19,9 +17,6 @@ class PolicyServiceProvider extends CacheableServiceProvider
 {
     public const CACHE_FILE = 'bootstrap/cache/policies.php';
 
-    /** @var array Ignored policies */
-    public static $IgnoredPolicies = [];
-
     /**
      * @return array Dynamically load polices.
      *
@@ -29,18 +24,23 @@ class PolicyServiceProvider extends CacheableServiceProvider
      */
     public function loadDynamic()
     {
-        return Collection::make(ClassFinder::getClassesInNamespace(ClassResolver::$PoliciesNamespace))
-            ->reject(static function (string $policyClass) {
-                return in_array($policyClass, self::$IgnoredPolicies)
-                    || ClassResolver::getModelClass($policyClass) === null;
-            })
-            ->mapWithKeys(static function ($policyClass) {
-                /** @var BaseModel|null $modelClass */
-                $modelClass = ClassResolver::getModelClass($policyClass);
+        $policies = array_diff(
+            ClassResolver::getClassesInNamespace(config('zero.namespaces.policies')),
+            config('zero.ignore.policies', [])
+        );
+        $map      = [];
 
-                return [$modelClass => $policyClass];
-            })
-            ->toArray();
+        foreach ($policies as $policy) {
+            $model = ClassResolver::getModelClass($policy);
+
+            if ($model === null) {
+                continue;
+            }
+
+            $map[$model] = $policy;
+        }
+
+        return $map;
     }
 
     /**

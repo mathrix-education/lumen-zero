@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Mathrix\Lumen\Zero\Exceptions\Validation;
 
 /**
- * Trait HasRequestValidator.
+ * Override the Controller::validate() to catch Validation exceptions.
  */
 trait HasRequestValidator
 {
