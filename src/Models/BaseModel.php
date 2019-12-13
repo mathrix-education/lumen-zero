@@ -7,8 +7,7 @@ namespace Mathrix\Lumen\Zero\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
-use Mathrix\Lumen\Zero\Models\Traits\HasValidator;
-use Mathrix\Lumen\Zero\Models\Traits\IsSearchable;
+use Mathrix\Lumen\Zero\Exceptions\RelationDeletionRestrict;
 use function class_basename;
 use function count;
 use function is_array;
@@ -150,5 +149,20 @@ abstract class BaseModel extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return Carbon::instance($date)->format('c');
+    }
+
+    /**
+     * Throws a RelationDeletionRestrict exception if the model has at least one occurrence of the given relation.
+     * Useful to assert that a model being deleted won't cause any conflict.
+     *
+     * @param string $relation The relation name.
+     *
+     * @throws RelationDeletionRestrict
+     */
+    public function restrict(string $relation): void
+    {
+        if ($this->{$relation}()->exists()) {
+            throw new RelationDeletionRestrict($this, $relation);
+        }
     }
 }

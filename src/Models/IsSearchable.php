@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mathrix\Lumen\Zero\Models\Traits;
+namespace Mathrix\Lumen\Zero\Models;
 
 trait IsSearchable
 {
-    /** @var string[]|null The searchable columns of the model. */
-    protected $searchable = null;
+    /** @var string[] The searchable columns of the model. */
+    protected $searchable;
 
     /**
      * @return string[] The searchable columns of the model. By default, it will use the "fillable" property
@@ -21,8 +21,8 @@ trait IsSearchable
     /**
      * @return string[]|null
      */
-    public function getSearchable(): ?array
+    public function getSearchable(): array
     {
-        return $this->searchable;
+        return $this->searchable ?? [];
     }
 }

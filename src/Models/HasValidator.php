@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mathrix\Lumen\Zero\Models\Traits;
+namespace Mathrix\Lumen\Zero\Models;
 
 use Illuminate\Support\Facades\Validator;
 use Mathrix\Lumen\Zero\Exceptions\Validation;
@@ -18,7 +18,7 @@ trait HasValidator
     /**
      * The HashValidator boot function.
      */
-    protected static function bootHasValidator()
+    protected static function bootHasValidator(): void
     {
         static::saving(static function (self $model) {
             $model->validate();
@@ -30,7 +30,7 @@ trait HasValidator
      *
      * @throws Validation
      */
-    public function validate()
+    public function validate(): bool
     {
         $validator = Validator::make($this->getValidationData(), $this->getValidationRules());
 
@@ -46,7 +46,7 @@ trait HasValidator
      *
      * @return array
      */
-    protected function getValidationData()
+    protected function getValidationData(): array
     {
         $hidden = $this->getHidden();
         $this->setHidden([]);
@@ -61,7 +61,7 @@ trait HasValidator
      *
      * @return array
      */
-    protected function getValidationRules()
+    protected function getValidationRules(): array
     {
         return $this->rules;
     }
