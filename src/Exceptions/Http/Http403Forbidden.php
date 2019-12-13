@@ -7,8 +7,8 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
 /**
  * @codeCoverageIgnore
  */
-abstract class Http404NotFound extends Http
+abstract class Http403Forbidden extends Http
 {
     /** THE HTTP error standard code */
-    protected const CODE = 404;
+    protected const CODE = 403;
 }

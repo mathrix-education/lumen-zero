@@ -7,7 +7,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
 /**
  * @codeCoverageIgnore
  */
-class Http401Unauthorized extends Http
+abstract class Http401Unauthorized extends Http
 {
     /** THE HTTP error standard code */
     protected const CODE = 401;

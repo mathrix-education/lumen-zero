@@ -15,7 +15,7 @@ use function get_class;
  */
 class ZeroRouterTest extends MockeryTestCase
 {
-    public function resolveDataProvider()
+    public function resolveDataProvider(): array
     {
         return [
             'list'           => ['list', 'get', '/pears'],
@@ -38,7 +38,7 @@ class ZeroRouterTest extends MockeryTestCase
      * @dataProvider resolveDataProvider
      * @covers ::resolve
      */
-    public function testResolve(string $key, string $expectedMethod, string $expectedUri)
+    public function testResolve(string $key, string $expectedMethod, string $expectedUri): void
     {
         $model = Mockery::mock('overload:\Pear');
         $model->shouldReceive('getKeyName')->withNoArgs()->andReturn('id')->once();

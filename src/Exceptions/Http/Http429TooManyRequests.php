@@ -7,7 +7,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
 /**
  * @codeCoverageIgnore
  */
-class Http429TooManyRequests extends Http
+abstract class Http429TooManyRequests extends Http
 {
     /** THE HTTP error standard code */
     protected const CODE = 429;

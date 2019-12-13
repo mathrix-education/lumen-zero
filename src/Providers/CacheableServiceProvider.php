@@ -11,8 +11,6 @@ use function app;
 use function dirname;
 use function file_exists;
 use function file_put_contents;
-use function is_dir;
-use function mkdir;
 use const LOCK_EX;
 
 abstract class CacheableServiceProvider extends ServiceProvider
@@ -26,7 +24,7 @@ abstract class CacheableServiceProvider extends ServiceProvider
      *
      * @throws ExportException
      */
-    final public function boot()
+    final public function boot(): void
     {
         if (!$this->isCached() && config('zero.cache') === self::CACHE_MODE_ALWAYS) {
             $this->writeCache();
@@ -79,9 +77,7 @@ abstract class CacheableServiceProvider extends ServiceProvider
         $cacheFilePath = $this->getCacheFile();
         $cacheFileDir  = dirname($cacheFilePath);
 
-        if (!is_dir($cacheFileDir)) {
-            mkdir($cacheFileDir, 0755, true);
-        }
+        mkdirp($cacheFileDir, 0755);
 
         file_put_contents($this->getCacheFile(), $code, LOCK_EX);
     }

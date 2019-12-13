@@ -7,7 +7,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
 /**
  * @codeCoverageIgnore
  */
-class Http405MethodNotAllowed extends Http
+abstract class Http405MethodNotAllowed extends Http
 {
     /** THE HTTP error standard code */
     protected const CODE = 405;

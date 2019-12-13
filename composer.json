@@ -38,7 +38,7 @@
     "brick/varexporter": "^0.2.1",
     "haydenpierce/class-finder": "^0.3.1",
     "illuminate/mail": "^6.3",
-    "laravel/lumen-framework": "5.8.* || ^6.0"
+    "laravel/lumen-framework": "^6.0"
   },
   "require-dev": {
     "codedungeon/phpunit-result-printer": "^0.26.2",
@@ -49,7 +49,10 @@
   "autoload": {
     "psr-4": {
       "Mathrix\\Lumen\\Zero\\": "src"
-    }
+    },
+    "files": [
+      "src/helpers.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {

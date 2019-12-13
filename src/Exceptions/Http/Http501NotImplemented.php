@@ -7,7 +7,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
 /**
  * @codeCoverageIgnore
  */
-class Http501NotImplemented extends Http
+abstract class Http501NotImplemented extends Http
 {
     /** THE HTTP error standard code */
     protected const CODE = 501;
