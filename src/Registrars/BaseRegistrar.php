@@ -26,7 +26,7 @@ abstract class BaseRegistrar
     /**
      * @param Router $router The Lumen Application Router.
      */
-    public function __construct(Router &$router)
+    public function __construct(Router $router)
     {
         $this->router     = $router;
         $this->modelClass = ClassResolver::getModelClass($this);
@@ -69,7 +69,7 @@ abstract class BaseRegistrar
         [$method, $uri] = ZeroRouter::resolve($key, $this->modelClass);
 
         $plural     = Str::plural(class_basename($this->modelClass));
-        $controller = ClassResolver::$ControllersNamespace . "\\{$plural}Controller";
+        $controller = config('zero.namespaces.controllers') . "\\{$plural}Controller";
 
         $this->{$method}($uri, [
             'uses'       => $controller, // We will use $controller::_invoke();
