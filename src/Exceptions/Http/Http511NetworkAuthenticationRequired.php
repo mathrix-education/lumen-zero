@@ -8,6 +8,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
  * Send a HTTP/511 Network Authentication Required
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/511
+ *
  * @codeCoverageIgnore
  */
 abstract class Http511NetworkAuthenticationRequired extends Http

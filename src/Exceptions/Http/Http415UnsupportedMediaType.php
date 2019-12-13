@@ -8,6 +8,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
  * Send a HTTP/415 Unsupported Media Type
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/415
+ *
  * @codeCoverageIgnore
  */
 abstract class Http415UnsupportedMediaType extends Http

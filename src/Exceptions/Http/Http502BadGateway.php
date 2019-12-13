@@ -8,6 +8,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
  * Send a HTTP/502 Bad Gateway
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502
+ *
  * @codeCoverageIgnore
  */
 abstract class Http502BadGateway extends Http

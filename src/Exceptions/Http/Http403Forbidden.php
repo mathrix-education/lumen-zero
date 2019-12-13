@@ -8,6 +8,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
  * Send a HTTP/403 Forbidden
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403
+ *
  * @codeCoverageIgnore
  */
 abstract class Http403Forbidden extends Http

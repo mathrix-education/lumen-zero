@@ -8,6 +8,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
  * Send a HTTP/405 Method Not Allowed
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405
+ *
  * @codeCoverageIgnore
  */
 abstract class Http405MethodNotAllowed extends Http

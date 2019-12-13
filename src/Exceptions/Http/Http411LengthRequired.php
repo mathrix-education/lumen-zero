@@ -8,6 +8,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
  * Send a HTTP/411 Length Required
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/411
+ *
  * @codeCoverageIgnore
  */
 abstract class Http411LengthRequired extends Http
