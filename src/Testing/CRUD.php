@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mathrix\Lumen\Zero\Testing\Traits;
+namespace Mathrix\Lumen\Zero\Testing;
 
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\FactoryBuilder;

@@ -8,7 +8,10 @@ use Laravel\Lumen\Application;
 use Laravel\Lumen\Routing\Router;
 use Mathrix\Lumen\Zero\Registrars\BaseRegistrar;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
+use function array_diff;
+use function array_map;
 use function array_values;
+use function config;
 
 /**
  * Register and cache the routes declared in the registrars.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mathrix\Lumen\Zero\Testing\Traits;
+namespace Mathrix\Lumen\Zero\Testing;
 
 use Mathrix\Lumen\Zero\Exceptions\InvalidArgument;
 use function array_combine;

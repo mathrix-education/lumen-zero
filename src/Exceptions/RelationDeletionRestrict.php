@@ -7,9 +7,10 @@ namespace Mathrix\Lumen\Zero\Exceptions;
 use Mathrix\Lumen\Zero\Exceptions\Http\Http409Conflict;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use Throwable;
+use function trans;
 
 /**
- * Called when a model is being deleted but has restricting relations.
+ * Thrown when a model is being deleted but has restricting relations.
  */
 class RelationDeletionRestrict extends Http409Conflict
 {

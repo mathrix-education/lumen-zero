@@ -8,13 +8,14 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Throwable;
+use const JSON_PRETTY_PRINT;
+use const JSON_THROW_ON_ERROR;
 use function class_basename;
 use function env;
 use function explode;
 use function get_class;
 use function json_encode;
 use function preg_replace;
-use const JSON_PRETTY_PRINT;
 
 /**
  * Define the HTTP Exceptions basics.
