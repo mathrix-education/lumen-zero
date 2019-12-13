@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "acf6b0d27adc78d24854fb337f290188",
+    "content-hash": "bd580fa9bbd73be93626dd7bf7046c3d",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -4047,17 +4047,17 @@
             "time": "2017-11-07T22:49:43+00:00"
         },
         {
-            "name": "mathrix/coding-standard",
-            "version": "0.9.1",
+            "name": "mathrix-education/coding-standard",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mathrix-education/coding-standard.git",
-                "reference": "b09b19c5f46a4403f4b899c859fcca28c42072ac"
+                "reference": "043fc855555b42e916ec80165a900136b3c4b557"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mathrix-education/coding-standard/zipball/b09b19c5f46a4403f4b899c859fcca28c42072ac",
-                "reference": "b09b19c5f46a4403f4b899c859fcca28c42072ac",
+                "url": "https://api.github.com/repos/mathrix-education/coding-standard/zipball/043fc855555b42e916ec80165a900136b3c4b557",
+                "reference": "043fc855555b42e916ec80165a900136b3c4b557",
                 "shasum": ""
             },
             "require": {
@@ -4070,6 +4070,7 @@
                     "Mathrix\\CodingStandard\\": "src/Mathrix"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4090,13 +4091,7 @@
                 "standard",
                 "style"
             ],
-            "support": {
-                "email": "mathieu@mathrix.fr",
-                "issues": "https://github.com/mathrix-education/coding-standard/issues",
-                "wiki": "https://github.com/mathrix-education/coding-standard/wiki",
-                "source": "https://github.com/mathrix-education/coding-standard"
-            },
-            "time": "2019-09-15T16:37:06+00:00"
+            "time": "2019-12-13T20:00:35+00:00"
         },
         {
             "name": "mockery/mockery",
