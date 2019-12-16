@@ -6,6 +6,7 @@ namespace Mathrix\Lumen\Zero\Exceptions;
 
 use Mathrix\Lumen\Zero\Exceptions\Http\Http404NotFound;
 use Throwable;
+use function trans;
 
 /**
  * Thrown when a route does not exist.

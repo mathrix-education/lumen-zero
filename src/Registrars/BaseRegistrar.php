@@ -10,6 +10,7 @@ use Mathrix\Lumen\Zero\Exceptions\InvalidArgument;
 use Mathrix\Lumen\Zero\Utils\ClassResolver;
 use function call_user_func_array;
 use function class_basename;
+use function config;
 
 /**
  * Allow object oriented routes declaration.
