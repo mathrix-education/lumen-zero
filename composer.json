@@ -9,7 +9,8 @@
     "zero"
   ],
   "homepage": "https://github.com/mathrix-education/lumen-zero",
-  "license": "proprietary",
+  "readme": "README.md",
+  "license": "MIT",
   "authors": [
     {
       "name": "Mathieu Bour",
