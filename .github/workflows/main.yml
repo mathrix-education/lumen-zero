@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Setup PHP
-        uses: shivammathur/setup-php@1.5.0
+        uses: shivammathur/setup-php@1.6.0
         with:
           php-version: 7.4
           extensions: mbstring
