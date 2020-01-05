@@ -11,7 +11,7 @@ namespace Mathrix\Lumen\Zero\Exceptions\Http;
  *
  * @codeCoverageIgnore
  */
-abstract class Http418Imateapot extends Http
+abstract class Http418ImATeapot extends Http
 {
     /** THE HTTP error standard code */
     protected const CODE = 418;

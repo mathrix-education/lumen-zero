@@ -4,38 +4,33 @@ declare(strict_types=1);
 
 namespace Mathrix\Lumen\Zero\Database;
 
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Console\OutputStyle;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use JsonSerializable;
 use Mathrix\Lumen\Zero\Models\BaseModel;
-use function app;
+use RuntimeException;
+use const FILE_IGNORE_NEW_LINES;
+use const FILE_SKIP_EMPTY_LINES;
+use const JSON_THROW_ON_ERROR;
 use function array_combine;
 use function array_fill_keys;
 use function array_keys;
-use function array_map;
 use function array_merge;
-use function array_shift;
-use function array_slice;
+use function collect;
 use function count;
 use function database_path;
 use function factory;
 use function file;
 use function file_get_contents;
-use function is_array;
-use function is_callable;
 use function is_int;
 use function is_string;
 use function json_decode;
 use function json_encode;
-use function rand;
 use function str_getcsv;
-use function strcmp;
 
 class BaseTableSeeder extends Seeder
 {
@@ -45,96 +40,74 @@ class BaseTableSeeder extends Seeder
     protected $output;
 
     /**
-     * Override default call.
-     *
-     * @param string $class
-     * @param bool   $silent
-     */
-    public function call($class, $silent = false)
-    {
-        $this->resolve($class)
-            ->__invoke();
-    }
-
-    /**
      * Set the console command instance.
+     * Allow to get the Output object which is useful when creating progress bars
      *
      * @param Command $command
      *
-     * @return $this
+     * @return Seeder
      */
     public function setCommand(Command $command)
     {
-        $this->command = $command;
-        $this->output  = $command->getOutput();
+        $this->output = $command->getOutput();
 
-        return $this;
-    }
-
-    /**
-     * Seed data using a json file.
-     *
-     * @param string      $filename The json file name, without the trailing .json
-     * @param string|null $table    If null, same as filename
-     */
-    public function seedFromJson(string $filename, ?string $table = null)
-    {
-        if ($table === null) {
-            $table = $filename;
-        }
-
-        $path     = app()->databasePath("raws/$filename.json");
-        $jsonData = json_decode(file_get_contents($path), true);
-
-        $this->output->writeln("<comment>Seeding:</comment> $table from json");
-        $this->seedFromArray($jsonData, $table);
+        return parent::setCommand($command);
     }
 
     /**
      * Send data to database using a raw array.
      *
-     * @param array  $rawData
-     * @param string $table
-     * @param int    $chunkSize
+     * @param array  $rawData   The data as an array of models
+     * @param string $table     The destination SQL table
+     * @param int    $chunkSize The chunk size used for insertions
      */
-    public function seedFromArray(array $rawData, string $table, int $chunkSize = 100)
+    public function seedFromArray(array $rawData, string $table, int $chunkSize = 100): void
     {
         $progressBar = $this->output->createProgressBar(count($rawData));
         $progressBar->setFormat(self::DEFAULT_PROGRESS_BAR_FORMAT);
 
-        // Let's find all row keys
-        $keys = [];
-        foreach ($rawData as $row) {
-            $keys = array_merge($keys, array_keys($row));
-        }
+        $data = collect($rawData);
+        $keys = $data->reduce(fn($carry, $item) => [...$carry, ...array_keys($item)], []);
+        $data = $data
+            // fill non-existing keys with null
+            ->map(fn($model) => [...array_fill_keys($keys, null), ...$model])
+            // parse the array value as json
+            ->map(static function ($model) {
+                foreach ($model as $column => $val) {
+                    if (!($model[$column] instanceof JsonSerializable)) {
+                        continue;
+                    }
 
-        // Fill missing row with all keys
-        $emptyRow = array_fill_keys($keys, null);
-        foreach ($rawData as $k => $row) {
-            $rawData[$k] = array_merge($emptyRow, $row);
-        }
-
-        // Handle json encode of array, assuming they should be injected a strings
-        foreach ($rawData as $key => $row) {
-            foreach ($row as $column => $val) {
-                if (!is_array($val)) {
-                    continue;
+                    $model[$column] = json_encode($model[$column], JSON_THROW_ON_ERROR, 512);
                 }
+            });
 
-                $rawData[$key][$column] = json_encode($val);
-            }
-        }
+        $data->chunk($chunkSize)
+            ->each(static function (Collection $chunkData) use ($table, $progressBar) {
+                DB::table($table)->insert($chunkData->toArray());
+                $progressBar->advance($chunkData->count());
+            });
 
-        // Insert data in database by chunk
-        for ($i = 0; $i < count($rawData); $i += $chunkSize) {
-            $insertData = array_slice($rawData, $i, $chunkSize);
-            DB::table($table)
-                ->insert($insertData);
-            $progressBar->advance(count($insertData));
-        }
-
+        // Finish the progress bar
         $progressBar->finish();
         $this->output->write("\n");
+    }
+
+    /**
+     * Seed data using a json file.
+     * By default, it will search in database path in the raw directory but you can also pass an absolute path.
+     *
+     * @param string      $filename The json file name, without the trailing .json
+     * @param string|null $table    If null, same as filename
+     */
+    public function seedFromJson(string $filename, ?string $table = null): void
+    {
+        $table  ??= $filename;
+        $path     = database_path("raws/$filename.json");
+        $jsonData = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+
+        $this->output->writeln("<comment>Seeding:</comment> $table from json");
+        $this->seedFromArray($jsonData, $table);
     }
 
     /**
@@ -143,30 +116,26 @@ class BaseTableSeeder extends Seeder
      * @param string      $filename The csv file name, without the trailing .csv
      * @param string|null $table    If null, same as filename
      */
-    public function seedFromCsv(string $filename, ?string $table = null)
+    public function seedFromCsv(string $filename, ?string $table = null): void
     {
-        if ($table === null) {
-            $table = $filename;
+        $table ??= $filename;
+        $path    = database_path("raws/$filename.csv");
+
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        if (!$lines) {
+            throw new RuntimeException("Error while reading CSV file at path: $path");
         }
 
-        $path = database_path("raws/$filename.csv");
+        $data = collect($lines)->map(fn($line) => str_getcsv($line));
 
-        $csvFile = file($path);
-        $csvData = [];
-        foreach ($csvFile as $line) {
-            $csvData[] = str_getcsv($line);
-        }
-        $headings = array_shift($csvData);
-
-        $csvData = array_map(
-            static function ($line) use ($headings) {
-                return array_combine($headings, $line);
-            },
-            $csvData
-        );
+        // Since the csv data has no array keys, extract the first line assuming this is the heading and combine
+        // them with the data values
+        $headings = $data->shift();
+        $data->map(fn($values) => array_combine($headings, $values));
 
         $this->output->writeln("<comment>Seeding:</comment> $table from csv");
-        $this->seedFromArray($csvData, $table);
+        $this->seedFromArray($data->toArray(), $table);
     }
 
     /**
@@ -177,8 +146,12 @@ class BaseTableSeeder extends Seeder
      * @param int    $count
      * @param array  $factoryOptions
      */
-    public function seedFromSubFactory(string $modelClass, string $subFactory, int $count, array $factoryOptions = [])
-    {
+    public function seedFromSubFactory(
+        string $modelClass,
+        string $subFactory,
+        int $count,
+        array $factoryOptions = []
+    ): void {
         $factoryOptions = array_merge(
             [
                 'subFactory' => $subFactory,
@@ -196,7 +169,7 @@ class BaseTableSeeder extends Seeder
      * @param string    $modelClass
      * @param array|int $factoryOptions
      */
-    public function seedFromFactory(string $modelClass, $factoryOptions)
+    public function seedFromFactory(string $modelClass, $factoryOptions): void
     {
         $defaultFactoryOptions = [
             'subFactory' => null,
@@ -246,80 +219,5 @@ class BaseTableSeeder extends Seeder
         }
 
         $this->seedFromArray($factoryData->toArray(), $factoryOptions['table']);
-    }
-
-    /**
-     * Link two tables in both directions.
-     *
-     * @param BaseModel|string $modelClass1 the model class to use and link
-     * @param BaseModel|string $modelClass2 the model class to use and link
-     * @param int              $min         the minimum relations
-     * @param int              $max         the maximum relations
-     *
-     * @throws Exception
-     */
-    public function linkAll($modelClass1, $modelClass2, $min = 3, $max = 5)
-    {
-        $this->link($modelClass1, $modelClass2, $min, $max);
-        $this->link($modelClass2, $modelClass1, $min, $max);
-    }
-
-    /**
-     * Link two tables.
-     *
-     * @param BaseModel|string $modelClass1 the model class to use
-     * @param BaseModel|string $modelClass2 the model class to link
-     * @param int              $min         the minimum relations
-     * @param int              $max         the maximum relations
-     * @param callable|null    $callback
-     *
-     * @throws Exception
-     */
-    public function link($modelClass1, $modelClass2, $min = 3, $max = 5, ?callable $callback = null)
-    {
-        // Build all necessary variables (tables, ids...)
-        $models1     = $modelClass1::all();
-        $model1Table = $modelClass1::getTableName();
-        $model1Key   = Str::singular($model1Table) . '_id';
-        $model2Ids   = $modelClass2::query()
-            ->get(['id'])
-            ->pluck('id')
-            ->toArray();
-        $model2Table = $modelClass2::getTableName();
-        $model2Key   = Str::singular($model2Table) . '_id';
-
-        if (strcmp($model1Table, $model2Table) < 0) {
-            $linkTable = Str::singular($model1Table) . '_' . Str::singular($model2Table);
-        } else {
-            $linkTable = Str::singular($model2Table) . '_' . Str::singular($model1Table);
-        }
-
-        $this->output->writeln("<comment>Linking:</comment> $model1Table <=> $model2Table");
-
-        // Build link data
-        $linkData = [];
-        foreach ($models1 as $model1) {
-            $model1Id                  = $model1->id;
-            $model2IdsToLinkWithModel1 = Arr::random($model2Ids, rand($min, $max)); // rand does not has to be secure
-
-            foreach ($model2IdsToLinkWithModel1 as $order => $model2Id) {
-                if (is_callable($callback)) {
-                    $linkData[] = $callback(
-                        $order,
-                        [
-                            $model1Key => $model1Id,
-                            $model2Key => $model2Id,
-                        ]
-                    );
-                } else {
-                    $linkData[] = [
-                        $model1Key => $model1Id,
-                        $model2Key => $model2Id,
-                    ];
-                }
-            }
-        }
-
-        $this->seedFromArray($linkData, $linkTable);
     }
 }
