@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 use JsonSerializable;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use RuntimeException;
+use const FILE_IGNORE_NEW_LINES;
+use const FILE_SKIP_EMPTY_LINES;
+use const JSON_THROW_ON_ERROR;
 use function array_combine;
 use function array_fill_keys;
 use function array_keys;
@@ -28,9 +31,6 @@ use function is_string;
 use function json_decode;
 use function json_encode;
 use function str_getcsv;
-use const FILE_IGNORE_NEW_LINES;
-use const FILE_SKIP_EMPTY_LINES;
-use const JSON_THROW_ON_ERROR;
 
 class BaseTableSeeder extends Seeder
 {
@@ -102,7 +102,7 @@ class BaseTableSeeder extends Seeder
      */
     public function seedFromJson(string $filename, ?string $table = null): void
     {
-        $table    ??= $filename;
+        $table  ??= $filename;
         $path     = database_path("raws/$filename.json");
         $jsonData = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
 
@@ -119,7 +119,7 @@ class BaseTableSeeder extends Seeder
     public function seedFromCsv(string $filename, ?string $table = null): void
     {
         $table ??= $filename;
-        $path  = database_path("raws/$filename.csv");
+        $path    = database_path("raws/$filename.csv");
 
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
