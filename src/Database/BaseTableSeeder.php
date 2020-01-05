@@ -10,11 +10,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use JsonSerializable;
 use Mathrix\Lumen\Zero\Models\BaseModel;
+use RuntimeException;
 use function array_combine;
 use function array_fill_keys;
 use function array_keys;
 use function array_merge;
+use function collect;
 use function count;
 use function database_path;
 use function factory;
@@ -25,6 +28,9 @@ use function is_string;
 use function json_decode;
 use function json_encode;
 use function str_getcsv;
+use const FILE_IGNORE_NEW_LINES;
+use const FILE_SKIP_EMPTY_LINES;
+use const JSON_THROW_ON_ERROR;
 
 class BaseTableSeeder extends Seeder
 {
@@ -68,9 +74,11 @@ class BaseTableSeeder extends Seeder
             // parse the array value as json
             ->map(static function ($model) {
                 foreach ($model as $column => $val) {
-                    if ($model[$column] instanceof \JsonSerializable) {
-                        $model[$column] = json_encode($model[$column], JSON_THROW_ON_ERROR, 512);
+                    if (!($model[$column] instanceof JsonSerializable)) {
+                        continue;
                     }
+
+                    $model[$column] = json_encode($model[$column], JSON_THROW_ON_ERROR, 512);
                 }
             });
 
@@ -116,7 +124,7 @@ class BaseTableSeeder extends Seeder
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         if (!$lines) {
-            throw new \RuntimeException("Error while reading CSV file at path: $path");
+            throw new RuntimeException("Error while reading CSV file at path: $path");
         }
 
         $data = collect($lines)->map(fn($line) => str_getcsv($line));
@@ -138,8 +146,12 @@ class BaseTableSeeder extends Seeder
      * @param int    $count
      * @param array  $factoryOptions
      */
-    public function seedFromSubFactory(string $modelClass, string $subFactory, int $count, array $factoryOptions = []): void
-    {
+    public function seedFromSubFactory(
+        string $modelClass,
+        string $subFactory,
+        int $count,
+        array $factoryOptions = []
+    ): void {
         $factoryOptions = array_merge(
             [
                 'subFactory' => $subFactory,
