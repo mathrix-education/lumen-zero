@@ -113,7 +113,7 @@ class BaseTableSeeder extends Seeder
         $table ??= $filename;
         $path  = database_path("raws/$filename.csv");
 
-        $lines = file($path, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         if (!$lines) {
             throw new \RuntimeException("Error while reading CSV file at path: $path");
