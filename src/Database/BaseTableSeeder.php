@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use JsonSerializable;
 use Mathrix\Lumen\Zero\Models\BaseModel;
 use RuntimeException;
 use const FILE_IGNORE_NEW_LINES;
@@ -20,12 +19,14 @@ use function array_combine;
 use function array_fill_keys;
 use function array_keys;
 use function array_merge;
+use function array_unique;
 use function collect;
 use function count;
 use function database_path;
 use function factory;
 use function file;
 use function file_get_contents;
+use function is_array;
 use function is_int;
 use function is_string;
 use function json_decode;
@@ -67,19 +68,22 @@ class BaseTableSeeder extends Seeder
         $progressBar->setFormat(self::DEFAULT_PROGRESS_BAR_FORMAT);
 
         $data = collect($rawData);
-        $keys = $data->reduce(fn($carry, $item) => [...$carry, ...array_keys($item)], []);
+        $keys = $data->reduce(fn($carry, $item) => array_unique([...$carry, ...array_keys($item)]), []);
+
         $data = $data
             // fill non-existing keys with null
             ->map(fn($model) => array_merge(array_fill_keys($keys, null), $model))
             // parse the array value as json
             ->map(static function ($model) {
                 foreach ($model as $column => $val) {
-                    if (!($model[$column] instanceof JsonSerializable)) {
+                    if (!is_array($model[$column])) {
                         continue;
                     }
 
                     $model[$column] = json_encode($model[$column], JSON_THROW_ON_ERROR, 512);
                 }
+
+                return $model;
             });
 
         $data->chunk($chunkSize)
