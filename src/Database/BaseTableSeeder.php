@@ -70,7 +70,7 @@ class BaseTableSeeder extends Seeder
         $keys = $data->reduce(fn($carry, $item) => [...$carry, ...array_keys($item)], []);
         $data = $data
             // fill non-existing keys with null
-            ->map(fn($model) => [...array_fill_keys($keys, null), ...$model])
+            ->map(fn($model) => array_merge(array_fill_keys($keys, null), $model))
             // parse the array value as json
             ->map(static function ($model) {
                 foreach ($model as $column => $val) {
