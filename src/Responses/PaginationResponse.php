@@ -19,7 +19,10 @@ class PaginationResponse extends DataResponse
      */
     public function __construct($query, ?Closure $callback = null, $status = 200, $headers = [], $options = 0)
     {
-        $total  = $query->count();
+        $totalQuery         = (clone $query)->getQuery();
+        $totalQuery->limit  = null;
+        $totalQuery->offset = null;
+
         $models = $query->get();
 
         if ($callback !== null) {
@@ -33,7 +36,7 @@ class PaginationResponse extends DataResponse
         $meta = [
             'page'     => (int)($query->getQuery()->offset / $query->getQuery()->limit),
             'per_page' => $query->getQuery()->limit,
-            'total'    => $total,
+            'total'    => $totalQuery->count(),
         ];
 
         parent::__construct($models, $meta, $status, $headers, $options);
